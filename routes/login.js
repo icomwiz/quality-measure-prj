@@ -10,6 +10,7 @@ router.post('/', function(req, res, next) {
     if(req.body.c_id === 'aa' && req.body.c_pw === 'aa') {
         return res.redirect('/main');
     }
+
     next(new Error('Check ID or PW'));
 });
 module.exports = router;
