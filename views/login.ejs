@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <title><%= title %></title>
+</head>
+<body>
+    <div data-role='header'>
+        <h1><%= title %></h1>
+    </div>
+    <div data-role="content">
+        <form action="/login" method="POST" onsubmit="return login()">
+            <input type="text" name="c_id" id="c_id" placeholder="ID">
+            <input type="password" name="c_pw" id="c_pw" placeholder="Password">
+            <button type="submit">로그인</button>
+        </form>
+    </div>
+    <div data-role="footer">
+        <h1><%= title %></h1>
+    </div>
+</body>
+<script>
+    function login() {
+        if( $("#c_id").val().trim() === "") {
+            var message = "아이디를 입력해주세요.";
+            $("#c_id").val("");
+            $("#c_id").focus();
+            alert(message);
+            return false;
+        } else if( $("#c_pw").val().trim() === "" ) {
+            var message = "패스워드를 입력해주세요.";
+            $("#c_pw").val("");
+            $("#c_pw").focus();
+            alert(message);
+            return false;
+        }
+    }
+</script>
+</html>
