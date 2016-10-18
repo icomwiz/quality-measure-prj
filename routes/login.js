@@ -1,8 +1,7 @@
-var login = require('../../../../Users/taehwan/Desktop/quality-measure-prj/models/login');
+var login = require('../models/login');
 
 var express = require('express');
 var router = express.Router();
-
 
 router.get('/', function(req, res, next) {
     res.render('login', { title: 'Icomwiz' });
