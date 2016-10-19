@@ -10,13 +10,27 @@
     <div data-role='header'>
         <h1><%= title %></h1>
     </div>
-    <div data-role="content">
-        <% for(var i = 0; i < 5; i++) {%>
-        <li> <%= i %> </li>
-        <% } %>
-    </div>
-    <div data-role="footer" data-position="fixed">
-        <h1><%= title %></h1>
+    <div data-role="content" >
+        <button id="addReport">+</button>
+        <ul data-role="listview" data-inset="true">
+            <% for(var i = 0; i < report.length ; i++) {%>
+                <li>
+                    <div dat-role="controlgroup">
+                        <p style="width: 80%; float: left">
+                            <%= report[i].date%><br>
+                            <%= "측정장소 : "+report[i].location + report[i].target1%><br>
+                            <%= "측정팀 : " +report[i].teamName%>
+                        </p>
+                        <div style=" float: right">
+                            <button data-icon="edit" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+                            <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+                        </div>
+                    </div>
+                </li>
+            <% } %>
+        </ul>
     </div>
 </body>
+
 </html>
+
