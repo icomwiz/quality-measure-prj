@@ -9,7 +9,7 @@ function login(user, callback) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_login, [user.email, user.pw], function(err, result) {
+        dbConn.query(sql_login, [user.email, user.password], function(err, result) {
             dbConn.release();
             if (err) {
                 return callback(err);

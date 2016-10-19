@@ -11,33 +11,39 @@
         <h1><%= title %></h1>
     </div>
     <div data-role="content">
-        <form action="/login" method="POST" onsubmit="return login()">
-            <input type="text" name="c_id" id="c_id" placeholder="ID">
-            <input type="password" name="c_pw" id="c_pw" placeholder="Password">
-            <button type="submit">로그인</button>
+        <form action="/login" method="POST">
+            <input type="text" name="email" id="email">
+            <input type="password" name="password" id="password">
+            <input type="button" value="로그인" id="btnLogin"/>
         </form>
     </div>
     <div data-role="footer">
         <h1><%= title %></h1>
     </div>
 </body>
-
 <script>
-    function login() {
-        if( $("#c_id").val().trim() === "") {
-            var message = "아이디를 입력해주세요.";
-            $("#c_id").val("");
-            $("#c_id").focus();
-            alert(message);
-            return false;
-        } else if( $("#c_pw").val().trim() === "" ) {
-            var message = "패스워드를 입력해주세요.";
-            $("#c_pw").val("");
-            $("#c_pw").focus();
-            alert(message);
-            return false;
-        }
-    }
+    $(function() {
+        $("#btnLogin").click(function() {
+            var param = {
+                email: $("#email").val(),
+                password: $("#password").val()
+            };
+            $.ajax({
+                url: "http://localhost:3000/auth",
+                type: "POST",
+                dataType: "json",
+                data: param,
+                success: function(data) {
+                    if( data.response == 'fail') {
+                        alert('실패');
+                    }
+                },
+                error: function(data) {
+                    alert('점속에러');
+                    console.log(error);
+                }
+            });
+        });
+    })
 </script>
-
 </html>

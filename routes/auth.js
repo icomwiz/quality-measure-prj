@@ -1,4 +1,4 @@
-var login = require('../models/login');
+var Employee = require('../models/employee');
 
 var express = require('express');
 var router = express.Router();
@@ -9,18 +9,17 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
     var user = {};
-    user.email = req.body.c_id;
-    user.pw = req.body.c_pw;
+    user.email = req.body.email;
+    user.password = req.body.password;
 
-    login.login(user, function(err, result) {
+    Employee.login(user, function(err, result) {
         if(err) {
             return next(err);
         }
-        console.log(result);
-        if(result) {
-            return res.redirect('/main');
+        if (result) {
+            return res.render('/login', {response: 'ok'});
         }
-        res.redirect('/login');
+        res.render('/login', {response: 'fail'});
     });
 });
 
