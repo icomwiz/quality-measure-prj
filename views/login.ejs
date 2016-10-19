@@ -11,11 +11,9 @@
         <h1><%= title %></h1>
     </div>
     <div data-role="content">
-        <form action="/login" method="POST">
-            <input type="text" name="email" id="email">
-            <input type="password" name="password" id="password">
-            <input type="button" value="로그인" id="btnLogin"/>
-        </form>
+        <input type="text" name="email" id="email">
+        <input type="password" name="password" id="password">
+        <input type="button" value="로그인" id="btnLogin"/>
     </div>
     <div data-role="footer">
         <h1><%= title %></h1>
@@ -34,12 +32,9 @@
                 dataType: "json",
                 data: param,
                 success: function(data) {
-                    if( data.response == 'fail') {
-                        alert('실패');
-                    }
+                    alert(data.result);
                 },
                 error: function(data) {
-                    alert('점속에러');
                     console.log(error);
                 }
             });

@@ -17,9 +17,14 @@ router.post('/', function(req, res, next) {
             return next(err);
         }
         if (result) {
-            return res.render('/login', {response: 'ok'});
+            //return res.render('/login', {result: 'ok'});
+            return res.send({
+                result: 'ok'
+            });
         }
-        res.render('/login', {response: 'fail'});
+        res.send({
+            result: 'fail'
+        });
     });
 });
 
