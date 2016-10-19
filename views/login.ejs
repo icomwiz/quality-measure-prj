@@ -32,13 +32,16 @@
                 dataType: "json",
                 data: param,
                 success: function(data) {
-                    alert(data.result);
+                    if(data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/main";
+                    }
+                    alert('ID나 PASSWORD를 확인해주세요.');
                 },
                 error: function(data) {
                     console.log(error);
                 }
             });
         });
-    })
+    });
 </script>
 </html>
