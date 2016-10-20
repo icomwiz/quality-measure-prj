@@ -7,13 +7,14 @@
     <title><%= title %></title>
 </head>
 <body>
-    <div data-role='header'>
-        <h1><%= title %></h1>
-    </div>
-    <div data-role="content" >
-        <button id="addReport">+</button>
-        <ul data-role="listview" data-inset="true">
-            <% for(var i = 0; i < report.length ; i++) {%>
+    <div data-role="page" id="page1">
+        <div data-role='header'>
+            <h1><%= title %></h1>
+        </div>
+        <div data-role="content" >
+            <a href="#page2" data-role="button" id="addReport">+</a>
+            <ul data-role="listview" data-inset="true">
+                <% for(var i = 0; i < report.length ; i++) {%>
                 <li>
                     <div dat-role="controlgroup">
                         <p style="width: 80%; float: left">
@@ -27,10 +28,42 @@
                         </div>
                     </div>
                 </li>
-            <% } %>
-        </ul>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+
+    <div data-role="page" id="page2">
+        <div data-role='header'>
+            <input id="date" type="date" style=" text-align: center;">
+        </div>
+        <div data-role="content" >
+
+        </div>
+        <div data-role="footer" >
+            <div style="text-align : center">
+                <button data-icon="check" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+                <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+            </div>
+        </div>
     </div>
 </body>
+<script>
+    $(function() {
+        $("#addReport").click(function() {
+            $('#date').val(date());
+        });
+    });
 
+    function date(){
+        var date = new Date();
+
+        var year  = date.getFullYear();
+        var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+        var day   = date.getDate();
+
+        return year +'-'+month+'-'+day;
+    }
+</script>
 </html>
 
