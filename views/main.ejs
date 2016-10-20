@@ -34,16 +34,132 @@
     </div>
 
     <div data-role="page" id="page2">
-        <div data-role='header'>
-            <input id="date" type="date" style=" text-align: center;">
+        <div data-role='header' class="ui-grid-a">
+            <div class="ui-block-a" style="width: 30%;">
+                <input id="date" type="date" style="text-align: center;">
+            </div>
         </div>
+
         <div data-role="content" >
+            <div class="ui-grid-b">
+                <div class="ui-block-a" style="width: 10%">
+                    <p>조장 :</p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="text" value=""  />
+                </div>
+                <div class="ui-block-a" style="width: 10%">
+                    <p>조원 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 30%">
+                    <input type="text" value=""  />
+                </div>
+                <div class="ui-block-a" style="width: 10%">
+                    <p>측정장소 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="text" value=""  />
+                </div>
+
+                <div class="ui-block-a" style="width: 10%">
+                    <p>차량번호 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="text" value=""  />
+                </div>
+
+                <div class="ui-block-a" style="width: 10%">
+                    <p>차량종류 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="text" value=""  />
+                </div>
+            </div>
+
+            <div>
+                <fieldset data-role="controlgroup" data-iconpos="left">
+                    <legend>측정장비:</legend>
+                    <input type="checkbox" name="checkbox-h-6a" id="checkbox-h-6a">
+                    <label for="checkbox-h-6a">OPTis-P8E</label>
+                    <input type="checkbox" name="checkbox-h-6b" id="checkbox-h-6b">
+                    <label for="checkbox-h-6b">OPTis-MII</label>
+                    <input type="checkbox" name="checkbox-h-6c" id="checkbox-h-6c">
+                    <label for="checkbox-h-6c">OPTis-S4</label>
+                    <input type="checkbox" name="checkbox-h-6d" id="checkbox-h-6d">
+                    <label for="checkbox-h-6d">N_PM10</label>
+                    <input type="checkbox" name="checkbox-h-6e" id="checkbox-h-6e">
+                    <label for="checkbox-h-6e">N_MDM3</label>
+                    <input type="checkbox" name="checkbox-h-6f" id="checkbox-h-6f">
+                    <label for="checkbox-h-6f">N_PM6</label>
+                    <input type="checkbox" name="checkbox-h-6g" id="checkbox-h-6g">
+                    <label for="checkbox-h-6g">N_MDM3</label>
+                    <input type="checkbox" name="checkbox-h-6h" id="checkbox-h-6h">
+                    <label for="checkbox-h-6h">Manual</label>
+                </fieldset>
+            </div>
+
+
+            <div class="ui-grid-d">
+                <div class="ui-block-a" style="width: 25%">
+                    <p>집/대상지 이동시간 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-b" style="width: 10%">
+                    <p>시작</p>
+                </div>
+                <div class="ui-block-c" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-c" style="width: 10%">
+                    <p>종료</p>
+                </div>
+            </div>
+
+            <div class="ui-grid-b">
+                <div class="ui-block-a" style="width: 25%">
+                    <p>대상지 도착후 SETUP : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-b" style="width: 10%">
+                    <p>시작</p>
+                </div>
+                <div class="ui-block-c" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-c" style="width: 10%">
+                    <p>종료</p>
+                </div>
+            </div>
+
+            <div class="ui-grid-c">
+                <div class="ui-block-a" style="width: 25%">
+                    <p>측정 전 장애 시간 : </p>
+                </div>
+                <div class="ui-block-b" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-b" style="width: 10%">
+                    <p>시작</p>
+                </div>
+                <div class="ui-block-c" style="width: 15%">
+                    <input type="time" value="">
+                </div>
+                <div class="ui-block-c" style="width: 10%">
+                    <p>종료</p>
+                </div>
+            </div>
 
         </div>
-        <div data-role="footer" >
-            <div style="text-align : center">
-                <button data-icon="check" data-mini="true" data-iconpos="notext" data-inline="true"></button>
-                <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+        <div data-role="footer" class="ui-grid-a">
+            <div class="ui-block-a" style="text-align: center" >
+                <button data-icon="edit"  >저장</button>
+            </div>
+            <div class="ui-block-b" style="text-align: center">
+                <button data-icon="delete" >취소</button>
             </div>
         </div>
     </div>
