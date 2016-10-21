@@ -34,6 +34,8 @@
                 success: function(data) {
                     if(data.result === 'ok') {
                         return window.location.href = "http://localhost:3000/reports";
+                    } else if(data.result === 1 || data.result === 2) {
+                        return window.location.href = "http://localhost:3000/teams/simple";
                     }
                     alert('ID나 PASSWORD를 확인해주세요.');
                 },

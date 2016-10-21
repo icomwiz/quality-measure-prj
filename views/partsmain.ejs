@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <title>파트 메인 페이지 </title>
+</head>
+<body>
+    <div data-role='header'>
+        <h1><%= partName %> 관리 페이지 </h1>
+    </div>
+    <div data-role="content">
+        <p class="hello"> <%= name %> <%= departmentPosition %>님 반갑습니다. </p>
+        <select name="select-choice-min" id="management-kind" data-mini="true">
+            <option value="team">관리 팀 목록</option>
+            <option value="statistics">통계</option>
+            <option value="upload">계획 업로드</option>
+        </select>
+        <ul data-role="listview" id="listArea" data-inset="true">
+            <% for(var i = 0; i < teamList.length; i++) { %>
+                <li class="ui-btn"><%= teamList[i].teamName %></li>
+            <% } %>
+        </ul>
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <h4>icomwiz</h4>
+    </div>
+    <script>
+        $(function() {
+            $("#listArea > li").click(function() {
+                var teamName = $(this).text();
+                alert(teamName);
+            });
+        });
+    </script>
+</body>
+</html>

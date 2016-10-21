@@ -60,10 +60,15 @@ router.post('/', function(req, res, next) {
         });
     })(req, res, next);
 }, function(req, res, next) {
-    console.log(req.user.id);
-    res.send({
-        result: 'ok'
-    });
+    if (req.user.teamPosition === 1 || req.user.teamPosition === 2) {
+        res.send({
+            result: 1
+        })
+    } else {
+        res.send({
+            result: 'ok'
+        });
+    }
 });
 
 module.exports = router;
