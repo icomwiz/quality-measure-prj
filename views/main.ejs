@@ -88,7 +88,7 @@
                         <input type="hidden" name="myName" id="myName" value="<%= equipment.name%>">
                     </div>
                 </div>
-                <div class="ui-grid-c">
+                <div class="ui-grid-b">
                     <div class="ui-block-a" >
                         <p>시작전 KM :</p>
                     </div>
@@ -100,17 +100,19 @@
                     </div>
                 </div>
                 <div class="ui-grid-b">
-                    <div class="ui-block-a" >
-                        <p>현재주유상태 :</p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="measure_machine" id="measure_machine" value="">
+                    <div class="ui-field-contain">
+                        <label for="select-native-3">현재주유상태 : </label>
+                        <select name="select-native-3" id="select-native-3" data-iconpos="left">
+                            <option value="1">하</option>
+                            <option value="2">중하</option>
+                            <option value="3" selected>중</option>
+                            <option value="4">중상</option>
+                            <option value="5">상</option>
+                        </select>
                     </div>
                 </div>
                 <div class="ui-grid-d">
-                    <div class="ui-block-a" >
-                        <p>집/대상지 이동시간 : </p>
-                    </div>
+                    <p>집/대상지 이동시간 : </p>
                     <div class="ui-block-b">
                         <input type="time" name="move_start_time" id="move_start_time" value="">
                     </div>
@@ -124,10 +126,8 @@
                         <p>종료</p>
                     </div>
                 </div>
-                <div class="ui-grid-b">
-                    <div class="ui-block-a" >
-                        <p>대상지 도착후 SETUP : </p>
-                    </div>
+                <div class="ui-grid-d">
+                    <p>대상지 도착후 SETUP : </p>
                     <div class="ui-block-b">
                         <input type="time" name="step_start_time" id="step_start_time" value="">
                     </div>
@@ -141,28 +141,43 @@
                         <p>종료</p>
                     </div>
                 </div>
-                <div class="ui-grid-c">
-                    <div class="ui-block-a" style="width: 25%">
-                        <p>측정 전 장애 시간 : </p>
-                    </div>
-                    <div class="ui-block-b" style="width: 15%">
-                        <input type="time" name="err_start_time" id="err_start_time" value="">
-                    </div>
-                    <div class="ui-block-b" style="width: 10%">
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c" style="width: 15%">
-                        <input type="time" name="err_end_time" id="err_end_time" value="">
-                    </div>
-                    <div class="ui-block-c" style="width: 10%">
-                        <p>종료</p>
-                    </div>
+                <div class="ui-field-contain">
+                    <label for="select-native-2">측정전 장애 발생 유무 : </label>
+                    <select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
+                        <option value="0">장애발생</option>
+                        <option value="1" selected>장애 미발생</option>
+                    </select>
                 </div>
+
+                <!-- selectbox 에따른 hidden 옵션 -->
+                <div id="err" style="display:none" >
+                    <div class="ui-grid-d">
+                        <div class="ui-block-b">
+                            <input type="time" name="move_start_time" id="move_start_time" value="">
+                        </div>
+                        <div class="ui-block-b" >
+                            <p>시작</p>
+                        </div>
+                        <div class="ui-block-c" >
+                            <input type="time" name="move_end_time" id="move_end_time" value="">
+                        </div>
+                        <div class="ui-block-c" >
+                            <p>종료</p>
+                        </div>
+                    </div>
+
+                    장애 내역 (분석실 pm에 보고 내용)
+                    <textarea name="textarea" id="errInfo" cols="30" rows="50"></textarea>
+                    장애 대응 내역 (분석실 pm 대응 방안)
+                    <textarea name="textarea" id="errSolution" cols="30" rows="50"></textarea>
+                </div>
+
+
             </div>
             <div data-role="footer">
                 <h1>
-                    <button data-icon="edit" id="saveBtn" style="width: 25%">저장</button>
-                    <button data-icon="delete" id="Cencel" style="width: 25%">취소</button>
+                    <button data-icon="edit" id="saveBtn" >저장</button>
+                    <button data-icon="delete" id="Cencel" >취소</button>
                 </h1>
             </div>
         <!-- </form> -->
@@ -176,7 +191,6 @@
         $("#Cencel").click(function() {
             window.location.href = "http://localhost:3000/reports?action=0";
         });
-
         $("#saveBtn").click(function() {
             var param = {
                 date: $("#date").val(),
@@ -216,6 +230,16 @@
             });
         });
     });
+
+    function ErrSelect(Val) {
+        alert(Val);
+        if (Val === 0) {
+            //style 변경해야함
+        } else {
+            //style 변경해야함 style="display:none"
+        }
+    }
+
     function date(){
         var date = new Date();
 
