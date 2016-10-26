@@ -20,4 +20,28 @@ function report(callback) {
     });
 }
 
+// INPUT: teamName, OUTPUT: teamName, date, location
+function getReportsByteamId(teamId, callback) {
+    var sql_select_reports_order_by_date =
+        "SELECT t.name teamName, t.team_no teamNo, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, r.location " +
+        "FROM team t JOIN report r ON(t.id = r.team_id) " +
+        "WHERE t.id = ? " +
+        "GROUP BY r.date " +
+        "ORDER BY r.date DESC";
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_select_reports_order_by_date, [teamId], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    })
+}
+
 module.exports.report = report;
+module.exports.getReportsByteamId = getReportsByteamId;

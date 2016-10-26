@@ -7,6 +7,23 @@ a {
   color: #00B7FF;
 }
 
+li {
+  list-style: none;
+}
+
+
+#btnLogin {
+  cursor: pointer;
+}
+
+.teamList {
+  cursor: pointer;
+}
+
 .hello {
   text-align: right;
+}
+
+.parts-main-radio-btns {
+  text-align: center;
 }

@@ -1,37 +1,146 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 메타 정보 선언 -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- 제이쿼리 모바일, 제이쿼리 라이브러리 파일 선언 -->
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-    <title>파트 메인 페이지 </title>
+
+    <!-- 사용자 스타일 시트 파일 선언 -->
+    <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <div data-role='header'>
-        <h1><%= partName %> 관리 페이지 </h1>
+    <div data-role='header' data-position="fixed">
+        <h4><%= result.partName %></h4>
     </div>
     <div data-role="content">
-        <p class="hello"> <%= name %> <%= departmentPosition %>님 반갑습니다. </p>
-        <select name="select-choice-min" id="management-kind" data-mini="true">
-            <option value="team">관리 팀 목록</option>
-            <option value="statistics">통계</option>
-            <option value="upload">계획 업로드</option>
-        </select>
-        <ul data-role="listview" id="listArea" data-inset="true">
-            <% for(var i = 0; i < teamList.length; i++) { %>
-                <li class="ui-btn"><%= teamList[i].teamName %></li>
-            <% } %>
+        <p class="hello"> <%= result.name %> <%= result.departmentPosition %>님 반갑습니다. </p>
+        <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="true"/>
+            <label for="owns-team">팀 관리</label>
+            <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
+            <label for="file-upload">파일 업로드</label>
+        </fieldset>
+        <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
     </div>
     <div data-role="footer" data-position="fixed">
         <h4>icomwiz</h4>
     </div>
     <script>
+        //팀을 선택시 해당 팀의 report들을 불러오는 function
+        function getReport(teamId) {
+            $.ajax({
+                url: "http://localhost:3000/reports",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    action: 1,
+                    teamId: teamId
+                },
+                success: function(data) {
+                    $('#listArea').empty();
+                    for(var i = 0; i < data.result.length; i++) {
+                        $('#listArea').append("<li data-inset=\"true\">" +
+                                                    data.result[i].date + "<br/>" +
+                                                    "측정장소 : " + data.result[i].location + "<br/>" +
+                                                    "측정팀 : " + data.result[i].teamName + " " + data.result[i].teamNo + "조" +
+                                              "</li>");
+                    }
+                    $('#listArea').trigger('create');
+                    $('#listArea').listview('refresh');
+                },
+                error: function(data) {
+                    alert('접속 에러');
+                }
+            });
+        }
+
+        //팀관리 탭을 선택했을 때 실행되는 function
+        function teamManagement() {
+            $.get("http://localhost:3000/teams/simple", function(data) {
+                $('#listArea').empty();
+                $.each(data.result, function() {
+                    $('#listArea').append("<li data-role=\"collapsible\" data-iconpos=\"right\" data-shadow=\"false\" data-corners=\"false\">" +
+                            "<h2>"+this.teamName+"</h2>" +
+                            "<ul id=" + "\"" + this.teamName +"\"" + "data-role=\"listview\" data-theme=\"d\" data-inset=\"true\"></ul>" +
+                            "</li>");
+                    $("#listArea li").collapsible();
+                    var teamNameSelector = '#' + this.teamName;
+                    $.ajax({
+                        url: "http://localhost:3000/teams",
+                        type: "GET",
+                        dataType: "JSON",
+                        data: { teamName: this.teamName },
+                        success: function(data) {
+                            if( data.result ) {
+                                for(var i = 0; i < data.result.length; i++) {
+                                    $(teamNameSelector).append("<li class=\"teamList\" data-role=\"listview\" id=" + "\"" + data.result[i].teamId +"\"" + ">" +
+                                                                    data.result[i].teamName + " " +data.result[i].teamNo + "조" +
+                                                               "</li>");
+                                    var teamIdSelector = '#' + data.result[i].teamId;
+                                    $(teamIdSelector).click(function() {
+                                        getReport(this.id);
+                                    })
+                                }
+                                $('#listArea').trigger('create');
+                                $(teamNameSelector).listview('refresh');
+                            }
+                        },
+                        error: function(data) {
+                            alert("접속 에러");
+                        }
+                    });
+                });
+            });
+        }
+
+        //파일업로드 탭을 선택했을 때 실행되는 폼을 만드는 function
+        function fileUpload() {
+            $('#listArea').empty();
+            $('#listArea').append("<li>" +
+                                    "<input type=\"file\" name=\"uploadfile\" />" +
+                                    "<input type=\"button\" id=\"uploadbtn\" value=\"계획서 업로드\" />" +
+                                  "</li>");
+            $('#listArea').trigger('create');
+            $('#listArea').listview('refresh');
+        }
+
+        //html파싱이 완료 된 후 실행되는 function
         $(function() {
-            $("#listArea > li").click(function() {
-                var teamName = $(this).text();
-                alert(teamName);
+            //팀관리 라디오가 체크되었을 시
+            if ($('input:radio[name=radio-choice-1]:checked')) {
+                teamManagement();
+            }
+
+            //팀관리 탭이 클릭되었을 시
+            $("#owns-team").click(function() {
+                teamManagement();
+            });
+
+            //파일 업로드 탭이 클릭 되었을 시
+            $("#file-upload").click(function() {
+                fileUpload();
+            });
+
+            //파일 업로드 버튼이 클릭 되었을 시
+            $(document).on('click', '#uploadbtn', function() {
+                var formData = new FormData();
+                formData.append("uploadfile", $("input[name=uploadfile]")[0].files[0]);
+                $.ajax({
+                    url:'http://localhost:3000/reports/planner',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    type: 'POST',
+                    success: function(data){
+                        alert(data.result);
+                    }
+                });
             });
         });
     </script>

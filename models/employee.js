@@ -46,6 +46,7 @@ function verifyPassword(password, hashPassword, callback) {
             return callback(err);
         }
         dbConn.query(sql_select_hash_password, [password], function(err, results) {
+           dbConn.release();
            if (err) {
                return callback(err);
            }

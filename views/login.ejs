@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- 메타 정보 선언 -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- 제이쿼리 모바일, 제이쿼리 라이브러리 파일 선언 -->
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+
+    <!-- 사용자 스타일 시트 파일 선언 -->
+    <link rel='stylesheet' href='/stylesheets/style.css' />
     <title><%= title %></title>
 </head>
 <body>
@@ -21,7 +29,7 @@
 </body>
 <script>
     $(function() {
-        $("#btnLogin").click(function() {
+        $("#btnLogin").bind('tap', function() {
             var param = {
                 email: $("#email").val(),
                 password: $("#password").val()
@@ -35,7 +43,32 @@
                     if(data.result === 'ok') {
                         return window.location.href = "http://localhost:3000/reports";
                     } else if(data.result === 1 || data.result === 2) {
-                        return window.location.href = "http://localhost:3000/teams/simple";
+                        return window.location.href = "http://localhost:3000/employees/partsmain";
+                    }
+                    alert('ID나 PASSWORD를 확인해주세요.');
+                },
+                error: function(data) {
+                    console.log(error);
+                }
+            });
+        })
+
+        $("#btnLogin").click(function() {
+            alert('a');
+            var param = {
+                email: $("#email").val(),
+                password: $("#password").val()
+            };
+            $.ajax({
+                url: "http://localhost:3000/auth",
+                type: "POST",
+                dataType: "json",
+                data: param,
+                success: function(data) {
+                    if(data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/reports";
+                    } else if(data.result === 1 || data.result === 2) {
+                        return window.location.href = "http://localhost:3000/employees/partsmain";
                     }
                     alert('ID나 PASSWORD를 확인해주세요.');
                 },
