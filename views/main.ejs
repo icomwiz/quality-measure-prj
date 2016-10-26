@@ -4,6 +4,8 @@
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title><%= title %></title>
 </head>
 <body>
@@ -19,7 +21,7 @@
                     <div dat-role="controlgroup">
                         <p style="width: 80%; float: left">
                             <%= report[i].date%><br>
-                            <%= "측정장소 : "+report[i].location + report[i].target1%><br>
+                            <%= "측정장소 : "+report[i].location +" "+ report[i].location_detail%><br>
                             <%= "측정팀 : " +report[i].teamName%>
                         </p>
                         <div style=" float: right">
@@ -34,134 +36,136 @@
     </div>
 
     <div data-role="page" id="page2">
-        <div data-role='header' class="ui-grid-a">
-            <div class="ui-block-a" style="width: 30%;">
-                <input id="date" type="date" style="text-align: center;">
-            </div>
-        </div>
-
-        <div data-role="content" >
-            <div class="ui-grid-b">
-                <div class="ui-block-a" style="width: 10%">
-                    <p>조장 :</p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="text" value=""  />
-                </div>
-                <div class="ui-block-a" style="width: 10%">
-                    <p>조원 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 30%">
-                    <input type="text" value=""  />
-                </div>
-                <div class="ui-block-a" style="width: 10%">
-                    <p>측정장소 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="text" value=""  />
-                </div>
-
-                <div class="ui-block-a" style="width: 10%">
-                    <p>차량번호 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="text" value=""  />
-                </div>
-
-                <div class="ui-block-a" style="width: 10%">
-                    <p>차량종류 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="text" value=""  />
-                </div>
+        <!-- <form action="http://192.18.0.28:3000/reports" method="post"> -->
+            <div data-role='header' class="ui-grid-a">
+                <h1>
+                    <input id="date" type="date" style="text-align: center;">
+                </h1>
             </div>
 
-            <div>
-                <fieldset data-role="controlgroup" data-iconpos="left">
-                    <legend>측정장비:</legend>
-                    <input type="checkbox" name="checkbox-h-6a" id="checkbox-h-6a">
-                    <label for="checkbox-h-6a">OPTis-P8E</label>
-                    <input type="checkbox" name="checkbox-h-6b" id="checkbox-h-6b">
-                    <label for="checkbox-h-6b">OPTis-MII</label>
-                    <input type="checkbox" name="checkbox-h-6c" id="checkbox-h-6c">
-                    <label for="checkbox-h-6c">OPTis-S4</label>
-                    <input type="checkbox" name="checkbox-h-6d" id="checkbox-h-6d">
-                    <label for="checkbox-h-6d">N_PM10</label>
-                    <input type="checkbox" name="checkbox-h-6e" id="checkbox-h-6e">
-                    <label for="checkbox-h-6e">N_MDM3</label>
-                    <input type="checkbox" name="checkbox-h-6f" id="checkbox-h-6f">
-                    <label for="checkbox-h-6f">N_PM6</label>
-                    <input type="checkbox" name="checkbox-h-6g" id="checkbox-h-6g">
-                    <label for="checkbox-h-6g">N_MDM3</label>
-                    <input type="checkbox" name="checkbox-h-6h" id="checkbox-h-6h">
-                    <label for="checkbox-h-6h">Manual</label>
-                </fieldset>
-            </div>
+            <div data-role="content" >
+                <div class="ui-grid-b">
+                    <div class="ui-block-a">
+                        <p>조장 :</p>
+                    </div>
+                    <div class="ui-block-b">
 
+                        <input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  />
+                    </div>
+                    <div class="ui-block-a" >
+                        <p>조원 : </p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="group_member" id="group_member" value="<%= member%>" />
+                    </div>
+                    <div class="ui-block-a">
+                        <p>측정장소 : </p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="measure_palce" id="measure_palce" value="<%= base.location%>"  />
+                    </div>
 
-            <div class="ui-grid-d">
-                <div class="ui-block-a" style="width: 25%">
-                    <p>집/대상지 이동시간 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="time" value="">
-                </div>
-                <div class="ui-block-b" style="width: 10%">
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c" style="width: 15%">
-                    <input type="time" value="">
-                </div>
-                <div class="ui-block-c" style="width: 10%">
-                    <p>종료</p>
-                </div>
-            </div>
+                    <div class="ui-block-a">
+                        <p>차량번호 : </p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="car_number" id="car_number" value="<%= base.car_number%>"  />
+                    </div>
 
-            <div class="ui-grid-b">
-                <div class="ui-block-a" style="width: 25%">
-                    <p>대상지 도착후 SETUP : </p>
+                    <div class="ui-block-a" >
+                        <p>차량종류 : </p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="car_kind" id="car_kind" value="<%= base.car_type%>"  />
+                    </div>
                 </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="time" value="">
+                <div class="ui-grid-b">
+                    <div class="ui-block-a" >
+                        <p>측정장비 :</p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment.equipment_name%>">
+                        <input type="hidden" name="myName" id="myName" value="<%= equipment.name%>">
+                    </div>
                 </div>
-                <div class="ui-block-b" style="width: 10%">
-                    <p>시작</p>
+                <div class="ui-grid-c">
+                    <div class="ui-block-a" >
+                        <p>시작전 KM :</p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="measure_machine" id="measure_machine" value="">
+                    </div>
+                    <div class="ui-block-b" >
+                        <p> KM</p>
+                    </div>
                 </div>
-                <div class="ui-block-c" style="width: 15%">
-                    <input type="time" value="">
+                <div class="ui-grid-b">
+                    <div class="ui-block-a" >
+                        <p>현재주유상태 :</p>
+                    </div>
+                    <div class="ui-block-b" >
+                        <input type="text" name="measure_machine" id="measure_machine" value="">
+                    </div>
                 </div>
-                <div class="ui-block-c" style="width: 10%">
-                    <p>종료</p>
+                <div class="ui-grid-d">
+                    <div class="ui-block-a" >
+                        <p>집/대상지 이동시간 : </p>
+                    </div>
+                    <div class="ui-block-b">
+                        <input type="time" name="move_start_time" id="move_start_time" value="">
+                    </div>
+                    <div class="ui-block-b" >
+                        <p>시작</p>
+                    </div>
+                    <div class="ui-block-c" >
+                        <input type="time" name="move_end_time" id="move_end_time" value="">
+                    </div>
+                    <div class="ui-block-c" >
+                        <p>종료</p>
+                    </div>
+                </div>
+                <div class="ui-grid-b">
+                    <div class="ui-block-a" >
+                        <p>대상지 도착후 SETUP : </p>
+                    </div>
+                    <div class="ui-block-b">
+                        <input type="time" name="step_start_time" id="step_start_time" value="">
+                    </div>
+                    <div class="ui-block-b">
+                        <p>시작</p>
+                    </div>
+                    <div class="ui-block-c">
+                        <input type="time" name="step_end_time" id="step_end_time" value="">
+                    </div>
+                    <div class="ui-block-c" >
+                        <p>종료</p>
+                    </div>
+                </div>
+                <div class="ui-grid-c">
+                    <div class="ui-block-a" style="width: 25%">
+                        <p>측정 전 장애 시간 : </p>
+                    </div>
+                    <div class="ui-block-b" style="width: 15%">
+                        <input type="time" name="err_start_time" id="err_start_time" value="">
+                    </div>
+                    <div class="ui-block-b" style="width: 10%">
+                        <p>시작</p>
+                    </div>
+                    <div class="ui-block-c" style="width: 15%">
+                        <input type="time" name="err_end_time" id="err_end_time" value="">
+                    </div>
+                    <div class="ui-block-c" style="width: 10%">
+                        <p>종료</p>
+                    </div>
                 </div>
             </div>
-
-            <div class="ui-grid-c">
-                <div class="ui-block-a" style="width: 25%">
-                    <p>측정 전 장애 시간 : </p>
-                </div>
-                <div class="ui-block-b" style="width: 15%">
-                    <input type="time" value="">
-                </div>
-                <div class="ui-block-b" style="width: 10%">
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c" style="width: 15%">
-                    <input type="time" value="">
-                </div>
-                <div class="ui-block-c" style="width: 10%">
-                    <p>종료</p>
-                </div>
+            <div data-role="footer">
+                <h1>
+                    <button data-icon="edit" id="saveBtn" style="width: 25%">저장</button>
+                    <button data-icon="delete" id="Cencel" style="width: 25%">취소</button>
+                </h1>
             </div>
-
-        </div>
-        <div data-role="footer" class="ui-grid-a">
-            <div class="ui-block-a" style="text-align: center" >
-                <button data-icon="edit"  >저장</button>
-            </div>
-            <div class="ui-block-b" style="text-align: center">
-                <button data-icon="delete" >취소</button>
-            </div>
-        </div>
+        <!-- </form> -->
     </div>
 </body>
 <script>
@@ -169,8 +173,49 @@
         $("#addReport").click(function() {
             $('#date').val(date());
         });
-    });
+        $("#Cencel").click(function() {
+            window.location.href = "http://localhost:3000/reports?action=0";
+        });
 
+        $("#saveBtn").click(function() {
+            var param = {
+                date: $("#date").val(),
+                group_leader: $("#group_leader").val(),
+                group_member: $("#group_member").val(),
+                measure_place: $("#measure_palce").val(),
+                car_kind: $("#car_kind").val(),
+                car_number: $("#car_number").val(),
+                measure_machine : $("#measure_machine").val(),
+                moveTime : {
+                    startTime: $("#move_start_time").val(),
+                    endTime: $("#move_end_time").val()
+                },
+                arrivalSETPUP : {
+                    startTime : $("#step_start_time").val(),
+                    endTime : $("#step_end_time").val()
+                },
+                errorList : {
+                    startTime: $("#err_start_time").val(),
+                    endTime : $("#err_end_time").val()
+                }
+            };
+            $.ajax({
+                url: "http://localhost:3000/reports",
+                type: "POST",
+                dataType: "json",
+                data: param,
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/reports";
+                    }
+                    alert('작성실패');
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
+        });
+    });
     function date(){
         var date = new Date();
 

@@ -29,32 +29,7 @@
 </body>
 <script>
     $(function() {
-        $("#btnLogin").bind('tap', function() {
-            var param = {
-                email: $("#email").val(),
-                password: $("#password").val()
-            };
-            $.ajax({
-                url: "http://localhost:3000/auth",
-                type: "POST",
-                dataType: "json",
-                data: param,
-                success: function(data) {
-                    if(data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/reports";
-                    } else if(data.result === 1 || data.result === 2) {
-                        return window.location.href = "http://localhost:3000/employees/partsmain";
-                    }
-                    alert('ID나 PASSWORD를 확인해주세요.');
-                },
-                error: function(data) {
-                    console.log(error);
-                }
-            });
-        })
-
         $("#btnLogin").click(function() {
-            alert('a');
             var param = {
                 email: $("#email").val(),
                 password: $("#password").val()
@@ -66,14 +41,14 @@
                 data: param,
                 success: function(data) {
                     if(data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/reports";
+                        return window.location.href = "http://localhost:3000/reports?action=0";
                     } else if(data.result === 1 || data.result === 2) {
                         return window.location.href = "http://localhost:3000/employees/partsmain";
                     }
                     alert('ID나 PASSWORD를 확인해주세요.');
                 },
                 error: function(data) {
-                    console.log(error);
+                    console.log(data);
                 }
             });
         });

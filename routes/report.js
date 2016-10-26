@@ -6,15 +6,33 @@ var router = express.Router();
 
 router.get('/', function(req, res, next) {
     var action = parseInt(req.query.action);
-    console.log(action);
     if (action === 0) {
-        Report.report(function(err, result) {
+        var user_id = req.user.id;
+        Report.reportList(function(err, result) {
             if(err) {
                 return next(err);
             }
-            res.render('main', {
-                title : 'Icomwiz',
-                report : result
+            Report.addReport(user_id, function(err, leader, member, equipment, results) {
+                if (err) {
+                    return next(err);
+                }
+
+                // console.log(results[2][0].id);
+                // console.log(results[2][0].location);
+                // console.log(results[2][0].car_number);
+                // console.log(results[2][0].car_type);
+                // console.log(results[2][0].type);
+                // console.log(results[2][0].date);
+
+                res.render('main', {
+                    title : 'Icomwiz',
+                    report : result,
+                    leader : leader,
+                    member : member,
+                    equipment : equipment,
+                    base : results[2][0]
+                });
+
             });
         });
     } else if ( action === 1 ) {
@@ -33,6 +51,22 @@ router.get('/', function(req, res, next) {
     }
 });
 
+router.post('/', function(req, res, next) {
+    var info = {};
+    info.report = req.body;
+    info.report.user_id = req.user.id;
+    console.log(info);
+    console.log("===============================================");
+    console.log(info.report);
+
+    Report.newReport(info, function(err, result) {
+        if(err) {
+            return next(err);
+        }
+        res.send({result : "ok"});
+    });
+});
+
 router.post('/planner', function(req, res, next) {
     var form = new formidable.IncomingForm();
     form.uploadDir = path.join(__dirname, '../planners');
@@ -42,7 +76,6 @@ router.post('/planner', function(req, res, next) {
         if (err) {
             return next(err);
         }
-
     });
     res.send({
        result: 'hi'

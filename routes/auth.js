@@ -60,6 +60,7 @@ router.post('/', function(req, res, next) {
         });
     })(req, res, next);
 }, function(req, res, next) {
+    console.log(req.user);
     if (req.user.teamPosition === 1 || req.user.teamPosition === 2) {
         res.send({
             result: 1
