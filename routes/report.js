@@ -1,7 +1,9 @@
 var Report = require('../models/report');
 var formidable = require('formidable');
-
+var path = require('path');
 var express = require('express');
+var date = require('date-utils');
+var fs = require('fs');
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
@@ -76,9 +78,20 @@ router.post('/planner', function(req, res, next) {
         if (err) {
             return next(err);
         }
-    });
-    res.send({
-       result: 'hi'
+        var srcExcelPath = files.uploadExcelfile.path;
+        var date = new Date();
+        var dt = date.toFormat('YYYY-MM-DD HH24-MI-SS');
+
+        var excelFileName = req.user.name + ' ' + dt + path.extname(srcExcelPath);
+        var destExcelPath = path.join(path.dirname(srcExcelPath), excelFileName);
+        fs.rename(srcExcelPath, destExcelPath, function(err) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: '계획서 업로드 완료!'
+            });
+        });
     });
 });
 

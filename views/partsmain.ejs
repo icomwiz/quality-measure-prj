@@ -18,7 +18,7 @@
         <h4><%= result.partName %></h4>
     </div>
     <div data-role="content">
-        <p class="hello"> <%= result.name %> <%= result.departmentPosition %>님 반갑습니다. </p>
+        <p class="hello"> <b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다. </p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
             <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="true"/>
             <label for="owns-team">팀 관리</label>
@@ -103,7 +103,7 @@
         function fileUpload() {
             $('#listArea').empty();
             $('#listArea').append("<li>" +
-                                    "<input type=\"file\" name=\"uploadfile\" />" +
+                                    "<input id=\"file\" type=\"file\" name=\"uploadExcelfile\" />" +
                                     "<input type=\"button\" id=\"uploadbtn\" value=\"계획서 업로드\" />" +
                                   "</li>");
             $('#listArea').trigger('create');
@@ -130,7 +130,14 @@
             //파일 업로드 버튼이 클릭 되었을 시
             $(document).on('click', '#uploadbtn', function() {
                 var formData = new FormData();
-                formData.append("uploadfile", $("input[name=uploadfile]")[0].files[0]);
+                formData.append("uploadExcelfile", $("input[name=uploadExcelfile]")[0].files[0]);
+                if( $("#file").val() != "" ){
+                    var ext = $('#file').val().split('.').pop().toLowerCase();
+                    if($.inArray(ext, ['xlsm','xlsx']) == -1) {
+                        alert('gif,png,jpg,jpeg 파일만 업로드 할수 있습니다.');
+                        return;
+                    }
+                }
                 $.ajax({
                     url:'http://localhost:3000/reports/planner',
                     processData: false,

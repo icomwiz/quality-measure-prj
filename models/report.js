@@ -139,5 +139,4 @@ function getReportsByteamId(teamId, callback) {
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
-
 module.exports.getReportsByteamId = getReportsByteamId;

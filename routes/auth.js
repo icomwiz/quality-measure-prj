@@ -64,7 +64,7 @@ router.post('/', function(req, res, next) {
     if (req.user.teamPosition === 1 || req.user.teamPosition === 2) {
         res.send({
             result: 1
-        })
+        });
     } else {
         res.send({
             result: 'ok'
