@@ -8,7 +8,8 @@ var router = express.Router();
 
 router.get('/', function(req, res, next) {
     var action = parseInt(req.query.action);
-    if (action === 0) {
+    var Reportid = parseInt(req.query.Reportid);
+    if (action === 0 && !Reportid) {
         var user_id = req.user.id;
         Report.reportList(function(err, result) {
             if(err) {
@@ -25,30 +26,33 @@ router.get('/', function(req, res, next) {
                 // console.log(results[2][0].car_type);
                 // console.log(results[2][0].type);
                 // console.log(results[2][0].date);
-
                 res.render('main', {
                     title : 'Icomwiz',
                     report : result,
                     leader : leader,
                     member : member,
                     equipment : equipment,
-                    base : results[2][0]
+                    base : results[2][0],
+                    report_id : result[0].id
                 });
-
             });
         });
-    } else if ( action === 1 ) {
+    } else if ( action === 1 && !Reportid) {
         var teamId = req.query.teamId || -1;
         Report.getReportsByteamId(teamId, function(err, result) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
             res.send({
                 result: result
             });
         });
-    } else {
+    } else if(action === 0 && Reportid) {
+        res.send({
+            result : "1234"
+        });
+    }
+    else {
         res.send(new Error('action 지정 하세요'));
     }
 });
@@ -57,11 +61,8 @@ router.post('/', function(req, res, next) {
     var info = {};
     info.report = req.body;
     info.report.user_id = req.user.id;
-    console.log(info);
-    console.log("===============================================");
-    console.log(info.report);
 
-    Report.newReport(info, function(err, result) {
+    Report.newReport(info.report, function(err, result) {
         if(err) {
             return next(err);
         }

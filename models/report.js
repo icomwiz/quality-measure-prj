@@ -97,18 +97,92 @@ function addReport(user_id, callback) {
 }
 
 function newReport(info, callback) {
-    var sql_insert_report="";
+    var me = {};
+    var sql_select_me = "SELECT e.team_id, e.team_position, t.name, t.team_no FROM employee e "+
+    "JOIN team t ON (e.team_id = t.id) "+
+    "WHERE e.id = ?";
+    var sql_insert_report="INSERT INTO report(employee_id, team_id, team_name, team_position, " +
+        "team_member, equipment_name, date, location, car_number, " +
+        "car_type, car_mileage_before, car_refuel_state, car_manager, `type`) "+
+        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    var sql_insert_details = "INSERT "+
+    "INTO report_details(report_id, work_details, start_time, end_time) " +
+    "VALUES (?, ?, ?, ?)";
+
+    var sql_insert_details_err = "INSERT "+
+        "INTO report_details(report_id, work_details, start_time, end_time, type, obstacle_start_time, obstacle_end_time, " +
+        "obstacle_classification, obstacle_details, obstacle_phenomenon, obstacle_result) " +
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)";
+
     dbPool.getConnection(function(err, dbConn) {
         if(err) {
             return callback(err);
         }
-        dbConn.query(sql_insert_report ,[],function(err, result) {
+
+        async.series([selectMe, insertReport, insertDetails], function(err, results) {
             dbConn.release();
-            if(err) {
+            if (err) {
                 return callback(err);
             }
-            callback(null, result);
+            callback(null, "Success");
         });
+
+        function selectMe(callback) {
+            dbConn.query(sql_select_me, [info.user_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+//                console.log(typeof(result[0].team_position));
+//                console.log(result[0].team_position);
+                if (result[0].team_position == 3 ) {
+                    me.team_position = '조장';
+                } else if (result[0].team_position == 4) {
+                    me.team_position = '조원';
+                }
+
+                me.team_id = result[0].team_id;
+                me.team_name = result[0].name + ' ' + result[0].team_no + '조';
+                callback(null, null);
+            });
+        }
+
+        function insertReport(callback) {
+            dbConn.query(sql_insert_report ,[info.user_id, me.team_id, me.team_name, me.team_position, info.group_member, info.measure_machine, info.date, info.measure_place,
+                info.car_number, info.car_kind, info.KM, info.car_refuel_state, info.group_leader, 1],function(err, result) {
+                if(err) {
+                    return callback(err);
+                }
+                me.insertId = result.insertId;
+                callback(null, null);
+            });
+        }
+
+
+        function insertDetails(callback) {
+            dbConn.query(sql_insert_details, [me.insertId, 100, info.moveTime.startTime, info.moveTime.endTime], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                if (info.errCheck == 0) {
+                    dbConn.query(sql_insert_details_err ,[me.insertId, 101, info.arrivalSETPUP.startTime, info.arrivalSETPUP.endTime,
+                        info.errCheck, info.errorList.startTime, info.errorList.endTime, info.errorList.obstacle_classification,
+                        info.errorList.obstacle_details, info.errorList.errInfo, info.errorList.errSolution],function(err, result) {
+                        if(err) {
+                            return callback(err);
+                        }
+                        callback(null, null);
+                    });
+                } else {
+                    dbConn.query(sql_insert_details, [me.insertId, 101, info.arrivalSETPUP.startTime, info.arrivalSETPUP.endTime], function(err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null, null);
+                    });
+                }
+            });
+        }
     });
 }
 
