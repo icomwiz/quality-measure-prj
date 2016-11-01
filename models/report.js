@@ -6,7 +6,7 @@ function reportList(callback) {
         "r.location location, rd.location location_detail, t.name teamName "+
         "FROM report r LEFT JOIN report_details rd ON (r.id = rd.report_id) "+
         "JOIN employee e ON (r.employee_id = e.id) "+
-        "LEFT JOIN team t ON (t.id = e.team_id) WHERE r.type = 1";
+        "LEFT JOIN team t ON (t.id = e.team_id) WHERE r.type = 1 ORDER BY r.id DESC";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -16,8 +16,66 @@ function reportList(callback) {
             if (err) {
                 return callback(err);
             }
+            if(!result[0]) {
+                result.push({id : null});
+            }
             callback(null, result);
         });
+    });
+}
+function updateReportSelect(info, callback) {
+    var squ_select_Report = "SELECT r.id, r.team_name, r.car_manager, r.team_member, r.equipment_name, " +
+                            "date_format(convert_tz(r.date, '+00:00', '+09:00'), '%Y-%m-%d') `date`, r.location, "+
+                            "r.car_number, r.car_type, r.car_mileage_before, r.car_refuel_state, "+
+                            "rd.id AS details_id, rd.work_details, rd.start_time, rd.end_time, "+
+                            "rd.obstacle_classification, rd.obstacle_details, rd.obstacle_phenomenon, rd.obstacle_result, "+
+                            "rd.obstacle_start_time, rd.obstacle_end_time, rd.type AS err_type "+
+                            "FROM report r "+
+                            "JOIN report_details rd ON (r.id = rd.report_id) "+
+                            "WHERE r.id = ? AND r.employee_id = ? AND r.type = 1 AND "+
+                            "(rd.work_details = 101 OR rd.work_details = 100)";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+       dbConn.query(squ_select_Report, [info.Reportid, info.user_id], function(err, result) {
+           var report = {};
+           dbConn.release();
+           if (err) {
+               return callback(err);
+           }
+           report.id = result[0].id;
+           report.team_name = result[0].team_name;
+           report.car_manager = result[0].car_manager;
+           report.team_member = result[0].team_member;
+           report.equipment_name = result[0].equipment_name;
+           report.date = result[0].date;
+           report.location = result[0].location;
+           report.car_number = result[0].car_number;
+           report.car_type = result[0].car_type;
+           report.car_mileage_before = result[0].car_mileage_before;
+           report.car_refuel_state = result[0].car_refuel_state;
+           report.move = {};
+           report.setup = {};
+           async.each(result, function(item, callback) {
+               if (item.work_details === 100) {
+                   report.move.start_time = item.start_time;
+                   report.move.end_time = item.end_time;
+               } else if (item.work_details === 101) {
+                   report.setup.start_time = item.start_time;
+                   report.setup.end_time = item.end_time;
+                   report.setup.obstacle_classification = item.obstacle_classification;
+                   report.setup.obstacle_details = item.obstacle_details;
+                   report.setup.obstacle_phenomenon = item.obstacle_phenomenon;
+                   report.setup.obstacle_result = item.obstacle_result;
+                   report.setup.obstacle_start_time = item.obstacle_start_time;
+                   report.setup.obstacle_end_time = item.obstacle_end_time;
+                   report.setup.err_type = item.err_type;
+               }
+
+           });
+           callback(null, report);
+       })
     });
 }
 
@@ -93,6 +151,49 @@ function addReport(user_id, callback) {
                 callback(null, result);
             });
         }
+    });
+}
+
+function deleteReport(reportId, callback) {
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.beginTransaction(function(err) {
+            if (err) {
+                return callback(err);
+            }
+            async.series([details, report], function(err, results) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                return dbConn.commit(function() {
+                    dbConn.release();
+                    callback(err);
+                });
+            });
+            function details(callback) {
+                var sql_delete_details = "DELETE FROM report_details WHERE report_id = ?";
+                dbConn.query(sql_delete_details, reportId, function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, result);
+                });
+            }
+            function report(callback) {
+                var sql_delete_report = "DELETE FROM report WHERE id = ?";
+                dbConn.query(sql_delete_report, reportId, function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, result);
+                });
+            }
+        });
     });
 }
 
@@ -424,5 +525,7 @@ function updatePlan(plan, callback) {
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
+module.exports.deleteReport = deleteReport;
 module.exports.getReportsByteamId = getReportsByteamId;
 module.exports.updatePlan = updatePlan;
+module.exports.updateReportSelect = updateReportSelect;

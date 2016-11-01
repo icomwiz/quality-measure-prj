@@ -16,6 +16,7 @@
         <div data-role="content" >
             <a href="#page2" data-role="button" id="addReport">+</a>
             <ul data-role="listview" data-inset="true">
+                <% if(report[0].id) { %>
                 <% for(var i = 0; i < report.length ; i++) {%>
                 <li>
                     <div dat-role="controlgroup">
@@ -26,10 +27,11 @@
                         </p>
                         <div style=" float: right">
                             <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>
-                            <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true"></button>
+                            <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>
                         </div>
                     </div>
                 </li>
+                <% } %>
                 <% } %>
             </ul>
         </div>
@@ -143,13 +145,13 @@
                 <div class="ui-field-contain">
                     <label for="select-native-2">측정전 장애 발생 유무 : </label>
                     <select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
-                        <option value="0">장애발생</option>
                         <option value="1" selected>장애 미발생</option>
+                        <option value="0">장애 발생</option>
                     </select>
                 </div>
 
                 <!-- selectbox 에따른 hidden 옵션 -->
-                <div id="ErrSelect" style="display:none" >
+                <div class="ErrSelect" style="display:none" >
                     <div class="ui-field-contain">
                         <label for="obstacle_classification">지연구분 : </label>
                         <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
@@ -188,19 +190,19 @@
 
                     <div data-role="fieldcontain">
                         <label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>
-                        <textarea name="errInfo" id="errInfo"></textarea>
+                        <textarea name="errInfo" id="errInfo" class="errInfo"></textarea>
                     </div>
 
                     <div data-role="fieldcontain">
                         <label for="errSolution">장애 대응 내역 (분석실 pm 대응 방안) :</label>
-                        <textarea name="errSolution" id="errSolution"></textarea>
+                        <textarea name="errSolution" id="errSolution" class="errSolution"></textarea>
                     </div>
                 </div>
             </div>
             <div data-role="footer">
                 <h1>
                     <a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>
-                    <button data-icon="delete" id="Cencel" >취소</button>
+                    <button data-icon="delete" class="Cencel" >취소</button>
                 </h1>
             </div>
         <!-- </form> -->
@@ -209,11 +211,129 @@
     <div data-role="page" id="page3">
         <div data-role='header' class="ui-grid-a">
             <h1>
-                <input id="date" type="date" style="text-align: center;">
+                <input id="date2" type="date" style="text-align: center;">
             </h1>
         </div>
+
         <div data-role="content" >
-            <input type="text" class="tlqkf" value="">
+            <p>조장 :</p>
+            <input type="text" name="car_manager" id="car_manager" value=""  />
+            <p>조원 : </p>
+            <input type="text" name="team_member" id="team_member" value="" />
+            <p>측정장소 : </p>
+            <input type="text" name="location" id="location" value=""  />
+            <p>차량번호 : </p>
+            <input type="text" name="car_number2" id="car_number2" value=""  />
+            <p>차량종류 : </p>
+            <input type="text" name="car_type" id="car_type" value=""  />
+            <p>측정장비 :</p>
+            <input type="text" name="equipment_name" id="equipment_name" value="">
+            <p>시작전 KM :</p>
+            <input type="text" name="KM" id="KM" class="Km" value="">
+            <p> KM</p>
+            <div class="ui-grid-b">
+                <div class="ui-field-contain">
+                    <label for="select-native-33">현재주유상태 : </label>
+                    <select name="select-native-33" id="select-native-33" data-iconpos="left">
+                        <option value="1">하</option>
+                        <option value="2">중하</option>
+                        <option value="3" >중</option>
+                        <option value="4">중상</option>
+                        <option value="5">상</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-grid-d">
+                <p>집/대상지 이동시간 : </p>
+                <div class="ui-block-b">
+                    <input type="time" name="move_start_time" id="move_start_time2" value="">
+                </div>
+                <div class="ui-block-b" >
+                    <p>시작</p>
+                </div>
+                <div class="ui-block-c" >
+                    <input type="time" name="move_end_time" id="move_end_time2" value="">
+                </div>
+                <div class="ui-block-c" >
+                    <p>종료</p>
+                </div>
+            </div>
+            <div class="ui-grid-d">
+                <p>대상지 도착후 SETUP : </p>
+                <div class="ui-block-b">
+                    <input type="time" name="step_start_time" id="setup_start_time2" value="">
+                </div>
+                <div class="ui-block-b">
+                    <p>시작</p>
+                </div>
+                <div class="ui-block-c">
+                    <input type="time" name="step_end_time" id="setup_end_time2" value="">
+                </div>
+                <div class="ui-block-c" >
+                    <p>종료</p>
+                </div>
+            </div>
+            <div class="ui-field-contain">
+                <label for="select-native-22">측정전 장애 발생 유무 : </label>
+                <select name="select-native-22" id="select-native-22" data-iconpos="left" onchange="ErrSelect(this.value);">
+                    <option value="1">장애 미발생</option>
+                    <option value="0">장애 발생</option>
+                </select>
+            </div>
+
+            <!-- selectbox 에따른 hidden 옵션 -->
+            <div class="ErrSelect" id="ErrSelect2" style="display:none" >
+                <div class="ui-field-contain">
+                    <label for="obstacle_classification2">지연구분 : </label>
+                    <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
+                        <option value="측정자">측정자</option>
+                        <option value="장비">장비</option>
+                        <option value="장비">노트북</option>
+                        <option value="장비">프로그램</option>
+                        <option value="장비">단말기</option>
+                        <option value="장비">기타</option>
+                    </select>
+                </div>
+
+                <div class="ui-grid-d">
+                    <div class="ui-block-b" >
+                        <p>세부내역</p>
+                    </div>
+                    <div class="ui-block-b">
+                        <input type="text" name="obstacle_details" id="obstacle_details2" placeholder="ex)블루투스알람 등등 " value="">
+                    </div>
+                </div>
+                <div class="ui-grid-d">
+                    <div class="ui-block-b">
+                        <input type="time" name="err_start_time" id="err_start_time2" value="">
+                    </div>
+                    <div class="ui-block-b" >
+                        <p>시작</p>
+                    </div>
+                    <div class="ui-block-c" >
+                        <input type="time" name="err_end_time" id="err_end_time2" value="">
+                    </div>
+                    <div class="ui-block-c" >
+                        <p>종료</p>
+                    </div>
+                </div>
+
+                <div data-role="fieldcontain">
+                    <label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>
+                    <textarea name="errInfo" id="errInfo2" class="errInfo"></textarea>
+                </div>
+
+                <div data-role="fieldcontain">
+                    <label for="errSolution">장애 대응 내역 (분석실 pm 대응 방안) :</label>
+                    <textarea name="errSolution" id="errSolution2" class="errSolution"></textarea>
+                </div>
+            </div>
+        </div>
+        <div data-role="footer">
+            <h1>
+                <a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>
+                <button data-icon="delete" class="Cencel" >취소</button>
+            </h1>
         </div>
     </div>
 </body>
@@ -222,7 +342,7 @@
         $("#addReport").click(function() {
             $('#date').val(date());
         });
-        $("#Cencel").click(function() {
+        $(".Cencel").click(function() {
             window.location.href = "http://localhost:3000/reports?action=0";
         });
         $("#saveBtn").click(function() {
@@ -272,18 +392,75 @@
         });
         $(".btninfo").click(function() {
             var Reportid = $(this).val();
-            window.location.href = "http://localhost:3000/reports?action=0&Reportid="+Reportid+"#page3"
+            $.ajax({
+                url: "http://localhost:3000/reports?action=0&Reportid="+Reportid, //Server 에서 받아올 url
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    $('#date2').val(data.result.date);
+                    $('#car_manager').val(data.result.car_manager); //조장
+                    $('#team_member').val(data.result.team_member); //조원
+                    $('#location').val(data.result.location); //측정장소
+                    $('#car_number2').val(data.result.car_number); //차량번호
+                    $('#car_type').val(data.result.car_type); //차량종류
+                    $('#equipment_name').val(data.result.equipment_name); //측정장비
+                    $('#select-native-33').val(data.result.car_refuel_state); //현재주유상태
+                    $('.Km').val(data.result.car_mileage_before); //시작전 KM
+                    $('#move_start_time2').val(data.result.move.start_time); //집/대상지이동시간 - 시작
+                    $('#move_end_time2').val(data.result.move.end_time); //집/대상지이동시간 - 종료
+                    $('#setup_start_time2').val(data.result.setup.start_time);
+                    $('#setup_end_time2').val(data.result.setup.end_time);
+                    if(data.result.setup.err_type == 0) {
+                        $('#select-native-22').val(0);
+                        $('#ErrSelect2').css("display", "block");
+                        $('#obstacle_classification2').val(data.result.setup.obstacle_classification);
+                        $('#obstacle_details2').val(data.result.setup.obstacle_details);
+                        $('#err_start_time2').val(data.result.setup.obstacle_start_time);
+                        $('#err_end_time2').val(data.result.setup.obstacle_end_time);
+                        $('#errInfo2').val(data.result.setup.obstacle_phenomenon);//장애내역
+                        $('#errSolution2').val(data.result.setup.obstacle_result);//장애대응내역
+
+                    } else {
+                        $('#select-native-22').val(1);
+                        $('#ErrSelect2').css("display", "none");
+                    }
+                    return window.location.href = "#page3"; //이동 url
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
+//            var Reportid = $(this).val();
+//            window.location.href = "http://localhost:3000/reports?action=0&Reportid="+Reportid+"#page3"
+        });
+        $('.deleteinfo').click(function() {
+            var Reportid = $(this).val();
+            $.ajax({
+                url: "http://localhost:3000/reports/"+Reportid,
+                type: "DELETE",
+                dataType: "json",
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/reports?action=0";
+                    }
+                    alert('삭제실패');
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
+
         });
     });
 
     function ErrSelect(Val) {
         if (Val === '0') {
-            $('#ErrSelect').css("display", "block");
+            $('.ErrSelect').css("display", "block");
         } else {
-            $('#ErrSelect').css("display", "none");
+            $('.ErrSelect').css("display", "none");
             //$('#errInfo').text('');
-            $('#errInfo').text();
-            $('#errSolution').text();
+            $('.errInfo').text();
+            $('.errSolution').text();
         }
     }
     function date(){
@@ -293,6 +470,12 @@
         var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
         var day   = date.getDate();
 
+        if(month < 10) {
+            month = "0"+month;
+        }
+        if(day < 10) {
+            day = "0"+day
+        }
         return year +'-'+month+'-'+day;
     }
 </script>

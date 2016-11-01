@@ -50,13 +50,33 @@ router.get('/', function(req, res, next) {
             });
         });
     } else if(action === 0 && Reportid) {
-        res.send({
-            result : "1234"
+        var info = {};
+        info.user_id = req.user.id;
+        info.Reportid = req.query.Reportid;
+        Report.updateReportSelect(info, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            console.log(result);
+            res.send({
+                result : result
+            });
         });
-    }
-    else {
+    } else {
         res.send(new Error('action 지정 하세요'));
     }
+});
+
+router.delete('/:id', function(req, res, next) {
+    var reportid = req.params.id;
+    Report.deleteReport(reportid, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : 'ok'
+        })
+    });
 });
 
 router.post('/', function(req, res, next) {
@@ -85,7 +105,6 @@ router.post('/planner', function(req, res, next) {
         var date = new Date();
         var dt = date.toFormat('YYYY-MM-DD HH24-MI-SS');
         var today = date.toFormat('YYYY-MM-DD');
-        console.log(today);
 
         var excelFileName = req.user.name + ' ' + dt + path.extname(srcExcelPath);
         var destExcelPath = path.join(path.dirname(srcExcelPath), excelFileName);
@@ -135,7 +154,6 @@ router.post('/planner', function(req, res, next) {
                     }
                 }
             }
-            console.log(plans);
             for (var i = 0; i < plans.length; i++) {
                 if (plans[i].date === today) { //계획의 날짜가 오늘이면 바로 업데이트
                     Report.updatePlan(plans[i], function(err, callback) {
