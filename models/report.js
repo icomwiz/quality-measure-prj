@@ -364,7 +364,7 @@ function getReportsByteamId(teamId, callback) {
     var sql_select_reports_order_by_date =
         "SELECT t.name teamName, t.team_no teamNo, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, r.location " +
         "FROM team t JOIN report r ON(t.id = r.team_id) " +
-        "WHERE t.id = ? " +
+        "WHERE t.id = ? AND r.type = 1 " +
         "GROUP BY r.date " +
         "ORDER BY r.date DESC";
 
@@ -382,7 +382,7 @@ function getReportsByteamId(teamId, callback) {
     });
 }
 
-//리포트 업데이트 하기
+//엑셀 파일을 통해 리포트 업데이트 하기
 function updatePlan(plan, callback) {
     var aesPassword = process.env.AES_PASSWORD; //AES패스워드
 
@@ -454,7 +454,7 @@ function updatePlan(plan, callback) {
     //report가 있는지 확인하기
     var sql_select_report = 'SELECT id reportId ' +
                             'FROM report ' +
-                            'WHERE employee_id = ? AND team_id = ? AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
+                            'WHERE employee_id = ? AND team_id = ? AND date = STR_TO_DATE(?, \'%Y-%m-%d\') AND type = 0';
 
     //report가 있다면 update하기
     var sql_update_report =
@@ -807,7 +807,7 @@ function updatePlan(plan, callback) {
             });
         }
 
-        //리포트가 존재하는지 이미 존재하는지 확인하기
+        //리포트가 존재하는지 확인하기
         function findReport(id, teamId, callback) { //id(employeeId)와 teamId, callback함수를 매개변수로
             dbConn.query(sql_select_report, [id, teamId, plan.date], function(err, results) {
                 if (err) {

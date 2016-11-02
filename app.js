@@ -55,6 +55,7 @@ app.use('/auth', auth);
 app.use('/reports', report);
 app.use('/teams', team);
 app.use('/employees', employee);
+app.use('/excelforms', express.static(path.join(__dirname, 'planners/form/excelform.xlsx')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

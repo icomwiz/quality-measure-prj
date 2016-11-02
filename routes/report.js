@@ -12,7 +12,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
     var action = parseInt(req.query.action);
     var Reportid = parseInt(req.query.Reportid);
-    if (action === 0 && !Reportid) {
+    if (action === 0 && !Reportid) { //필주
         var user_id = req.user.id;
         Report.reportList(function(err, result) {
             if(err) {
@@ -40,7 +40,7 @@ router.get('/', function(req, res, next) {
                 });
             });
         });
-    } else if ( action === 1 && !Reportid) {
+    } else if ( action === 1 && !Reportid) { //재성
         var teamId = req.query.teamId || -1;
         Report.getReportsByteamId(teamId, function(err, result) {
             if (err) {
@@ -50,7 +50,7 @@ router.get('/', function(req, res, next) {
                 result: result
             });
         });
-    } else if(action === 0 && Reportid) {
+    } else if(action === 0 && Reportid) { //필주
         var info = {};
         info.user_id = req.user.id;
         info.Reportid = req.query.Reportid;
@@ -62,6 +62,8 @@ router.get('/', function(req, res, next) {
                 result : result
             });
         });
+    } else if(action === 2) { //재성
+        console.log(2);
     } else {
         res.send(new Error('action 지정 하세요'));
     }
@@ -109,6 +111,7 @@ router.put('/:id', function(req, res, next) {
     });
 });
 
+//엑셀파일을 통해 계획 업로드 하기
 router.post('/planner', function(req, res, next) {
     var form = new formidable.IncomingForm();
     form.uploadDir = path.join(__dirname, '../planners');

@@ -24,6 +24,8 @@
             <label for="owns-team">팀 관리</label>
             <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
             <label for="file-upload">파일 업로드</label>
+            <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
+            <label for="error-state">오류 현황</label>
         </fieldset>
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
@@ -32,7 +34,7 @@
         <h4>icomwiz</h4>
     </div>
     <script>
-        //팀을 선택시 해당 팀의 report들을 불러오는 function
+        //팀을 선택시 해당 팀의 날짜별 report들을 불러오는 function
         function getReport(teamId) {
             $.ajax({
                 url: "http://localhost:3000/reports",
@@ -45,10 +47,11 @@
                 success: function(data) {
                     $('#listArea').empty();
                     for(var i = 0; i < data.result.length; i++) {
-                        $('#listArea').append("<li data-inset=\"true\">" +
-                                                    data.result[i].date + "<br/>" +
-                                                    "측정장소 : " + data.result[i].location + "<br/>" +
-                                                    "측정팀 : " + data.result[i].teamName + " " + data.result[i].teamNo + "조" +
+                        $('#listArea').append("<li data-inset=\"true\" class=\"allteamlist\">" +
+                                                    "<span class=\"allteamlistdate\">" + data.result[i].date + "</span>" + "<br/>" +
+                                                    "측정장소 : " + "<span class=\"allteamlistlocation\">" + data.result[i].location + "</span>" + "<br/>" +
+                                                    "측정팀 : " + "<span class=\"allteamlistteam\">" + data.result[i].teamName + " " + data.result[i].teamNo + "조" + "</span>" +
+                                                    "<input type=\"hidden\" class=\"allteamlistteamid\" value=\""+ teamId +"\"/>" +
                                               "</li>");
                     }
                     $('#listArea').trigger('create');
@@ -85,7 +88,7 @@
                                     var teamIdSelector = '#' + data.result[i].teamId;
                                     $(teamIdSelector).click(function() {
                                         getReport(this.id);
-                                    })
+                                    });
                                 }
                                 $('#listArea').trigger('create');
                                 $(teamNameSelector).listview('refresh');
@@ -99,7 +102,7 @@
             });
         }
 
-        //파일업로드 탭을 선택했을 때 실행되는 폼을 만드는 function
+        //파일업로드 탭을 선택했을 때 실행되는 function
         function fileUpload() {
             $('#listArea').empty();
             $('#listArea').append("<li>" +
@@ -107,10 +110,15 @@
                                     "<input type=\"button\" id=\"uploadbtn\" value=\"계획서 업로드\" />" +
                                   "</li>" +
                                   "<li>" +
-                                    "<input type=\"button\" id=\"formDownload\" value=\"엑셀양식 다운로드\" />" +
+                                    "<input type=\"button\" id=\"formDownloadbtn\" value=\"엑셀양식 다운로드\" />" +
                                   "</li>");
             $('#listArea').trigger('create');
             $('#listArea').listview('refresh');
+        }
+
+        //오류현황 탭을 선택했을 때 폼을 실행되는 function
+        function errorState() {
+            $('#listArea').empty();
         }
 
         //html파싱이 완료 된 후 실행되는 function
@@ -119,14 +127,22 @@
             if ($('input:radio[name=radio-choice-1]:checked')) {
                 teamManagement();
             }
+
             //팀관리 탭이 클릭되었을 시
             $("#owns-team").click(function() {
                 teamManagement();
             });
+
             //파일 업로드 탭이 클릭 되었을 시
             $("#file-upload").click(function() {
                 fileUpload();
             });
+
+            //오류현황 탭이 클릭 되었을 시
+            $("#error-state").click(function() {
+                errorState();
+            });
+
             //파일 업로드 버튼이 클릭 되었을 시
             $(document).on('click', '#uploadbtn', function() {
                 var formData = new FormData();
@@ -150,6 +166,17 @@
                 } else {
                     alert('파일을 선택해 주세요');
                 }
+            });
+
+            //엑셀 양식 다운로드 버튼이 클릭되었을 시
+            $(document).on('click', '#formDownloadbtn', function() {
+                return window.location.href = "http://localhost:3000/excelforms";
+            });
+
+            // 팀(ex QOE팀 1조)을 눌렀을 때 실행
+            $(document).on('click', '.allteamlist', function() {
+                var queryStr = '?action=2&teamId=' + $(this).children(".allteamlistteamid").val() + '&date=' + $(this).children(".allteamlistdate").text();
+                return window.location.href = "http://localhost:3000/reports" + queryStr;
             });
         });
     </script>

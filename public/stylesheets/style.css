@@ -20,6 +20,10 @@ li {
   cursor: pointer;
 }
 
+.allteamlist {
+  cursor: pointer;
+}
+
 .hello {
   text-align: right;
 }
