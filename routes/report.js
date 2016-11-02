@@ -6,6 +6,7 @@ var express = require('express');
 var date = require('date-utils');
 var fs = require('fs');
 var xlsx = require('xlsx');
+var CronJob = require('cron').CronJob;
 var router = express.Router();
 
 router.get('/', function(req, res, next) {
@@ -120,50 +121,73 @@ router.post('/planner', function(req, res, next) {
                     if (z.substring(0, 1) === 'A') { //날짜
                         var plan = {};
                         plan.date = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'B') { //부서
+                    } else if(z.substring(0, 1) === 'B') { //부서
                         plan.department = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'C') { //직책
+                    } else if(z.substring(0, 1) === 'C') { //직책
                         plan.departmentPosition = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'D') { //파트
+                    } else if(z.substring(0, 1) === 'D') { //파트
                         plan.partName = worksheet1[z].v.split(',');
-                    } else if(z.substring(0,1) === 'E') { //팀
+                    } else if(z.substring(0, 1) === 'E') { //팀
                         plan.teamName = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'F') { //조
+                    } else if(z.substring(0, 1) === 'F') { //조
                         plan.teamNo = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'G') { //직위
+                    } else if(z.substring(0, 1) === 'G') { //조원
+                        plan.teamMember = worksheet1[z].v;
+                    } else if(z.substring(0, 1) === 'H') { //직위
                         plan.teamPosition = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'H') { //이름
+                    } else if(z.substring(0, 1) === 'I') { //이름
                         plan.name = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'I') { //휴대폰 번호
+                    } else if(z.substring(0, 1) === 'J') { //휴대폰 번호
                         plan.phoneNumber = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'J') { //이메일
+                    } else if(z.substring(0, 1) === 'K') { //이메일
                         plan.email = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'K') { //측정 장비
+                    } else if(z.substring(0, 1) === 'L') { //측정장비
                         plan.equipmentName = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'L') { //차량 번호
+                    } else if(z.substring(0, 1) === 'M') { //차량번호
                         plan.carNumber = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'M') { //차량 종류
+                    } else if(z.substring(0, 1) === 'N') { //차량종류
                         plan.carType = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'N') { //업무 후 차량 관리자
+                    } else if(z.substring(0, 1) === 'O') { //업무후 차량 관리자
                         plan.carManager = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'O') { //측정 지역
+                    } else if(z.substring(0, 1) === 'P') { //측정지역
                         plan.location = worksheet1[z].v;
-                    } else if(z.substring(0,1) === 'P') { //일일 측정 목표 호량
+                    } else if(z.substring(0, 1) === 'Q') { //측정 목표 호량
                         plan.calls = worksheet1[z].v;
                         plans.push(plan);
                     }
                 }
             }
             for (var i = 0; i < plans.length; i++) {
-                if (plans[i].date === today) { //계획의 날짜가 오늘이면 바로 업데이트
-                    Report.updatePlan(plans[i], function(err, callback) {
+                var date = plans[i].date.split('-'); //2016-10-31 형식으로 되어있는 날짜 형식을 - 단위로 자름.
+                if (date[1].length === 1) { //date[1]은 월. 1월이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
+                    date[1] = '0' + date[1];
+                }
+                if (date[2].length === 1) { //date[2]는 일. 1일이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
+                    date[2] = '0' + date[2];
+                }
+                date = date[0] + '-' + date[1] + '-' + date[2];
+                if (date === today) { //계획의 날짜가 오늘이면 바로 업데이트
+                    Report.updatePlan(plans[i], function(err, result) {
                         if (err) {
                             return next(err);
                         }
-
                     });
                 } else { //계획의 날짜가 오늘이 아니면 cron을 통해 스케쥴링
-
+                    var date = plans[i].date.split('-'); //2016-10-31 형식으로 되어있는 날짜 형식을 - 단위로 자름.
+                    var month = (parseInt(date[1]) - 1).toString(); //01월이라 되어있는 형식을 앞의 0을 제거하여 표현
+                    var day = parseInt(date[2]).toString(); //01일이라 되어있는 형식을 앞의 0을 제거하여 표현
+                    var cronTime = '0 0 0' + ' ' + day + ' ' + month + ' ' + '*';
+                    console.log(cronTime);
+                    var job = new CronJob(cronTime ,function() {
+                        console.log('스케줄링 시작');
+                        Report.updatePlan(plans[i], function(err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+                        });
+                        job.stop();
+                    }, function() {
+                    }, true, 'Asia/Seoul');
                 }
             }
             res.send({
