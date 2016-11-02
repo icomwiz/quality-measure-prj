@@ -58,7 +58,6 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
             res.send({
                 result : result
             });
@@ -87,6 +86,23 @@ router.post('/', function(req, res, next) {
 
     Report.newReport(info.report, function(err, result) {
         if(err) {
+            return next(err);
+        }
+        res.send({result : "ok"});
+    });
+});
+
+//TODO : 2016-11-02
+router.put('/:id', function(req, res, next) {
+    var info = {};
+    info.report = req.body;
+    info.report.report_id = req.params.id;
+    info.report.user_id = req.user.id;
+
+    console.log(info);
+
+    Report.updateReport(info, function(err, result) {
+        if (err) {
             return next(err);
         }
         res.send({result : "ok"});

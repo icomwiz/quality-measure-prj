@@ -157,10 +157,10 @@
                         <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
                             <option value="측정자">측정자</option>
                             <option value="장비">장비</option>
-                            <option value="장비">노트북</option>
-                            <option value="장비">프로그램</option>
-                            <option value="장비">단말기</option>
-                            <option value="장비">기타</option>
+                            <option value="노트북">노트북</option>
+                            <option value="프로그램">프로그램</option>
+                            <option value="단말기">단말기</option>
+                            <option value="기타">기타</option>
                         </select>
 
                     </div>
@@ -216,6 +216,7 @@
         </div>
 
         <div data-role="content" >
+            <input type="hidden" id="reportId" value="">
             <p>조장 :</p>
             <input type="text" name="car_manager" id="car_manager" value=""  />
             <p>조원 : </p>
@@ -288,10 +289,10 @@
                     <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
                         <option value="측정자">측정자</option>
                         <option value="장비">장비</option>
-                        <option value="장비">노트북</option>
-                        <option value="장비">프로그램</option>
-                        <option value="장비">단말기</option>
-                        <option value="장비">기타</option>
+                        <option value="노트북">노트북</option>
+                        <option value="프로그램">프로그램</option>
+                        <option value="단말기">단말기</option>
+                        <option value="기타">기타</option>
                     </select>
                 </div>
 
@@ -331,7 +332,7 @@
         </div>
         <div data-role="footer">
             <h1>
-                <a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>
+                <a href="" data-role="button" id="updateBtn" data-icon="edit">저장</a>
                 <button data-icon="delete" class="Cencel" >취소</button>
             </h1>
         </div>
@@ -397,6 +398,7 @@
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
+                    $('#reportId').val(data.result.id);
                     $('#date2').val(data.result.date);
                     $('#car_manager').val(data.result.car_manager); //조장
                     $('#team_member').val(data.result.team_member); //조원
@@ -433,7 +435,7 @@
 //            var Reportid = $(this).val();
 //            window.location.href = "http://localhost:3000/reports?action=0&Reportid="+Reportid+"#page3"
         });
-        $('.deleteinfo').click(function() {
+        $(".deleteinfo").click(function() {
             var Reportid = $(this).val();
             $.ajax({
                 url: "http://localhost:3000/reports/"+Reportid,
@@ -450,6 +452,52 @@
                 }
             });
 
+        });
+        $("#updateBtn").click(function() {
+            var reportId = $('#reportId').val();
+            var param = {
+                date: $("#date2").val(),
+                group_leader: $("#car_manager").val(),
+                group_member: $("#team_member").val(),
+                measure_place: $("#location").val(),
+                car_kind: $("#car_type").val(),
+                car_number: $("#car_number2").val(),
+                measure_machine : $("#equipment_name").val(),
+                moveTime : {
+                    startTime: $("#move_start_time2").val(),
+                    endTime: $("#move_end_time2").val()
+                },
+                arrivalSETPUP : {
+                    startTime : $("#setup_start_time2").val(),
+                    endTime : $("#setup_end_time2").val()
+                },
+                errorList : {
+                    obstacle_classification: $("#obstacle_classification2").val(),
+                    obstacle_details: $("#obstacle_details2").val(),
+                    startTime: $("#err_start_time2").val(),
+                    endTime : $("#err_end_time2").val(),
+                    errInfo: $("#errInfo2").val(),
+                    errSolution: $("#errSolution2").val()
+                },
+                KM : $(".Km").val(),
+                car_refuel_state : $('#select-native-33').val(),
+                errCheck : $("#select-native-22").val()
+            };
+            $.ajax({
+                url: "http://localhost:3000/reports/"+reportId,
+                type: "PUT",
+                dataType: "json",
+                data: param,
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/reports?action=0";
+                    }
+                    alert('수정실패');
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
         });
     });
 

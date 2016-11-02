@@ -197,6 +197,78 @@ function deleteReport(reportId, callback) {
     });
 }
 
+function updateReport(info, callback) {
+    dbPool.getConnection(function(err, dbConn) {
+        if(err) {
+            return callback(err);
+        }
+        async.series([Report, Details_move, Details_setup], function(err, results) {
+            if (err) {
+                return dbConn.rollback(function() {
+                    dbConn.release();
+                    callback(err);
+                });
+            }
+            return dbConn.commit(function() {
+                dbConn.release();
+                callback(null, "Success");
+            });
+        });
+
+        function Report(callback) {
+            var report = 'UPDATE report '+
+                          'SET car_number = ?, car_type=?, car_mileage_before=?, car_refuel_state=? '+
+                          'WHERE id = ?';
+            dbConn.query(report, [info.report.car_number, info.report.car_kind, info.report.KM, info.report.car_refuel_state, info.report.report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, "Success Report");
+            });
+        }
+        function Details_move(callback) {
+            var update_move = "UPDATE report_details "+
+                "SET start_time=?, end_time=? "+
+                "WHERE report_id=? AND work_details=?";
+            dbConn.query(update_move, [info.report.moveTime.startTime, info.report.moveTime.endTime, info.report.report_id, 100], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, "Success Move");
+            });
+        }
+        function Details_setup(callback) {
+            if(info.report.errCheck == 1) {   //장애미발생
+                var update_setup1 = "UPDATE report_details "+
+                                  "SET start_time = ?, end_time = ?, obstacle_classification=NULL, "+
+                                  "obstacle_details=NULL, obstacle_phenomenon=NULL, obstacle_result=NULL, "+
+                                  "obstacle_start_time=NULL, obstacle_end_time=NULL, type=? "+
+                                  "WHERE report_id = ? AND work_details = 101";
+                dbConn.query(update_setup1, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, 1,info.report.report_id], function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, "Success SETUP");
+                });
+            } else {    //장애발생
+                var update_setup2 = 'UPDATE report_details '+
+                                  'SET start_time=?, end_time=?, obstacle_classification =?, '+
+                                  'obstacle_details=?, obstacle_phenomenon=?, obstacle_result=?, '+
+                                  'obstacle_start_time =?, obstacle_end_time=?, type=? '+
+                                  'WHERE report_id=? AND work_details=101';
+                dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, info.report.errorList.obstacle_classification,
+                    info.report.errorList.obstacle_details, info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
+                    0, info.report.report_id], function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, "Success SETUP");
+                });
+            }
+        }
+
+    });
+}
 function newReport(info, callback) {
     var me = {};
     var sql_select_me = "SELECT e.team_id, e.team_position, t.name, t.team_no FROM employee e "+
@@ -782,6 +854,7 @@ module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
 module.exports.deleteReport = deleteReport;
+module.exports.updateReport = updateReport;
 module.exports.getReportsByteamId = getReportsByteamId;
 module.exports.updatePlan = updatePlan;
 module.exports.updateReportSelect = updateReportSelect;
