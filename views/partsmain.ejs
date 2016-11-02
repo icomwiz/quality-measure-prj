@@ -105,6 +105,9 @@
             $('#listArea').append("<li>" +
                                     "<input id=\"file\" type=\"file\" name=\"uploadExcelfile\" />" +
                                     "<input type=\"button\" id=\"uploadbtn\" value=\"계획서 업로드\" />" +
+                                  "</li>" +
+                                  "<li>" +
+                                    "<input type=\"button\" id=\"formDownload\" value=\"엑셀양식 다운로드\" />" +
                                   "</li>");
             $('#listArea').trigger('create');
             $('#listArea').listview('refresh');
@@ -116,17 +119,14 @@
             if ($('input:radio[name=radio-choice-1]:checked')) {
                 teamManagement();
             }
-
             //팀관리 탭이 클릭되었을 시
             $("#owns-team").click(function() {
                 teamManagement();
             });
-
             //파일 업로드 탭이 클릭 되었을 시
             $("#file-upload").click(function() {
                 fileUpload();
             });
-
             //파일 업로드 버튼이 클릭 되었을 시
             $(document).on('click', '#uploadbtn', function() {
                 var formData = new FormData();
@@ -134,21 +134,22 @@
                 if( $("#file").val() != "" ){
                     var ext = $('#file').val().split('.').pop().toLowerCase();
                     if($.inArray(ext, ['xlsm','xlsx']) == -1) {
-                        alert('gif,png,jpg,jpeg 파일만 업로드 할수 있습니다.');
+                        alert('xlsx 파일만 업로드 할수 있습니다.');
                         return;
                     }
+                    $.ajax({
+                        url:'http://localhost:3000/reports/planner',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        type: 'POST',
+                        success: function(data) {
+                            alert(data.result);
+                        }
+                    });
+                } else {
+                    alert('파일을 선택해 주세요');
                 }
-
-                $.ajax({
-                    url:'http://localhost:3000/reports/planner',
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    type: 'POST',
-                    success: function(data){
-                        alert(data.result);
-                    }
-                });
             });
         });
     </script>
