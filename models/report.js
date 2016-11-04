@@ -1,17 +1,24 @@
 var dbPool = require('./common').dbPool;
 var async = require('async');
 
-function reportList(callback) {
-    var sql_select_report = "SELECT DISTINCT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
+function reportList(user_id, callback) {
+    /*var sql_select_report = "SELECT DISTINCT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
         "r.location location, rd.location location_detail, t.name teamName "+
         "FROM report r LEFT JOIN report_details rd ON (r.id = rd.report_id) "+
         "JOIN employee e ON (r.employee_id = e.id) "+
-        "LEFT JOIN team t ON (t.id = e.team_id) WHERE r.type = 1 ORDER BY r.id DESC";
+        "LEFT JOIN team t ON (t.id = e.team_id) " +
+        "WHERE r.type = 1 AND r.employee_id = ? ORDER BY r.id DESC";
+        */
+    var sql_select_report = "SELECT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
+    "r.location location, t.name teamName, t.team_no "+
+    "FROM report r " +
+    "JOIN team t ON (t.id = r.team_id)" +
+    "WHERE type = 1 AND employee_id = ?";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_select_report, function(err, result) {
+        dbConn.query(sql_select_report, [user_id], function(err, result) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -23,6 +30,7 @@ function reportList(callback) {
         });
     });
 }
+
 function updateReportSelect(info, callback) {
     var squ_select_Report = "SELECT r.id, r.team_name, r.car_manager, r.team_member, r.equipment_name, " +
                             "date_format(convert_tz(r.date, '+00:00', '+09:00'), '%Y-%m-%d') `date`, r.location, "+
@@ -251,19 +259,35 @@ function updateReport(info, callback) {
                     callback(null, "Success SETUP");
                 });
             } else {    //장애발생
-                var update_setup2 = 'UPDATE report_details '+
-                                  'SET start_time=?, end_time=?, obstacle_classification =?, '+
-                                  'obstacle_details=?, obstacle_phenomenon=?, obstacle_result=?, '+
-                                  'obstacle_start_time =?, obstacle_end_time=?, type=? '+
-                                  'WHERE report_id=? AND work_details=101';
-                dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, info.report.errorList.obstacle_classification,
-                    info.report.errorList.obstacle_details, info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
-                    0, info.report.report_id], function(err, result) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    callback(null, "Success SETUP");
-                });
+                if(info.report.errorList.obstacle_details) {
+                    var update_setup2 = 'UPDATE report_details '+
+                        'SET start_time=?, end_time=?, obstacle_classification =?, '+
+                        'obstacle_details=?, obstacle_phenomenon=?, obstacle_result=?, '+
+                        'obstacle_start_time =?, obstacle_end_time=?, type=? '+
+                        'WHERE report_id=? AND work_details=101';
+                    dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, info.report.errorList.obstacle_classification,
+                        info.report.errorList.obstacle_details, info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
+                        0, info.report.report_id], function(err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null, "Success SETUP");
+                    });
+                } else { //기타
+                    var update_setup2 = 'UPDATE report_details '+
+                        'SET start_time=?, end_time=?, '+
+                        'obstacle_phenomenon=?, obstacle_result=?, '+
+                        'obstacle_start_time =?, obstacle_end_time=?, type=? '+
+                        'WHERE report_id=? AND work_details=101';
+                    dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime,
+                        info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
+                        0, info.report.report_id], function(err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null, "Success SETUP");
+                    });
+                }
             }
         }
 

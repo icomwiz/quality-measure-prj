@@ -17,26 +17,29 @@
             <a href="#page2" data-role="button" id="addReport">+</a>
             <ul data-role="listview" data-inset="true">
                 <% if(report[0].id) { %>
-                <% for(var i = 0; i < report.length ; i++) {%>
-                <li>
-                    <div dat-role="controlgroup">
-                        <p style="width: 80%; float: left">
-                            <%= report[i].date%><br>
-                            <%= "측정장소 : "+report[i].location +" "+ report[i].location_detail%><br>
-                            <%= "측정팀 : " +report[i].teamName%><br>
-                        </p>
-                        <div style=" float: right">
-                            <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>
-                            <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>
+                    <% for(var i = 0; i < report.length ; i++) {%>
+                    <li>
+                        <div dat-role="controlgroup">
+                            <button style="width: 80%; float: left;" data-role="button" class="datailList" value="<%= report[i].id%>">
+                                <p  style="float: left; text-align:left" >
+                                    <%= report[i].date%><br>
+                                    <%= /*"측정장소 : "+report[i].location +" "+ report[i].location_detail */%>
+                                    <%= "측정장소 : "+report[i].location %><br>
+                                    <%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>
+                                    id : <%= report[i].id%>
+                                </p>
+                            </button>
+                            <div style=" float: right">
+                                <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>
+                                <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>
+                            </div>
                         </div>
-                    </div>
-                </li>
-                <% } %>
+                    </li>
+                    <% } %>
                 <% } %>
             </ul>
         </div>
     </div>
-
     <div data-role="page" id="page2">
             <div data-role='header' class="ui-grid-a">
                 <h1>
@@ -45,61 +48,22 @@
             </div>
 
             <div data-role="content" >
-                <div class="ui-grid-b">
-                    <div class="ui-block-a">
-                        <p>조장 :</p>
-                    </div>
-                    <div class="ui-block-b">
-
-                        <input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  />
-                    </div>
-                    <div class="ui-block-a" >
-                        <p>조원 : </p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="group_member" id="group_member" value="<%= member%>" />
-                    </div>
-                    <div class="ui-block-a">
-                        <p>측정장소 : </p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="measure_palce" id="measure_palce" value="<%= base.location%>"  />
-                    </div>
-
-                    <div class="ui-block-a">
-                        <p>차량번호 : </p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="car_number" id="car_number" value="<%= base.car_number%>"  />
-                    </div>
-
-                    <div class="ui-block-a" >
-                        <p>차량종류 : </p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="car_kind" id="car_kind" value="<%= base.car_type%>"  />
-                    </div>
-                </div>
-                <div class="ui-grid-b">
-                    <div class="ui-block-a" >
-                        <p>측정장비 :</p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment.equipment_name%>">
-                        <input type="hidden" name="myName" id="myName" value="<%= equipment.name%>">
-                    </div>
-                </div>
-                <div class="ui-grid-b">
-                    <div class="ui-block-a" >
-                        <p>시작전 KM :</p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="text" name="KM" id="KM" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p> KM</p>
-                    </div>
-                </div>
+                <p>조장 :</p>
+                <input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  />
+                <p>조원 : </p>
+                <input type="text" name="group_member" id="group_member" value="<%= member%>" />
+                <p>측정장소 : </p>
+                <input type="text" name="measure_palce" id="measure_palce" value="<%= base.location%>"  />
+                <p>차량번호 : </p>
+                <input type="text" name="car_number" id="car_number" value="<%= base.car_number%>"  />
+                <p>차량종류 : </p>
+                <input type="text" name="car_kind" id="car_kind" value="<%= base.car_type%>"  />
+                <p>측정장비 :</p>
+                <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment.equipment_name%>">
+                <input type="hidden" name="myName" id="myName" value="<%= equipment.name%>">
+                <p>시작전 KM :</p>
+                <input type="text" name="KM" id="KM" value="">
+                <p> KM</p>
                 <div class="ui-grid-b">
                     <div class="ui-field-contain">
                         <label for="select-native-3">현재주유상태 : </label>
@@ -128,7 +92,7 @@
                     </div>
                 </div>
                 <div class="ui-grid-d">
-                    <p>대상지 도착후 SETUP : </p>ㅡ
+                    <p>대상지 도착후 SETUP : </p>
                     <div class="ui-block-b">
                         <input type="time" name="step_start_time" id="step_start_time" value="">
                     </div>
@@ -151,7 +115,7 @@
                 </div>
 
                 <!-- selectbox 에따른 hidden 옵션 -->
-                <div class="ErrSelect" style="display:none" >
+                <div class="ErrSelect" style="display:none" class="obstacle_classification">
                     <div class="ui-field-contain">
                         <label for="obstacle_classification">지연구분 : </label>
                         <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
@@ -162,10 +126,9 @@
                             <option value="단말기">단말기</option>
                             <option value="기타">기타</option>
                         </select>
-
                     </div>
 
-                    <div class="ui-grid-d">
+                    <div class="ui-grid-d" class="obstacle_details">
                         <div class="ui-block-b" >
                             <p>세부내역</p>
                         </div>
@@ -207,7 +170,6 @@
             </div>
         <!-- </form> -->
     </div>
-
     <div data-role="page" id="page3">
         <div data-role='header' class="ui-grid-a">
             <h1>
@@ -499,12 +461,18 @@
                 }
             });
         });
+        $(".datailList").click(function() {
+            var Reportid = $(this).val();
+            return window.location.href = "http://localhost:3000/details?Report="+Reportid;
+        });
     });
 
     function ErrSelect(Val) {
         if (Val === '0') {
             $('.ErrSelect').css("display", "block");
-        } else {
+
+            console.log(Val);
+        } else if(Val ==='1') {
             $('.ErrSelect').css("display", "none");
             //$('#errInfo').text('');
             $('.errInfo').text();

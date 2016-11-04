@@ -16,6 +16,7 @@ var auth = require('./routes/auth');
 var team = require('./routes/team');
 var report = require('./routes/report');
 var employee = require('./routes/employee');
+var detail = require('./routes/detail');
 
 
 var app = express();
@@ -55,6 +56,7 @@ app.use('/auth', auth);
 app.use('/reports', report);
 app.use('/teams', team);
 app.use('/employees', employee);
+app.use('/details', detail);
 app.use('/excelforms', express.static(path.join(__dirname, 'planners/form/excelform.xlsx')));
 
 // catch 404 and forward to error handler

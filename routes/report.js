@@ -14,7 +14,7 @@ router.get('/', function(req, res, next) {
     var Reportid = parseInt(req.query.Reportid);
     if (action === 0 && !Reportid) { //필주
         var user_id = req.user.id;
-        Report.reportList(function(err, result) {
+        Report.reportList(user_id, function(err, result) {
             if(err) {
                 return next(err);
             }
@@ -118,14 +118,11 @@ router.post('/', function(req, res, next) {
     });
 });
 
-//TODO : 2016-11-02
 router.put('/:id', function(req, res, next) {
     var info = {};
     info.report = req.body;
     info.report.report_id = req.params.id;
     info.report.user_id = req.user.id;
-
-    console.log(info);
 
     Report.updateReport(info, function(err, result) {
         if (err) {
