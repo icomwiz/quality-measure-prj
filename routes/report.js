@@ -63,7 +63,31 @@ router.get('/', function(req, res, next) {
             });
         });
     } else if(action === 2) { //재성
-        console.log(2);
+        var resData = {};
+        resData.teamId = req.query.teamId;
+        resData.date = req.query.date;
+        Report.getReportDetailperDate(resData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            console.log(result);
+            res.render('partsteamreport',
+                {
+                    teamName: result.teamName,
+                    date: resData.date,
+                    teamMember: result.teamMember,
+                    teamLeader: result.teamLeader,
+                    location: result.location,
+                    employee: result.employee,
+                    carType: result.carType,
+                    carNumber: result.carNumber,
+                    carManager: result.carManager,
+                    carMileageBefore: result.carMileageBefore,
+                    carMileageAfter: result.carMileageAfter,
+                    carRefuelState: result.carRefuelState
+            });
+        });
+
     } else {
         res.send(new Error('action 지정 하세요'));
     }

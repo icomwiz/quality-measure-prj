@@ -269,6 +269,7 @@ function updateReport(info, callback) {
 
     });
 }
+
 function newReport(info, callback) {
     var me = {};
     var sql_select_me = "SELECT e.team_id, e.team_position, t.name, t.team_no FROM employee e "+
@@ -850,6 +851,51 @@ function updatePlan(plan, callback) {
 
 }
 
+//일자별 리포트 디테일 가져오기
+function getReportDetailperDate(reqData, callback) {
+    var sql_select_report_basic_information =
+        'SELECT r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, e.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
+        'FROM report r JOIN employee e ON (e.id = r.employee_id) ' +
+        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 ' +
+        'GROUP BY r.equipment_name';
+
+    var resData = {};
+    resData.employee = [];
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_select_report_basic_information, [reqData.teamId, reqData.date], function(err, results) {
+            dbConn.release();
+            if (err) {
+               return callback(err);
+            }
+            for(var i = 0; i < results.length; i++) {
+                resData.teamName = results[i].teamName || '';
+                resData.location = results[i].location || '';
+                resData.teamMember = results[i].teamMember || '';
+                if(results[i].teamPosition === '조장') {
+                    resData.teamLeader = results[i].name || '';
+                }
+                resData.employee.push(
+                    {
+                        name : results[i].name || '',
+                        equipment : results[i].equipmentName ||''
+                    });
+                resData.carType = results[i].carType || '';
+                resData.carNumber = results[i].carNumber || '';
+                resData.carManager = results[i].carManager || '';
+                resData.carMileageBefore = results[i].carMileageBefore || '';
+                resData.carMileageAfter = results[i].carMileageAfter || '';
+                resData.carRefuelState = results[i].carRefuelState || '';
+            }
+            callback(null, resData);
+        });
+    })
+
+}
+
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
@@ -858,3 +904,4 @@ module.exports.updateReport = updateReport;
 module.exports.getReportsByteamId = getReportsByteamId;
 module.exports.updatePlan = updatePlan;
 module.exports.updateReportSelect = updateReportSelect;
+module.exports.getReportDetailperDate = getReportDetailperDate;

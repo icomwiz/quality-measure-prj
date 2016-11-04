@@ -31,3 +31,29 @@ li {
 .parts-main-radio-btns {
   text-align: center;
 }
+
+#partsteamreport-teamName {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+}
+
+#partsteamreport-date {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+}
+
+#partsteamreport-basic-info {
+  background-color: lightgray;
+  margin: 3px;
+  padding: 3px;
+}
+
+.partsteamreport-basic-info-details {
+  background-color: white;
+  margin: 3px;
+  padding: 3px;
+}
