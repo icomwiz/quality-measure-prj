@@ -29,6 +29,16 @@
         </fieldset>
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
+        <div id="error-state-div">
+            <select name="period">
+                <option value="">직업선택</option>
+                <option value="">직업선택</option>
+                <option value="">직업선택</option>
+                <option value="">직업선택</option>
+                <option value="">직업선택</option>
+                <option value="">직업선택</option>
+            </select>
+        </div>
     </div>
     <div data-role="footer" data-position="fixed">
         <h4>icomwiz</h4>
@@ -65,6 +75,7 @@
 
         //팀관리 탭을 선택했을 때 실행되는 function
         function teamManagement() {
+            $('#error-state-div').hide();
             $.get("http://localhost:3000/teams/simple", function(data) {
                 $('#listArea').empty();
                 $.each(data.result, function() {
@@ -104,6 +115,7 @@
 
         //파일업로드 탭을 선택했을 때 실행되는 function
         function fileUpload() {
+            $('#error-state-div').hide();
             $('#listArea').empty();
             $('#listArea').append("<li>" +
                                     "<input id=\"file\" type=\"file\" name=\"uploadExcelfile\" />" +
@@ -119,6 +131,7 @@
         //오류현황 탭을 선택했을 때 폼을 실행되는 function
         function errorState() {
             $('#listArea').empty();
+            $('#error-state-div').show();
         }
 
         //html파싱이 완료 된 후 실행되는 function
