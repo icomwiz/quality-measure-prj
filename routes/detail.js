@@ -8,7 +8,7 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
     var report_id = req.query.Report;
-    console.log(report_id);
+    //console.log(report_id);
 
     Detail.detailsList(report_id, function(err, result) {
         var team_name = "";
@@ -22,6 +22,7 @@ router.get('/', function(req, res, next) {
             detail : result
         });
     });
+
     function date(){
         var date = new Date();
         var year  = date.getFullYear();
@@ -38,9 +39,14 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    console.log(req.body);
-    res.send({
-        result : "ok"
+    var addInfo = req.body;
+    Detail.addDetail(addInfo, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : "ok"
+        });
     });
 });
 module.exports = router;

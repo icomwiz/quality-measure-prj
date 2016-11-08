@@ -53,7 +53,7 @@
             <p>측정 장비 :</p>
             <input type="text" class="measure_machine" value=""/>
             <p>측정 회차 : </p>
-            <input type="number" class="work_details" min="1" max="20" step="1" />
+            <input type="number" class="work_details" value=""/>
             <p>측정 유형1 :</p>
             <input type="text" class="target1" value=""/>
             <p>측정 유형2 :</p>
@@ -82,18 +82,18 @@
 
 
             <div class="ui-field-contain">
-                <label for="errCheck">측정전 장애 발생 유무 : </label>
-                <select name="errCheck" id="errCheck" class="errCheck" data-iconpos="left" onchange="ErrSelect(this.value);">
-                    <option value="1" selected>장애 미발생</option>
-                    <option value="0">장애 발생</option>
+                <label for="errCheck1">측정전 장애 발생 유무 : </label>
+                <select name="errCheck1" id="errCheck1" data-iconpos="left" onchange="ErrSelect(this.value);">
+                    <option value="0" selected>장애 미발생</option>
+                    <option value="1">장애 발생</option>
                 </select>
             </div>
 
             <!-- selectbox 에따른 hidden 옵션 -->
             <div class="ErrSelect" style="display:none" class="obstacle_classification">
                 <div class="ui-field-contain">
-                    <label for="obstacle_classification">지연구분 : </label>
-                    <select name="obstacle_classification" id="obstacle_classification" class="obstacle_classification" data-iconpos="left">
+                    <label for="obstacle_classification1">지연구분 : </label>
+                    <select name="obstacle_classification1" id="obstacle_classification1" data-iconpos="left">
                         <option value="측정자">측정자</option>
                         <option value="장비">장비</option>
                         <option value="노트북">노트북</option>
@@ -172,10 +172,10 @@
                 start_time : $(".start_time").val(),
                 end_time : $(".end_time").val(),
                 calls : $('.calls').val(),
-                errCheck : $(".errCheck").val(),
+                errCheck : $("#errCheck1").val(),
                 errorList : {
-                    obstacle_classification: $("#obstacle_classification").val(),
-                    obstacle_details: $("#obstacle_details").val(),
+                    obstacle_classification: $("#obstacle_classification1").val(),
+                    obstacle_details: $(".obstacle_details").val(),
                     obstacle_start_time: $(".obstacle_start_time").val(),
                     obstacle_end_time : $(".obstacle_end_time").val(),
                     obstacle_phenomenon: $(".obstacle_phenomenon").val(),
