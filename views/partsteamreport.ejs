@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <!-- 메타 정보 선언 -->
     <meta charset="utf-8"/>
@@ -15,7 +15,7 @@
 </head>
 <body>
     <div data-role='header' data-position="fixed" id=partsteamreport-header">
-        <h1><label id="partsteamreport-teamName"><%=teamName%></label><br/><label id="partsteamreport-date"><%=date%></label></h1>
+        <h1><label id="partsteamreport-teamName"><%=teamName%> <label id="partsteamreport-date"><%=date%></label></h1>
     </div>
     <div data-role="content">
         <div id="partsteamreport-basic-info">
@@ -29,9 +29,49 @@
             </div>
             금일 측정 지역: <b><%=location%></b><br/>
             계획 대비 실적: <br/>
-            금일 측정 대상: <br/>
-            금일 에러 발생 총 건수: <br/>
-            금일 에러 발생 총 시간: <br/>
+            <table>
+                <tr>
+                    <td></td><td><b>계획</b></td><td><b>실제</b></td>
+                </tr>
+                <tr>
+                    <td><b>총 호량</b></td>
+                    <td>
+                        <%
+                            var totalPlanCalls = 0;
+                            for (var i = 0; i < performance.length; i++) {
+                               totalPlanCalls += performance[i].planCalls;
+                            }
+                        %>
+                        <b>
+                            <%=totalPlanCalls%>
+                        </b>
+                    </td>
+                    <td>
+                        <%
+                            var totalMeasurCalls = 0;
+                            for (var i = 0; i < performance.length; i++) {
+                                totalMeasurCalls += performance[i].measureCalls;
+                            }
+                        %>
+                        <b>
+                            <%=totalMeasurCalls%>
+                        </b>
+                    </td>
+                </tr>
+                <%
+                    for (var i = 0; i < performance.length; i++) { %>
+                        <tr>
+                            <td><b><%=performance[i].equipmentName%></b></td>
+                            <td><b><%=performance[i].planCalls%></b></td>
+                            <td><b><%=performance[i].measureCalls%></b></td>
+                        </tr>
+                <%
+                    }
+                %>
+            </table>
+            금일 측정 대상: <b><%=measureObj%></b> <br/>
+            금일 에러 발생 총 건수: <font color="red"><b><%=totalErrorCount%></b></font> 건<br/>
+            금일 에러 발생 총 시간: <font color="red"><b><%=totalDelayTime%></b></font><br/>
             차량: <br/>
             <div class="partsteamreport-basic-info-details">
                 차량 종류: <b><%=carType%></b><br/>
@@ -44,16 +84,54 @@
         </div>
         <br>
         <div>
-            <li data-role="collapsible" data-iconpos="false">
-                <h6>hi</h6>
-                <div>
-                    hi
-                </div>
-            </li>
+            <%
+                var maxNum = 0;
+                var maxNumflag = 0;
+                for(var i = 0; i < employee.length; i++) {
+                    if (maxNum < employee[i].work.length) {
+                        maxNum = employee[i].work.length;
+                        maxNumflag = i;
+                    }
+                }
+                for(var i = 0; i < employee[maxNumflag].work.length; i++) {
+            %>
+                <li data-role="collapsible" data-iconpos="false">
+                    <h6><%
+                            if (employee[maxNumflag].work[i].workDetails < 100) { %>
+                                <%=employee[maxNumflag].work[i].workDetails%>차 측정
+                        <%  } else {
+                                switch (employee[maxNumflag].work[i].workDetails) {
+                                    case 100: %>
+                                        집 대상지 이동
+                        <%              break; %>
+                        <%          case 101: %>
+                                        대상지 도착 후 SETUP
+                        <%              break; %>
+                        <%          case 102: %>
+                                        측정 종료 후 복귀 시간
+                        <%              break; %>
+                        <%          case 103: %>
+                                        FTP측정 데이터 업로드
+                        <%              break;
+                                }
+                            }
+                        %>
+                        (<%=employee[maxNumflag].work[i].startTime%> ~ <%=employee[maxNumflag].work[i].endTime%>)
+                    </h6>
+                    <div>
+                        hi
+                    </div>
+                </li>
+            <%
+                }
+            %>
         </div>
     </div>
     <div data-role="footer" data-position="fixed">
         <h1>icomwiz</h1>
     </div>
+    <script>
+
+    </script>
 </body>
 </html>

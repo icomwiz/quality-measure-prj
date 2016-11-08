@@ -878,46 +878,177 @@ function updatePlan(plan, callback) {
 //일자별 리포트 디테일 가져오기
 function getReportDetailperDate(reqData, callback) {
     var sql_select_report_basic_information =
-        'SELECT r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, e.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
+        'SELECT r.id reportId, r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, e.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
         'FROM report r JOIN employee e ON (e.id = r.employee_id) ' +
         'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 ' +
         'GROUP BY r.equipment_name';
 
+    var sql_select_report_details =
+        'SELECT work_details workDetails, ' + //몇차 측정인지
+                            'start_time startTime, ' + //측정 시작시간
+                            'end_time endTime, ' + //측정 종료시간
+                            'calls, ' + //호량
+                            'location, ' + //장소 ~동
+                            'target1, ' + //측정대상1
+                            'target2, ' + //측정대상2
+                            'obstacle_classification obstacleClassification, ' + //장애구분
+                            'obstacle_details obstacleDetails, ' + //장애 세부 내역
+                            'obstacle_phenomenon obstaclePhenomenon, ' + //장애 현상
+                            'obstacle_result obstacleResult, ' + //장애 처리 결과
+                            'obstacle_start_time obstacleStartTime, ' + //장애 발생 시작시간
+                            'obstacle_end_time obstacleEndTime, ' + //장애 발생 종료시간
+                            'SUBTIME(obstacle_end_time, obstacle_start_time) delayTime, ' + //지연 시간
+                            'type ' + //장애인지 장애가 아닌지
+        'FROM report_details ' +
+        'WHERE report_id = ?';
+
+    //금일 측정 대상 가져오기
+    var sql_select_report_detail_target2 =
+        'SELECT GROUP_CONCAT(DISTINCT(rd.target2)) measureObj ' +
+        'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
+        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1';
+
+    //전체 에러 건수와 시간
+    var sql_error_num_time =
+        'SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(subtime(obstacle_end_time, obstacle_start_time)))) totalDelayTime, COUNT(*) totalErrorCount ' +
+        'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
+        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 AND rd.type = 0';
+
+    //계획 대비 실적 가져오기
+    var sql_select_maesure_per_plan =
+        'SELECT a.equipmentName, a.planCalls, b.measureCalls ' +
+        'FROM(SELECT equipment_name equipmentName, calls planCalls ' +
+        'FROM report ' +
+        'WHERE team_id = ? AND date=STR_TO_DATE(?, \'%Y-%m-%d\') AND type=0) a JOIN (SELECT r.equipment_name equipmentName, sum(rd.calls) measureCalls ' +
+        'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
+        'WHERE r.team_id = ? AND r.date=STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type=1 ' +
+        'GROUP BY r.equipment_name) b ON (a.equipmentName = b.equipmentName)';
+
     var resData = {};
     resData.employee = [];
+    resData.performance = [];
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
+            dbConn.release();
             return callback(err);
         }
-        dbConn.query(sql_select_report_basic_information, [reqData.teamId, reqData.date], function(err, results) {
-            dbConn.release();
-            if (err) {
+        async.parallel([getBasicInfoAndMeasureInfo, getMeasureObj, briefErrorInfo, measurePerPlan], function(err, result) {
+           if (err) {
                return callback(err);
-            }
-            for(var i = 0; i < results.length; i++) {
-                resData.teamName = results[i].teamName || '';
-                resData.location = results[i].location || '';
-                resData.teamMember = results[i].teamMember || '';
-                if(results[i].teamPosition === '조장') {
-                    resData.teamLeader = results[i].name || '';
-                }
-                resData.employee.push(
-                    {
-                        name : results[i].name || '',
-                        equipment : results[i].equipmentName ||''
-                    });
-                resData.carType = results[i].carType || '';
-                resData.carNumber = results[i].carNumber || '';
-                resData.carManager = results[i].carManager || '';
-                resData.carMileageBefore = results[i].carMileageBefore || '';
-                resData.carMileageAfter = results[i].carMileageAfter || '';
-                resData.carRefuelState = results[i].carRefuelState || '';
-            }
-            callback(null, resData);
+           }
+           callback(null, resData);
         });
-    })
+        function getBasicInfoAndMeasureInfo(callback) {
+            async.series([getBasicInfo, getDetailInfoSet], function (err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+        function getMeasureObj(callback) {
+            dbConn.query(sql_select_report_detail_target2, [reqData.teamId, reqData.date], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                resData.measureObj = results[0].measureObj;
+                callback(null);
+            });
+        }
+        function briefErrorInfo(callback) {
+            dbConn.query(sql_error_num_time, [reqData.teamId, reqData.date], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                resData.totalDelayTime = results[0].totalDelayTime;
+                resData.totalErrorCount = results[0].totalErrorCount;
+                callback(null);
+            });
+        }
+        function measurePerPlan(callback) {
+            dbConn.query(sql_select_maesure_per_plan, [reqData.teamId, reqData.date, reqData.teamId, reqData.date], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                for(var i = 0; i < results.length; i++) {
+                    resData.performance.push({
+                        equipmentName: results[i].equipmentName,
+                        planCalls: results[i].planCalls,
+                        measureCalls: results[i].measureCalls
+                    });
+                }
+                callback(null);
+            });
+        }
+        function getDetailInfoSet(callback) {
+            async.each(resData.employee, getDetailInfo, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            })
+        }
 
+        function getBasicInfo(callback) {
+            dbConn.query(sql_select_report_basic_information, [reqData.teamId, reqData.date], function (err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                for (var i = 0; i < results.length; i++) {
+                    resData.teamName = results[i].teamName || '';
+                    resData.location = results[i].location || '';
+                    resData.teamMember = results[i].teamMember || '';
+                    if (results[i].teamPosition === '조장') {
+                        resData.teamLeader = results[i].name || '';
+                    }
+                    resData.employee.push(
+                        {
+                            reportId: results[i].reportId,
+                            name: results[i].name || '',
+                            equipment: results[i].equipmentName || ''
+                        });
+                    resData.carType = results[i].carType || '';
+                    resData.carNumber = results[i].carNumber || '';
+                    resData.carManager = results[i].carManager || '';
+                    resData.carMileageBefore = results[i].carMileageBefore || '';
+                    resData.carMileageAfter = results[i].carMileageAfter || '';
+                    resData.carRefuelState = results[i].carRefuelState || '';
+                }
+                callback(null);
+            });
+        }
+
+        function getDetailInfo(employee, callback) {
+            dbConn.query(sql_select_report_details, [employee.reportId], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                employee.work = [];
+                for (var i = 0; i < results.length; i ++) {
+                    var work = {
+                        workDetails: results[i].workDetails || '',
+                        startTime: results[i].startTime || '',
+                        endTime: results[i].endTime || '',
+                        calls: results[i].calls || '',
+                        location: results[i].location || '',
+                        target1: results[i].target1 || '',
+                        target2: results[i].target2 || '',
+                        obstacleClassification: results[i].obstacleClassification || '',
+                        obstacleDetails: results[i].obstacleDetails || '',
+                        obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                        obstacleResult: results[i].obstacleResult || '',
+                        obstacleStartTime: results[i].obstacleStartTime || '',
+                        obstacleEndTime: results[i].obstacleEndTime || '',
+                        delayTime: results[i].delayTime || '',
+                        type: results[i].type || ''
+                    };
+                    employee.work.push(work);
+                }
+                callback();
+            });
+        }
+    });
 }
 
 module.exports.reportList = reportList;

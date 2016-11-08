@@ -48,7 +48,9 @@ li {
 
 #partsteamreport-basic-info {
   background-color: lightgray;
-  margin: 3px;
+  margin-top: 15px;
+  margin-left: 3px;
+  margin-right: 3px;
   padding: 3px;
 }
 
@@ -56,4 +58,15 @@ li {
   background-color: white;
   margin: 3px;
   padding: 3px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  text-align: center;
+}
+
+th, td {
+  border: 1px solid #bcbcbc;
 }

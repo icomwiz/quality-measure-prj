@@ -70,7 +70,7 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
+            console.log(result.employee[0].work);
             res.render('partsteamreport',
                 {
                     teamName: result.teamName,
@@ -84,10 +84,13 @@ router.get('/', function(req, res, next) {
                     carManager: result.carManager,
                     carMileageBefore: result.carMileageBefore,
                     carMileageAfter: result.carMileageAfter,
-                    carRefuelState: result.carRefuelState
+                    carRefuelState: result.carRefuelState,
+                    performance: result.performance,
+                    measureObj: result.measureObj,
+                    totalDelayTime: result.totalDelayTime,
+                    totalErrorCount: result.totalErrorCount
             });
         });
-
     } else {
         res.send(new Error('action 지정 하세요'));
     }
