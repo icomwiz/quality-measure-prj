@@ -18,10 +18,10 @@
         <h4><%= result.partName %></h4>
     </div>
     <div data-role="content">
-        <p class="hello"> <b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다. </p>
+        <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
             <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="true"/>
-            <label for="owns-team">팀 관리</label>
+            <label id="owns-team-label" for="owns-team">팀 관리</label>
             <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
             <label for="file-upload">파일 업로드</label>
             <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
@@ -127,6 +127,10 @@
             if ($('input:radio[name=radio-choice-1]:checked')) {
                 teamManagement();
             }
+
+            $('#home').click(function() {
+                $("#owns-team-label").trigger('click');
+            });
 
             //팀관리 탭이 클릭되었을 시
             $("#owns-team").click(function() {

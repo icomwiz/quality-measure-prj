@@ -94,3 +94,11 @@ th, td {
   float: right;
 }
 
+#home {
+  width: 25px;
+  height: auto;
+  float: left;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-left: 5px;
+}

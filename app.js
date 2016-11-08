@@ -58,6 +58,7 @@ app.use('/teams', team);
 app.use('/employees', employee);
 app.use('/details', detail);
 app.use('/excelforms', express.static(path.join(__dirname, 'planners/form/excelform.xlsx')));
+app.use('/imgs', express.static(path.join(__dirname, 'public/img')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
