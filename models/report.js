@@ -912,7 +912,7 @@ function getReportDetailperDate(reqData, callback) {
     var sql_error_num_time =
         'SELECT SEC_TO_TIME(SUM(TIME_TO_SEC(subtime(obstacle_end_time, obstacle_start_time)))) totalDelayTime, COUNT(*) totalErrorCount ' +
         'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
-        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 AND rd.type = 0';
+        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 AND rd.type = 1';
 
     //계획 대비 실적 가져오기
     var sql_select_maesure_per_plan =
@@ -924,21 +924,52 @@ function getReportDetailperDate(reqData, callback) {
         'WHERE r.team_id = ? AND r.date=STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type=1 ' +
         'GROUP BY r.equipment_name) b ON (a.equipmentName = b.equipmentName)';
 
+    var sql_select_avg_details =
+        'SELECT rd.work_details workDetails, SEC_TO_TIME(avg(TIME_TO_SEC(rd.start_time))) startTime, SEC_TO_TIME(avg(TIME_TO_SEC(rd.end_time))) endTime, rd.location, rd.target1, sum(rd.calls) calls, sum(rd.type) error ' +
+        'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
+        'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 ' +
+        'GROUP BY rd.work_details ' +
+        'ORDER BY startTime';
+
     var resData = {};
-    resData.employee = [];
-    resData.performance = [];
+    resData.employees = [];
+    resData.performances = [];
+    resData.avgWorkDetails = [];
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             dbConn.release();
             return callback(err);
         }
-        async.parallel([getBasicInfoAndMeasureInfo, getMeasureObj, briefErrorInfo, measurePerPlan], function(err, result) {
+        async.parallel([getBasicInfoAndMeasureInfo, getMeasureObj, briefErrorInfo, measurePerPlan, getAvgWorkDetails], function(err, result) {
            if (err) {
+               dbConn.release();
                return callback(err);
            }
+           dbConn.release();
            callback(null, resData);
         });
+
+        function getAvgWorkDetails(callback) {
+            dbConn.query(sql_select_avg_details, [reqData.teamId, reqData.date], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                for(var i = 0; i < results.length; i++) {
+                    resData.avgWorkDetails.push({
+                        workDetails: results[i].workDetails,
+                        startTime: results[i].startTime.substring(0,8),
+                        endTime: results[i].endTime.substring(0,8),
+                        location: results[i].location || '',
+                        target1: results[i].target1 || '',
+                        calls: results[i].calls,
+                        error: results[i].error
+                    });
+                }
+                callback(null);
+            });
+        }
+
         function getBasicInfoAndMeasureInfo(callback) {
             async.series([getBasicInfo, getDetailInfoSet], function (err, results) {
                 if (err) {
@@ -972,7 +1003,7 @@ function getReportDetailperDate(reqData, callback) {
                     return callback(err);
                 }
                 for(var i = 0; i < results.length; i++) {
-                    resData.performance.push({
+                    resData.performances.push({
                         equipmentName: results[i].equipmentName,
                         planCalls: results[i].planCalls,
                         measureCalls: results[i].measureCalls
@@ -982,7 +1013,7 @@ function getReportDetailperDate(reqData, callback) {
             });
         }
         function getDetailInfoSet(callback) {
-            async.each(resData.employee, getDetailInfo, function(err) {
+            async.each(resData.employees, getDetailInfo, function(err) {
                 if (err) {
                     return callback(err);
                 }
@@ -1002,7 +1033,7 @@ function getReportDetailperDate(reqData, callback) {
                     if (results[i].teamPosition === '조장') {
                         resData.teamLeader = results[i].name || '';
                     }
-                    resData.employee.push(
+                    resData.employees.push(
                         {
                             reportId: results[i].reportId,
                             name: results[i].name || '',
@@ -1019,12 +1050,12 @@ function getReportDetailperDate(reqData, callback) {
             });
         }
 
-        function getDetailInfo(employee, callback) {
-            dbConn.query(sql_select_report_details, [employee.reportId], function(err, results) {
+        function getDetailInfo(employees, callback) {
+            dbConn.query(sql_select_report_details, [employees.reportId], function(err, results) {
                 if (err) {
                     return callback(err);
                 }
-                employee.work = [];
+                employees.work = [];
                 for (var i = 0; i < results.length; i ++) {
                     var work = {
                         workDetails: results[i].workDetails || '',
@@ -1043,7 +1074,7 @@ function getReportDetailperDate(reqData, callback) {
                         delayTime: results[i].delayTime || '',
                         type: results[i].type || ''
                     };
-                    employee.work.push(work);
+                    employees.work.push(work);
                 }
                 callback();
             });

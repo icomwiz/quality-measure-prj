@@ -70,7 +70,7 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result.employee[0].work);
+            console.log(result.employees[0].work);
             res.render('partsteamreport',
                 {
                     teamName: result.teamName,
@@ -78,17 +78,18 @@ router.get('/', function(req, res, next) {
                     teamMember: result.teamMember,
                     teamLeader: result.teamLeader,
                     location: result.location,
-                    employee: result.employee,
+                    employees: result.employees,
                     carType: result.carType,
                     carNumber: result.carNumber,
                     carManager: result.carManager,
                     carMileageBefore: result.carMileageBefore,
                     carMileageAfter: result.carMileageAfter,
                     carRefuelState: result.carRefuelState,
-                    performance: result.performance,
+                    performances: result.performances,
                     measureObj: result.measureObj,
                     totalDelayTime: result.totalDelayTime,
-                    totalErrorCount: result.totalErrorCount
+                    totalErrorCount: result.totalErrorCount,
+                    avgWorkDetails: result.avgWorkDetails
             });
         });
     } else {

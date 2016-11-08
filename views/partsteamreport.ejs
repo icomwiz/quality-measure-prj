@@ -15,7 +15,7 @@
 </head>
 <body>
     <div data-role='header' data-position="fixed" id=partsteamreport-header">
-        <h1><label id="partsteamreport-teamName"><%=teamName%> <label id="partsteamreport-date"><%=date%></label></h1>
+        <h1><label id="partsteamreport-teamName"><%=teamName%></label> <label id="partsteamreport-date"><%=date%></label> </h1>
     </div>
     <div data-role="content">
         <div id="partsteamreport-basic-info">
@@ -23,8 +23,8 @@
             조장: <b><%=teamLeader%></b> <br/>
             측정장비: <br/>
             <div class="partsteamreport-basic-info-details">
-                <% for(var i = 0; i < employee.length; i++) { %>
-                    <%=employee[i].name%> : <b><%=employee[i].equipment%></b> <br/>
+                <% for(var i = 0; i < employees.length; i++) { %>
+                    <%=employees[i].name%> : <b><%=employees[i].equipment%></b> <br/>
                 <% } %>
             </div>
             금일 측정 지역: <b><%=location%></b><br/>
@@ -38,8 +38,8 @@
                     <td>
                         <%
                             var totalPlanCalls = 0;
-                            for (var i = 0; i < performance.length; i++) {
-                               totalPlanCalls += performance[i].planCalls;
+                            for (var i = 0; i < performances.length; i++) {
+                               totalPlanCalls += performances[i].planCalls;
                             }
                         %>
                         <b>
@@ -49,8 +49,8 @@
                     <td>
                         <%
                             var totalMeasurCalls = 0;
-                            for (var i = 0; i < performance.length; i++) {
-                                totalMeasurCalls += performance[i].measureCalls;
+                            for (var i = 0; i < performances.length; i++) {
+                                totalMeasurCalls += performances[i].measureCalls;
                             }
                         %>
                         <b>
@@ -59,11 +59,11 @@
                     </td>
                 </tr>
                 <%
-                    for (var i = 0; i < performance.length; i++) { %>
+                    for (var i = 0; i < performances.length; i++) { %>
                         <tr>
-                            <td><b><%=performance[i].equipmentName%></b></td>
-                            <td><b><%=performance[i].planCalls%></b></td>
-                            <td><b><%=performance[i].measureCalls%></b></td>
+                            <td><b><%=performances[i].equipmentName%></b></td>
+                            <td><b><%=performances[i].planCalls%></b></td>
+                            <td><b><%=performances[i].measureCalls%></b></td>
                         </tr>
                 <%
                     }
@@ -85,22 +85,14 @@
         <br>
         <div>
             <%
-                var maxNum = 0;
-                var maxNumflag = 0;
-                for(var i = 0; i < employee.length; i++) {
-                    if (maxNum < employee[i].work.length) {
-                        maxNum = employee[i].work.length;
-                        maxNumflag = i;
-                    }
-                }
-                for(var i = 0; i < employee[maxNumflag].work.length; i++) {
+                for(var i = 0; i < avgWorkDetails.length; i ++ ) {
             %>
                 <li data-role="collapsible" data-iconpos="false">
                     <h6><%
-                            if (employee[maxNumflag].work[i].workDetails < 100) { %>
-                                <%=employee[maxNumflag].work[i].workDetails%>차 측정
+                            if (avgWorkDetails[i].workDetails < 100) { %>
+                                <%=avgWorkDetails[i].workDetails%> 차 측정
                         <%  } else {
-                                switch (employee[maxNumflag].work[i].workDetails) {
+                                switch (avgWorkDetails[i].workDetails) {
                                     case 100: %>
                                         집 대상지 이동
                         <%              break; %>
@@ -116,10 +108,124 @@
                                 }
                             }
                         %>
-                        (<%=employee[maxNumflag].work[i].startTime%> ~ <%=employee[maxNumflag].work[i].endTime%>)
+                        <font class="partsteamreport-time">(<%=avgWorkDetails[i].startTime%> ~ <%=avgWorkDetails[i].endTime%>)</font><br/>
+                        <font class="partsteamreport-location"><%=avgWorkDetails[i].location%> <%=avgWorkDetails[i].target1%></font><br/>
+                        <% if (avgWorkDetails[i].calls !== 0) { %>
+                            <font class="partsteamreport-calls"><%=avgWorkDetails[i].calls%> calls</font>
+                        <% } %>
+                        <% if (avgWorkDetails[i].error != 0) { %>
+                            <font class="partsteamreport-error">에러 발생</font>
+                        <% } %>
                     </h6>
                     <div>
-                        hi
+                        <table>
+                            <tr>
+                                <td></td>
+                                <% for(var j = 0; j < employees.length; j++) {%>
+                                    <td><%=employees[j].equipment%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>장비 담당</td>
+                                <% for(var j = 0; j < employees.length; j++) {%>
+                                    <td><%=employees[j].name%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>시간</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var measureTime = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        measureTime = employees[j].work[i].startTime + ' ~ ' + employees[j].work[i].endTime;
+                                    } %>
+                                <td><%=measureTime%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>측정 호량</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var calls = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        if (employees[j].work[i].calls != '') {
+                                            calls = employees[j].work[i].calls + ' calls';
+                                        }
+                                    } %>
+                                    <td><%=calls%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>측정 대상</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var target2 = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        target2 = employees[j].work[i].target2
+                                    } %>
+                                <td><%=target2%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>장애 구분</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var obstacleClassification = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        obstacleClassification = employees[j].work[i].obstacleClassification
+                                    } %>
+                                <td><%=obstacleClassification%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>장애 세부 내역</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var obstacleDetails = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        obstacleDetails = employees[j].work[i].obstacleDetails
+                                    } %>
+                                <td><%=obstacleDetails%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>장애 발생 시간</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var obstacleTime = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        if(employees[j].work[i].type === 1) {
+                                            obstacleTime = employees[j].work[i].obstacleStartTime + ' ~ ' + employees[j].work[i].obstacleEndTime;
+                                        }
+                                    } %>
+                                <td><%=obstacleTime%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>지연 시간</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var delayTime = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        delayTime = employees[j].work[i].delayTime
+                                    } %>
+                                <td><%=delayTime%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>지연 현상</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var obstaclePhenomenon = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        obstaclePhenomenon = employees[j].work[i].obstaclePhenomenon
+                                    } %>
+                                <td><%=obstaclePhenomenon%></td>
+                                <% } %>
+                            </tr>
+                            <tr>
+                                <td>처리 결과<br/>(PM지시)</td>
+                                <% for(var j = 0; j < employees.length; j++) {
+                                    var obstacleResult = '';
+                                    if (typeof employees[j].work[i] != 'undefined') {
+                                        obstacleResult = employees[j].work[i].obstacleResult
+                                    } %>
+                                <td><%=obstacleResult%></td>
+                                <% } %>
+                            </tr>
+                        </table>
                     </div>
                 </li>
             <%
@@ -130,8 +236,5 @@
     <div data-role="footer" data-position="fixed">
         <h1>icomwiz</h1>
     </div>
-    <script>
-
-    </script>
 </body>
 </html>
