@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 메타 정보 선언 -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- 제이쿼리 모바일, 제이쿼리 라이브러리 파일 선언 -->
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+
+    <!-- 사용자 스타일 시트 파일 선언 -->
+    <link rel='stylesheet' href='/stylesheets/day-error-style.css' />
+</head>
+<body>
+    <!-- 일별 에러 사항 페이지 -->
+    <div data-role="header" data-position="fixed">
+        <h1>일별 에러 사항</h1>
+    </div>
+    <div data-role="content">
+        <% for(var i = 0; i < result.length; i++ ) { %>
+        <table>
+            <tr>
+                <td class="date" colspan="<%=result[i].length + 1%>"><%=result[i][0].date%></td>
+            </tr>
+            <tr>
+                <td class="error-kind">오류 구분</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                    <td class="team"><%=result[i][j].teamName%></td>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">GPS</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].gpsError) != 0) { %>
+                <td class="error"><%=result[i][j].gpsError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].gpsError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">노트북</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].notebookError) != 0) { %>
+                <td class="error"><%=result[i][j].notebookError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].notebookError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">단말기</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].terminalError) != 0) { %>
+                <td class="error"><%=result[i][j].terminalError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].terminalError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">장비</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].equipmentError) != 0) { %>
+                <td class="error"><%=result[i][j].equipmentError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].equipmentError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">측정자</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].measurererError) != 0) { %>
+                <td class="error"><%=result[i][j].measurererError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].measurererError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">케이블</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].cableError) != 0) { %>
+                <td class="error"><%=result[i][j].cableError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].cableError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">프로그램</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].programError) != 0) { %>
+                <td class="error"><%=result[i][j].programError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].programError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="error-kind">기타</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].etcError) != 0) { %>
+                <td class="error"><%=result[i][j].etcError%></td>
+                <%  } else { %>
+                <td><%=result[i][j].etcError%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+            <tr>
+                <td class="sum">합계</td>
+                <% for(var j = 0; j < result[i].length; j++) { %>
+                <%  if (parseInt(result[i][j].sum) != 0) { %>
+                <td class="error-sum"><%=result[i][j].sum%></td>
+                <%  } else { %>
+                <td class="sum"><%=result[i][j].sum%></td>
+                <%  } %>
+                <% } %>
+            </tr>
+        </table>
+        <br/><br/>
+        <% } %>
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <h4>icomwiz</h4>
+    </div>
+</body>
+</html>

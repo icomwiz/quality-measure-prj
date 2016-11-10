@@ -11,38 +11,97 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 
     <!-- 사용자 스타일 시트 파일 선언 -->
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/partsmain-style.css' />
 </head>
 <body>
-    <div data-role='header' data-position="fixed">
-        <h4><%= result.partName %></h4>
-    </div>
-    <div data-role="content">
-        <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
-        <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
-            <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="true"/>
-            <label id="owns-team-label" for="owns-team">팀 관리</label>
-            <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
-            <label for="file-upload">파일 업로드</label>
-            <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
-            <label for="error-state">오류 현황</label>
-        </fieldset>
-        <ul id="listArea" data-role="listview" data-inset="true">
-        </ul>
-        <div id="error-state-div">
-            <select name="period">
-                <option value="">직업선택</option>
-                <option value="">직업선택</option>
-                <option value="">직업선택</option>
-                <option value="">직업선택</option>
-                <option value="">직업선택</option>
-                <option value="">직업선택</option>
-            </select>
+    <!-- 기본 분석자용 메인 페이지 -->
+    <div data-role="page" id="partsmain-main">
+        <div data-role='header' data-position="fixed">
+            <h4><%= result.partName %></h4>
+        </div>
+        <div data-role="content">
+            <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
+            <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
+                <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="true"/>
+                <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">팀 관리</label>
+                <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
+                <label class="partsmain-radio-labels" for="file-upload">파일 업로드</label>
+                <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
+                <label class="partsmain-radio-labels" for="error-state">오류 현황</label>
+            </fieldset>
+            <ul id="listArea" data-role="listview" data-inset="true">
+            </ul>
+            <div id="error-state-div">
+                <select name="period">
+                    <option selected>기간 선택</option>
+                    <option value="day">일 별 에러 현황</option>
+                    <option value="week">주 별 에러 현황</option>
+                    <option value="month">월 별 에러 현황</option>
+                    <option value="quarter">분기 별 에러 현황</option>
+                </select>
+            </div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>icomwiz</h4>
         </div>
     </div>
-    <div data-role="footer" data-position="fixed">
-        <h4>icomwiz</h4>
+
+    <!-- 일별 에러 사항 페이지 -->
+    <div data-role="page" id="error-day">
+        <div data-role="header" data-position="fixed">
+            <h1>일별 에러 사항</h1>
+        </div>
+        <div data-role="content">
+            <table>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>icomwiz</h4>
+        </div>
     </div>
+
+    <!-- 주별 에러 사항 페이지 -->
+    <div data-role="page" id="error-week">
+        <div data-role="header" data-position="fixed">
+            <h1>주별 에러 사항</h1>
+        </div>
+        <div data-role="content">
+            <a href = "#page1">이동</a>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>icomwiz</h4>
+        </div>
+    </div>
+
+    <!-- 월별 에러 사항 페이지 -->
+    <div data-role="page" id="error-month">
+        <div data-role="header" data-position="fixed">
+            <h1>월별 에러 사항</h1>
+        </div>
+        <div data-role="content">
+            <a href = "#page1">이동</a>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>icomwiz</h4>
+        </div>
+    </div>
+
+    <!-- 분기별 에러 사항 페이지 -->
+    <div data-role="page" id="error-quarter">
+        <div data-role="header" data-position="fixed">
+            <h1>분기별 에러 사항</h1>
+        </div>
+        <div data-role="content">
+            <a href = "#page1">이동</a>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h4>icomwiz</h4>
+        </div>
+    </div>
+
     <script>
         //팀을 선택시 해당 팀의 날짜별 report들을 불러오는 function
         function getReport(teamId) {
@@ -194,6 +253,19 @@
             $(document).on('click', '.allteamlist', function() {
                 var queryStr = '?action=2&teamId=' + $(this).children(".allteamlistteamid").val() + '&date=' + $(this).children(".allteamlistdate").text();
                 return window.location.href = "http://localhost:3000/reports" + queryStr;
+            });
+
+            // 오류현황 탭의 select가 선택되었을 시
+            $('select').change(function() {
+                if (this.value === 'day') {
+                    return window.location.href = "http://localhost:3000/reports/statistics?action=0";
+                } else if (this.value === 'week') {
+                    return window.location.href = "http://localhost:3000/reports/statistics?action=1";
+                } else if (this.value === 'month') {
+                    return window.location.href = "http://localhost:3000/reports/statistics?action=2";
+                } else if (this.value === 'quarter') {
+                    return window.location.href = "http://localhost:3000/reports/statistics?action=3";
+                }
             });
         });
     </script>

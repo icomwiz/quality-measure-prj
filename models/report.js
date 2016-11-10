@@ -1082,6 +1082,116 @@ function getReportDetailperDate(reqData, callback) {
     });
 }
 
+//일별 에러 통계
+function getErrorStatisticsPerDay(callback) {
+
+    //실제 측정 리포트가 있는 날짜들을 가져옴
+    var sql_select_day = 'SELECT DISTINCT(DATE_FORMAT(date, \'%Y-%m-%d\')) date ' +
+                         'FROM report ' +
+                         'WHERE type = 1 ' +
+                         'ORDER BY date DESC';
+
+    //날짜에 따라 에러사항 가져옴
+    var sql_select_error_statistics_per_day =
+        'SELECT b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
+        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
+        'FROM team t ' +
+        'WHERE t.team_no > 0 ' +
+        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
+        'FROM employee ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+        'JOIN team t ON(t.id = r.team_id) ' +
+        'WHERE r.type = 1 AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY a.teamId';
+
+
+    dbPool.getConnection(function(err, dbConn) {
+       if (err) {
+           return callback(err);
+       }
+
+       var resData = [];
+
+       async.waterfall([function(callback) {
+            dbConn.query(sql_select_day, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var dates = [];
+                for(var i = 0; i < results.length; i++) {
+                    dates.push(results[i].date);
+                }
+                callback(null, dates);
+            });
+           }, getErrorPerDay
+       ], function(err, result) {
+           if (err) {
+               return callback(err);
+           }
+           callback(null, resData);
+       });
+
+       function getErrorPerDay(dates, callback) {
+           async.each(dates, function(date, callback) {
+              dbConn.query(sql_select_error_statistics_per_day, [date], function(err, results) {
+                 if (err) {
+                     return callback(err);
+                 }
+                 var data = [];
+                 for (var i = 0; i < results.length; i++) {
+                     data.push({
+                         date: date,
+                         teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                         teamLeader: results[i].teamLeder || '',
+                         gpsError: results[i].gpsError || 0,
+                         notebookError: results[i].notebookError || 0,
+                         terminalError: results[i].terminalError || 0,
+                         equipmentError: results[i].equipmentError || 0,
+                         measurererError: results[i].measurererError || 0,
+                         cableError: results[i].cableError || 0,
+                         programError: results[i].programError || 0,
+                         etcError: results[i].etcError || 0,
+                         sum: results[i].sum || 0
+                     });
+                 }
+                 resData.push(data);
+                 callback();
+              });
+           }, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+           });
+       }
+    });
+}
+
+//주별 에러 통계
+function getErrorStatisticsPerWeek() {
+
+}
+
+//월별 에러 통계
+function getErrorStatisticsPerMonth() {
+
+}
+
+//분기별 에러 통계
+function getErrorStatisticsPerQuarter() {
+
+}
+
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
@@ -1091,3 +1201,7 @@ module.exports.getReportsByteamId = getReportsByteamId;
 module.exports.updatePlan = updatePlan;
 module.exports.updateReportSelect = updateReportSelect;
 module.exports.getReportDetailperDate = getReportDetailperDate;
+module.exports.getErrorStatisticsPerDay = getErrorStatisticsPerDay;
+module.exports.getErrorStatisticsPerWeek = getErrorStatisticsPerWeek;
+module.exports.getErrorStatisticsPerMonth = getErrorStatisticsPerMonth;
+module.exports.getErrorStatisticsPerQuarter = getErrorStatisticsPerQuarter;

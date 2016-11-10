@@ -1,0 +1,74 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+li {
+  list-style: none;
+}
+
+#partsteamreport-teamName {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+}
+
+#partsteamreport-date {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+}
+
+#partsteamreport-basic-info {
+  background-color: lightgray;
+  margin-top: 15px;
+  margin-left: 3px;
+  margin-right: 3px;
+  padding: 3px;
+  font-size: 1.1em;
+}
+
+.partsteamreport-basic-info-details {
+  background-color: white;
+  margin: 3px;
+  padding: 3px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+th, td {
+  border: 1px solid #bcbcbc;
+}
+
+.partsteamreport-time {
+  color: dimgray;
+  font-size: 0.8em;
+}
+
+.partsteamreport-location {
+  color: dimgray;
+  font-size: 0.8em;
+}
+
+.partsteamreport-calls {
+  color: #00B7FF;
+  font-size: 0.8em;
+}
+
+.partsteamreport-error {
+  color: red;
+  font-size: 0.8em;
+  float: right;
+}

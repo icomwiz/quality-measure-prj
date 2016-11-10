@@ -1,5 +1,4 @@
 var Report = require('../models/report');
-var Employee = require('../models/employee');
 var formidable = require('formidable');
 var path = require('path');
 var express = require('express');
@@ -239,6 +238,27 @@ router.post('/planner', function(req, res, next) {
             });
         });
     });
+});
+
+router.get('/statistics', function(req, res, next) {
+    var action = parseInt(req.query.action);
+    if (action === 0) { //일별
+        Report.getErrorStatisticsPerDay(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            console.log(result);
+            res.render('day-error', {
+                result: result
+            });
+        });
+    } else if (action === 1) { //주별
+        
+    } else if (action === 2) { //월별
+        
+    } else { //분기별
+        
+    }
 });
 
 module.exports = router;

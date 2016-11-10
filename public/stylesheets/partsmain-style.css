@@ -1,0 +1,45 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+li {
+  list-style: none;
+}
+
+#btnLogin {
+  cursor: pointer;
+}
+
+.teamList {
+  cursor: pointer;
+}
+
+.allteamlist {
+  cursor: pointer;
+}
+
+.hello {
+  text-align: right;
+}
+
+.parts-main-radio-btns {
+  text-align: center;
+}
+
+#home {
+  width: 25px;
+  height: auto;
+  float: left;
+  cursor: pointer;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+#error-state-div {
+  display: none;
+}

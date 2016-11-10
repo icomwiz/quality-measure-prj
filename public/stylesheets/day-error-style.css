@@ -1,0 +1,46 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    text-align: center;
+    font-size: 1em;
+}
+
+tr, td {
+    margin: 3px;
+    border: 1px solid black;
+}
+
+.date {
+    background-color: lightgrey;
+    height: 35px;
+    font-weight: bold;
+}
+
+.sum {
+    background-color: floralwhite;
+}
+
+.team {
+    background-color: lightgrey;
+}
+
+.error {
+    color: red;
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.error-sum {
+    color: red;
+    background-color: lightgrey;
+}
+
+.error-kind {
+    background-color: ghostwhite;
+}
