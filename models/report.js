@@ -1093,7 +1093,7 @@ function getErrorStatisticsPerDay(callback) {
 
     //날짜에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_day =
-        'SELECT b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
+        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
         'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
@@ -1150,9 +1150,10 @@ function getErrorStatisticsPerDay(callback) {
                  var data = [];
                  for (var i = 0; i < results.length; i++) {
                      data.push({
+                         teamId: results[i].teamId,
                          date: date,
                          teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
-                         teamLeader: results[i].teamLeder || '',
+                         teamLeader: results[i].teamLeader || '',
                          gpsError: results[i].gpsError || 0,
                          notebookError: results[i].notebookError || 0,
                          terminalError: results[i].terminalError || 0,
