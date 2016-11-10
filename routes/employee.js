@@ -10,7 +10,7 @@ router.get('/partsmain', function(req, res, next) {
         partId: req.user.partId,
         partName: req.user.partName
     };
-    res.render('partsmain', {
+    res.render('parts-main', {
         result: employeesInfo
     });
 });

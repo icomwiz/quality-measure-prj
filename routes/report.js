@@ -70,7 +70,7 @@ router.get('/', function(req, res, next) {
                 return next(err);
             }
             console.log(result.employees[0].work);
-            res.render('partsteamreport',
+            res.render('parts-team-report',
                 {
                     teamName: result.teamName,
                     date: resData.date,
@@ -248,7 +248,7 @@ router.get('/statistics', function(req, res, next) {
                 return next(err);
             }
             console.log(result);
-            res.render('day-error', {
+            res.render('parts-day-error', {
                 result: result
             });
         });
