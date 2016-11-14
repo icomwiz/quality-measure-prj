@@ -69,7 +69,7 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result.employees[0].work);
+            //console.log(result.employees[0].work);
             res.render('parts-team-report',
                 {
                     teamName: result.teamName,
@@ -252,7 +252,14 @@ router.get('/statistics', function(req, res, next) {
             });
         });
     } else if (action === 1) { //주별
-        
+        Report.getErrorStatisticsPerWeek(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-week-error', {
+                result: result
+            });
+        });
     } else if (action === 2) { //월별
         
     } else if (action === 3) { //분기별
@@ -266,10 +273,9 @@ router.get('/statistics', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
             res.send({
                 result: result
-            })
+            });
         });
     }
 });

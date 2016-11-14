@@ -31,10 +31,10 @@
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
         <div id="error-state-div">
-            <input class="error-state" type="button" value="일별 에러 현황"/>
-            <input class="error-state" type="button" value="주별 에러 현항"/>
-            <input class="error-state" type="button" value="월별 에러 현황"/>
-            <input class="error-state" type="button" value="분기별 에러 현황"/>
+            <input class="error-state" type="button" id="dayErrorBtn" value="일별 에러 현황"/>
+            <input class="error-state" type="button" id="weekErrorBtn" value="주별 에러 현항"/>
+            <input class="error-state" type="button" id="monthErrorBtn" value="월별 에러 현황"/>
+            <input class="error-state" type="button" id="quarterErrorBtn" value="분기별 에러 현황"/>
         </div>
     </div>
     <div data-role="footer" data-position="fixed">
@@ -194,16 +194,17 @@
             });
 
             // 오류현황 탭의 select가 선택되었을 시
-            $('.error-state').click(function() {
-                if (this.value === '일별 에러 현황') {
-                    return window.location.href = "http://localhost:3000/reports/statistics?action=0";
-                } else if (this.value === '주별 에러 현황') {
-                    return window.location.href = "http://localhost:3000/reports/statistics?action=1";
-                } else if (this.value === '월별 에러 현황') {
-                    return window.location.href = "http://localhost:3000/reports/statistics?action=2";
-                } else if (this.value === '분기별 에러 현황') {
-                    return window.location.href = "http://localhost:3000/reports/statistics?action=3";
-                }
+            $('#dayErrorBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/statistics?action=0";
+            });
+            $('#weekErrorBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/statistics?action=1";
+            });
+            $('#monthErrorBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/statistics?action=2";
+            });
+            $('#quarterErrorBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/statistics?action=3";
             });
         });
     </script>
