@@ -48,8 +48,6 @@ function detailsList(report_id, callback) {
 }
 
 function addDetail(info, callback) {
-    console.log(info);
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
            return callback(err);
@@ -84,7 +82,7 @@ function addDetail(info, callback) {
 
         }
         function insertDetail(callback) {
-            if (info.errCheck == 0) {
+            if (info.errCheck == 1) {
                 var insert_detail1 = "INSERT INTO "+
                     "report_details(report_id, work_details, target1, target2, location, start_time, end_time, calls, "+
                     "`type`, obstacle_classification, obstacle_details, obstacle_start_time, obstacle_end_time, obstacle_phenomenon, obstacle_result) "+
@@ -114,5 +112,91 @@ function addDetail(info, callback) {
     });
 }
 
+function deleteDetail(detail_id, callback) {
+    var delete_detail = "DELETE FROM report_details WHERE id = ?;";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(delete_detail, [detail_id], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, 'ok');
+        })
+    });
+}
+
+function updateDetailSelect(detail_id, callback) {
+    var sql_Select_Deport = "SELECT rd.id, rd.report_id, work_details, target1, target2, r.location location1, rd.location location2, start_time, end_time, rd.calls, rd.type, "+
+                            "obstacle_classification, obstacle_details, obstacle_start_time, obstacle_end_time, obstacle_phenomenon, obstacle_result, "+
+                            "r.team_member, r.equipment_name, r.car_manager, "+
+                            "date_format(convert_tz(r.date, '+00:00', '+09:00'), '%Y-%m-%d') `date`" +
+                            "FROM report_details rd "+
+                            "JOIN report r ON (r.id = rd.report_id) "+
+                            "WHERE rd.id = ?";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_Select_Deport, [detail_id], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result[0]);
+        });
+    });
+}
+
+function updateDetail(info, callback) {
+    console.log(info);
+    if(info.type == 1) {
+        var update_detail = "UPDATE report_details "+
+            "SET work_details=?, start_time=?, end_time=?, calls=?, location=?, target1=?, target2=?, "+
+            "obstacle_classification=?, obstacle_details=?, obstacle_start_time=?, obstacle_end_time=?, "+
+            "obstacle_phenomenon=?, obstacle_result=?, type = ? "+
+            "WHERE id = ?";
+        dbPool.getConnection(function(err, dbConn) {
+            if (err) {
+                return callback(err);
+            }
+            dbConn.query(update_detail, [info.work_details, info.start_time, info.end_time, info.calls, info.location2, info.target1, info.target2,
+                info.obstacle_classification, info.obstacle_details, info.obstacle_start_time, info.obstacle_end_time,
+                info.obstacle_phenomenon, info.obstacle_result, info.type, info.detail_id], function(err, result) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, null);
+            });
+        });
+    } else {
+        var update_detail2_notErr = "UPDATE report_details "+
+            "SET work_details=?, start_time=?, end_time=?, calls=?, location=?, target1=?, target2=?, "+
+            "obstacle_classification=NULL, obstacle_details=NULL, obstacle_start_time=NULL, obstacle_end_time=NULL, "+
+            "obstacle_phenomenon=NULL, obstacle_result=NULL, type = 0 "+
+            "WHERE id = ?";
+        dbPool.getConnection(function(err, dbConn) {
+            if (err) {
+                return callback(err);
+            }
+            dbConn.query(update_detail2_notErr, [info.work_details, info.start_time, info.end_time, info.calls, info.location2, info.target1, info.target2, info.detail_id], function(err, result) {
+                dbConn.release();
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, null);
+            });
+        });
+    }
+
+
+}
+
 module.exports.detailsList = detailsList;
 module.exports.addDetail = addDetail;
+module.exports.deleteDetail = deleteDetail;
+module.exports.updateDetailSelect = updateDetailSelect;
+module.exports.updateDetail = updateDetail;

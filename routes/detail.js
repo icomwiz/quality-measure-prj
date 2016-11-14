@@ -49,4 +49,40 @@ router.post('/', function(req, res, next) {
         });
     });
 });
+
+router.delete('/:id', function(req, res, next) {
+    var detail_id = req.params.id;
+    Detail.deleteDetail(detail_id, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : 'ok'
+        });
+    });
+});
+
+router.get('/:id', function(req, res, next) {
+    var detail_id = req.params.id;
+    Detail.updateDetailSelect(detail_id, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : result
+        });
+    });
+});
+
+router.put('/:id', function(req, res, next) {
+    var info = req.body;
+    Detail.updateDetail(info, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : 'ok'
+        });
+    });
+});
 module.exports = router;
