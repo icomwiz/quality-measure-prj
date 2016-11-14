@@ -1193,6 +1193,50 @@ function getErrorStatisticsPerQuarter() {
 
 }
 
+//일별 에러 통계의 자세한 에러 사항 보기
+function getDetailErrorStatePerDay(reqData, callback) {
+    var sql_detail_error_state =
+        'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+        'JOIN report_details rd ON (rd.report_id = r.id) ' +
+        'JOIN employee e ON (e.id = r.employee_id) ' +
+        'JOIN (SELECT e.name, t.id ' +
+        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
+        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+        'WHERE r.type = 1 AND t.id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 AND rd.obstacle_classification = ? ' +
+        'ORDER BY obstacleStartTime';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.date, reqData.obstacleClassification], function(err, results) {
+            dbConn.release();
+            if (err) {
+               return callback(err);
+           }
+           var resData = [];
+           for (var i = 0; i < results.length; i++) {
+               resData.push({
+                   date: results[i].date,
+                   teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                   teamLeader: results[i].teamLeader,
+                   errorGenerator: results[i].name,
+                   teamPosition: results[i].teamPosition,
+                   workDetails: results[i].workDetails,
+                   obstacleClassification: results[i].obstacleClassification,
+                   obstacleDetails: results[i].obstacleDetails,
+                   obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
+                   obstaclePhenomenon: results[i].obstaclePhenomenon,
+                   obstacleResult: results[i].obstacleResult
+               });
+           }
+           callback(null, resData);
+        });
+    });
+}
+
+
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
@@ -1206,3 +1250,4 @@ module.exports.getErrorStatisticsPerDay = getErrorStatisticsPerDay;
 module.exports.getErrorStatisticsPerWeek = getErrorStatisticsPerWeek;
 module.exports.getErrorStatisticsPerMonth = getErrorStatisticsPerMonth;
 module.exports.getErrorStatisticsPerQuarter = getErrorStatisticsPerQuarter;
+module.exports.getDetailErrorStatePerDay = getDetailErrorStatePerDay;

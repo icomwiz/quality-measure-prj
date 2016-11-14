@@ -41,10 +41,12 @@
                 <td class="error-kind">GPS</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].gpsError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].gpsError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="GPS"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].gpsError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="GPS"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].gpsError%></td>
                 <%  } %>
@@ -54,10 +56,12 @@
                 <td class="error-kind">노트북</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].notebookError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].notebookError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="노트북"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].notebookError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="노트북"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].notebookError%></td>
                 <%  } %>
@@ -67,10 +71,12 @@
                 <td class="error-kind">단말기</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].terminalError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].terminalError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="단말기"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].terminalError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="단말기"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].terminalError%></td>
                 <%  } %>
@@ -80,10 +86,12 @@
                 <td class="error-kind">장비</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].equipmentError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].equipmentError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="장비"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].equipmentError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="장비"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].equipmentError%></td>
                 <%  } %>
@@ -93,10 +101,12 @@
                 <td class="error-kind">측정자</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].measurererError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].measurererError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="측정자"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].measurererError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="측정자"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].measurererError%></td>
                 <%  } %>
@@ -106,10 +116,12 @@
                 <td class="error-kind">케이블</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].cableError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].cableError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="케이블"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].cableError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="케이블"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].cableError%></td>
                 <%  } %>
@@ -119,10 +131,12 @@
                 <td class="error-kind">프로그램</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].programError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].programError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="프로그램"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].programError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="프로그램"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].programError%></td>
                 <%  } %>
@@ -132,10 +146,12 @@
                 <td class="error-kind">기타</td>
                 <% for(var j = 0; j < result[i].length; j++) { %>
                 <%  if (parseInt(result[i][j].etcError) != 0) { %>
-                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].etcError%></a></td>
-                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                <input type="hidden" name="errorType" value="기타"/>
+                <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].etcError%>
+                        <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
+                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="errorType" value="기타"/>
+                    </a>
+                </td>
                 <%  } else { %>
                 <td><%=result[i][j].etcError%></td>
                 <%  } %>
@@ -164,7 +180,7 @@
         <div data-role="header">
             <h2>에러 현황</h2>
         </div>
-        <div role="main" class="ui-content">
+        <div role="main">
             <ul data-role="listview" id="errorListArea" data-inset="true">
             </ul>
         </div>
@@ -172,7 +188,58 @@
     <script>
         $(function() {
             $('.error-detail').click(function() {
-                //ajax 코드
+                $.ajax({
+                    url: "http://localhost:3000/reports/statistics",
+                    type: "GET",
+                    dataType: "JSON",
+                    data: {
+                        action: 4,
+                        teamId: $(this).children('input[name="teamId"]').val(),
+                        date: $(this).children('input[name="date"]').val(),
+                        obstacleClassification: encodeURI($(this).children('input[name="errorType"]').val(), "UTF-8")
+                    },
+                    success: function(data) {
+                        var tagList = "";
+                        var workdetails = '';
+                        for (var i = 0; i < data.result.length; i++) {
+                            if (data.result[i].workDetails < 100) {
+                                workdetails = data.result[i].workDetails + '차 측정 중 에러 발생';
+                            } else {
+                                switch (data.result[i].workDetails) {
+                                    case 100:
+                                        workdetails = '집 대상지 이동 중 에러 발생'
+                                        break;
+                                    case 101:
+                                        workdetails = '대상지 도착 후 SETUP 중 에러 발생'
+                                        break;
+                                    case 102:
+                                        workdetails = '측정 종료 후 복귀 중 에러 발생'
+                                        break;
+                                    case 103:
+                                        workdetails = 'FTP측정 데이터 업로드 중 에러 발생'
+                                        break;
+                                }
+                            }
+                            tagList += "<li><div>" +
+                                    '에러 발생 날짜 : ' + data.result[i].date + '<br/>' +
+                                    '팀 : ' + data.result[i].teamName + '<br/>' +
+                                    '조장 : ' + data.result[i].teamLeader + '<br/>' +
+                                    '에러 발생자 : ' + data.result[i].errorGenerator + '<br/>' +
+                                    workdetails + '<br/><br/>' +
+                                    '에러 구분 : ' + data.result[i].obstacleClassification + '<br/>' +
+                                    '에러 세부 : ' + data.result[i].obstacleDetails + '<br/>' +
+                                    '에러 발생 시간 : ' + data.result[i].obstacleTime + '<br/>' +
+                                    '에러 증상 : ' + data.result[i].obstaclePhenomenon + '<br/>' +
+                                    '에러 조치 : ' + data.result[i].obstacleResult + '<br/>' + "</div></li>"
+                        }
+                        $('#errorListArea').empty();
+                        $('#errorListArea').append(tagList);
+                        $('#listArea').listview('refresh');
+                    },
+                    error: function(data) {
+                        console.log('실패');
+                    }
+                });
             });
         });
     </script>

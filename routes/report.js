@@ -255,8 +255,22 @@ router.get('/statistics', function(req, res, next) {
         
     } else if (action === 2) { //월별
         
-    } else { //분기별
+    } else if (action === 3) { //분기별
         
+    } else if (action === 4) { //일별 자세한 에러 사항 보기
+        var reqData = {};
+        reqData.teamId = parseInt(req.query.teamId);
+        reqData.date = req.query.date;
+        reqData.obstacleClassification = decodeURI(req.query.obstacleClassification);
+        Report.getDetailErrorStatePerDay(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            console.log(result);
+            res.send({
+                result: result
+            })
+        });
     }
 });
 
