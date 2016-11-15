@@ -9,8 +9,7 @@ function detailsList(report_id, callback) {
         "FROM report_details rd "+
         "JOIN report r ON (r.id = rd.report_id) "+
         "WHERE rd.report_id = ? "+
-        "AND rd.work_details != 101 "+
-        "AND rd.work_details != 100 "+
+        "AND rd.work_details < 100 "+
         "ORDER BY rd.id DESC;";
 
     var team_name = "SELECT r.team_name "+
@@ -151,7 +150,6 @@ function updateDetailSelect(detail_id, callback) {
 }
 
 function updateDetail(info, callback) {
-    console.log(info);
     if(info.type == 1) {
         var update_detail = "UPDATE report_details "+
             "SET work_details=?, start_time=?, end_time=?, calls=?, location=?, target1=?, target2=?, "+
@@ -191,8 +189,6 @@ function updateDetail(info, callback) {
             });
         });
     }
-
-
 }
 
 module.exports.detailsList = detailsList;

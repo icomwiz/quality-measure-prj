@@ -17,24 +17,19 @@ router.get('/', function(req, res, next) {
             if(err) {
                 return next(err);
             }
-            Report.addReport(user_id, function(err, leader, member, equipment, results) {
+            Report.addReport(user_id, function(err, results) {
                 if (err) {
                     return next(err);
                 }
-
-                // console.log(results[2][0].id);
-                // console.log(results[2][0].location);
-                // console.log(results[2][0].car_number);
-                // console.log(results[2][0].car_type);
-                // console.log(results[2][0].type);
-                // console.log(results[2][0].date);
                 res.render('main', {
                     title : 'Icomwiz',
                     report : result,
-                    leader : leader,
-                    member : member,
-                    equipment : equipment,
-                    base : results[2][0],
+                    leader : results[0].name,
+                    member : results[1].team_member,
+                    equipment : results[1].equipment_name,
+                    location : results[1].location,
+                    car_number : results[1].car_number,
+                    car_type : results[1].car_type,
                     report_id : result[0].id
                 });
             });
@@ -118,6 +113,56 @@ router.post('/', function(req, res, next) {
             return next(err);
         }
         res.send({result : "ok"});
+    });
+});
+
+//FIXME : 마지막확인 수정중, 렌더링부분구현해야함
+router.get('/confirm', function(req, res, next) {
+    function date(){
+        var date = new Date();
+
+        var year  = date.getFullYear();
+        var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+        var day   = date.getDate();
+
+        if(month < 10) {
+            month = "0"+month;
+        }
+        if(day < 10) {
+            day = "0"+day
+        }
+        return year +'-'+month+'-'+day;
+    }
+    var user_id = req.user.id;
+    var info = {};
+    info.user_id = user_id;
+    info.date = date();
+    info.report_id = req.query.report;
+    console.log(info);
+
+    // Report.confirm(info, function(err, result) {
+    //     if (err) {
+    //         return next(err);
+    //     }
+    //     res.render('confirm', {
+    //         title : 'title'
+    //     });
+    // });
+
+    res.render('confirm', {
+        title : 'title'
+    });
+});
+
+router.post('/confirm', function(req, res, next) {
+    var info = req.body;
+    info.report_id = req.query.report;
+    info.refueling_price = parseInt(req.body.refueling_price) || 0;
+    Report.confirmUpdate(info, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({result : 'ok'});
     });
 });
 

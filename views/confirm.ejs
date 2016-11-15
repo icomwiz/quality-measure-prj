@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title><%= title %></title>
+</head>
+<body>
+<div data-role='header' class="ui-grid-a">
+    <h1>
+        <input id="date" type="date" style="text-align: center;">
+    </h1>
+</div>
+
+<div data-role="content" >
+    <p>조장 :</p>
+    <input type="text" name="group_leader" id="group_leader" value=""  />
+    <p>조원 : </p>
+    <input type="text" name="group_member" id="group_member" value="" />
+    <p>측정장소 : </p>
+    <input type="text" name="measure_palce" id="measure_palce" value=""  />
+    <p>차량번호 : </p>
+    <input type="text" name="car_number" id="car_number" value=""  />
+    <p>차량종류 : </p>
+    <input type="text" name="car_kind" id="car_kind" value=""  />
+    <p>측정장비 :</p>
+    <input type="text" name="measure_machine" id="measure_machine" value="">
+    <input type="hidden" name="myName" id="myName" value="">
+    <p>시작전 KM :</p>
+    <input type="text" name="KM" id="KM" value="">
+    <p> KM</p>
+    <div class="ui-grid-b">
+        <div class="ui-field-contain">
+            <label for="select-native-3">현재주유상태 : </label>
+            <select name="select-native-3" id="select-native-3" data-iconpos="left">
+                <option value="1">하</option>
+                <option value="2">중하</option>
+                <option value="3" selected>중</option>
+                <option value="4">중상</option>
+                <option value="5">상</option>
+            </select>
+        </div>
+    </div>
+    <p>호 완료율 : </p>
+    <input type="text" name="call" id="call" value="">
+    <p>총 측정 회차 : </p>
+    <input type="text" name="measure_inning" id="measure_inning" value="">
+    <p>장애발생 유무 : </p>
+    <input type="text" name="ErrCount" id="ErrCount" value="">
+
+    <p>금일 주유 금액</p>
+    <input type="number" name="refueling_price" id="refueling_price" value="">
+    <p>금일 차량 특이사항</p>
+    <input type="text" name="car_significant" id="car_significant" value="">
+    <p>금일 실적 미완료 원인</p>
+    <input type="text" name="cause_of_incompletion" id="cause_of_incompletion" value="">
+    <p>향후 실적 조치방안</p>
+    <input type="text" name="plan_of_incompletion" id="plan_of_incompletion" value="">
+
+    측정 종료 후 복귀 시간
+    <input type="time" name="move_start_time" id="move_start_time" value="">
+    <input type="time" name="move_end_time" id="move_end_time" value="">
+
+    FTP 측정 데이터 업로드
+    <input type="time" name="stime" id="stime" value="">
+    <input type="time" name="etime" id="etime" value="">
+
+</div>
+<div data-role="footer">
+    <h1>
+        <a href="" data-role="button" id="saveBtn" data-icon="edit">최종완료</a>
+        <button data-icon="delete" class="Cencel" >취소</button>
+    </h1>
+</div>
+</body>
+
+<script>
+    $(function() {
+        var query = getUrlParams(); //쿼리스트링 받아오기
+        $("#saveBtn").click(function() {
+            var param = {
+                // report
+                refueling_price : $('#refueling_price').val(), //주유금액
+                car_significant : $('#car_significant').val(), //차량특이사항
+                cause_of_incompletion : $('#cause_of_incompletion').val(), //금일실적미완료원인
+                plan_of_incompletion : $('#plan_of_incompletion').val(), //향후실적조치방안
+
+                // details
+                move_start_time : $('#move_start_time').val(),
+                move_end_time : $('#move_end_time').val(),  //측정종료후 복귀시간 - 102
+
+                stime : $('#stime').val(),
+                etime : $('#etime').val()   //FTP측정 데이터 업로드시간 - 103
+            };
+            $.ajax({
+                url: "http://localhost:3000/reports/confirm?report="+ query.report, // API
+                type: "POST",
+                dataType: "json",
+                data: param,
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/reports?action=0";
+                    }
+                    alert('작성실패');
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
+        });
+
+        function getUrlParams() {
+            const params = {};
+            window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+            return params;
+        }
+    });
+</script>
+</html>

@@ -80,7 +80,6 @@ function updateReportSelect(info, callback) {
                    report.setup.obstacle_end_time = item.obstacle_end_time;
                    report.setup.err_type = item.err_type;
                }
-
            });
            callback(null, report);
        })
@@ -88,79 +87,142 @@ function updateReportSelect(info, callback) {
 }
 
 function addReport(user_id, callback) {
-    var group = {};
-    group.member = "";
-    /*
-    조장->조원->조원 의순서
-    (조원, 조장, 측정장비)
-     */
-    var sql_employee ="SELECT name FROM employee "+
-                      "WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND team_position = 3 ";
-    var sql_employee_member = "SELECT name FROM employee "+
-                               "WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND team_position = 4";
-    var sql_my_equipment =  "SELECT name, equipment_name FROM employee WHERE id = ?";
-
-    /*
-    측정장소, 차량번호, 차량종류
-    */
-    var sql_report = "SELECT id, location, car_number, car_type, type  "+
-                     "FROM report WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND type = 0 "+
-                     "ORDER BY date DESC";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
-            return callback(err);
+            return callback(err)
         }
-        async.series([employee, member, report, equipment], function(err, results) {
-            dbConn.release();
+        async.series([function(callback) {
+            //조장
+            var team = "SELECT a.teamId, a.teamName, a.teamNo, b.name "+
+                "FROM(SELECT id teamId, name teamName, team_no teamNo "+
+                "FROM team t "+
+                "WHERE t.team_no > 0 "+
+                "GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId "+
+                "FROM employee "+
+                "WHERE team_position = 3) b ON(a.teamId = b.teamId) "+
+                "WHERE a.teamId = (SELECT team_id "+
+                "FROM employee WHERE id = ?)";
+            dbConn.query(team, [user_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, result[0]);
+            });
+        }, function(callback) {
+            //주소, 조원, 자동차타입, 장비
+            var select_plan = "SELECT id, location, team_member, car_number, car_type, equipment_name, type "+
+                "FROM report "+
+                "WHERE employee_id = ? "+
+                "AND type = 0 "+
+                "AND date = ?";
+
+            function date(){
+                var date = new Date();
+
+                var year  = date.getFullYear();
+                var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+                var day   = date.getDate();
+
+                if(month < 10) {
+                    month = "0"+month;
+                }
+                if(day < 10) {
+                    day = "0"+day
+                }
+                return year +'-'+month+'-'+day;
+            }
+
+            dbConn.query(select_plan, [user_id, date()], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, result[0]);
+            });
+
+        }], function(err, results) {
             if (err) {
+                dbConn.release();
                 return callback(err);
             }
-            callback(err, group.leader, group.member, group.equipment, results);
+            dbConn.release();
+            callback(null, results)
         });
-        function employee(callback) {
-            dbConn.query(sql_employee, [user_id], function(err, result) {
-                if (err) {
-                   return callback(err);
-                }
-                group.leader = result[0].name;
-                callback(null, null);
-            });
-        }
-        function member(callback) {
-            dbConn.query(sql_employee_member, [user_id], function(err, result) {
-                if (err) {
-                    return callback(err);
-                }
-                async.each(result, function(item, cb) {
-                    group.member += item.name + ", ";
-                }, function(err) {
-                    if (err) {
-                        return callback(err);
-                    }
-                });
-                group.member = group.member.slice(0,-2);
-                callback(null, null);
-            });
-        }
-        function report(callback) {
-            dbConn.query(sql_report, [user_id], function(err, result) {
-                if (err) {
-                    return callback(err);
-                }
-                callback(null, result);
-            });
-        }
-        function equipment(callback) {
-            dbConn.query(sql_my_equipment, [user_id], function(err, result) {
-                if (err) {
-                    return callback(err);
-                }
-                group.equipment = result[0];
-                callback(null, result);
-            });
-        }
     });
 }
+// function addReport(user_id, callback) {
+//     var group = {};
+//     group.member = "";
+//     /*
+//     조장->조원->조원 의순서
+//     (조원, 조장, 측정장비)
+//      */
+//     var sql_employee ="SELECT name FROM employee "+
+//                       "WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND team_position = 3 ";
+//     var sql_employee_member = "SELECT name FROM employee "+
+//                                "WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND team_position = 4";
+//     var sql_my_equipment =  "SELECT name, equipment_name FROM employee WHERE id = ?";
+//
+//     /*
+//     측정장소, 차량번호, 차량종류
+//     */
+//     var sql_report = "SELECT id, location, car_number, car_type, type  "+
+//                      "FROM report WHERE team_id = (SELECT team_id FROM employee WHERE id = ?) AND type = 0 "+
+//                      "ORDER BY date DESC";
+//     dbPool.getConnection(function(err, dbConn) {
+//         if (err) {
+//             return callback(err);
+//         }
+//         async.series([employee, member, report, equipment], function(err, results) {
+//             dbConn.release();
+//             if (err) {
+//                 return callback(err);
+//             }
+//             callback(err, group.leader, group.member, group.equipment, results);
+//         });
+//         function employee(callback) {
+//             dbConn.query(sql_employee, [user_id], function(err, result) {
+//                 if (err) {
+//                    return callback(err);
+//                 }
+//                 group.leader = result[0].name;
+//                 callback(null, null);
+//             });
+//         }
+//         function member(callback) {
+//             dbConn.query(sql_employee_member, [user_id], function(err, result) {
+//                 if (err) {
+//                     return callback(err);
+//                 }
+//                 async.each(result, function(item, cb) {
+//                     group.member += item.name + ", ";
+//                 }, function(err) {
+//                     if (err) {
+//                         return callback(err);
+//                     }
+//                 });
+//                 group.member = group.member.slice(0,-2);
+//                 callback(null, null);
+//             });
+//         }
+//         function report(callback) {
+//             dbConn.query(sql_report, [user_id], function(err, result) {
+//                 if (err) {
+//                     return callback(err);
+//                 }
+//                 callback(null, result);
+//             });
+//         }
+//         function equipment(callback) {
+//             dbConn.query(sql_my_equipment, [user_id], function(err, result) {
+//                 if (err) {
+//                     return callback(err);
+//                 }
+//                 group.equipment = result[0];
+//                 callback(null, result);
+//             });
+//         }
+//     });
+// }
 
 function deleteReport(reportId, callback) {
     dbPool.getConnection(function(err, dbConn) {
@@ -246,13 +308,13 @@ function updateReport(info, callback) {
             });
         }
         function Details_setup(callback) {
-            if(info.report.errCheck == 1) {   //장애미발생
+            if(info.report.errCheck == 0) {   //장애미발생
                 var update_setup1 = "UPDATE report_details "+
                                   "SET start_time = ?, end_time = ?, obstacle_classification=NULL, "+
                                   "obstacle_details=NULL, obstacle_phenomenon=NULL, obstacle_result=NULL, "+
                                   "obstacle_start_time=NULL, obstacle_end_time=NULL, type=? "+
                                   "WHERE report_id = ? AND work_details = 101";
-                dbConn.query(update_setup1, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, 1,info.report.report_id], function(err, result) {
+                dbConn.query(update_setup1, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, 0,info.report.report_id], function(err, result) {
                     if (err) {
                         return callback(err);
                     }
@@ -267,7 +329,7 @@ function updateReport(info, callback) {
                         'WHERE report_id=? AND work_details=101';
                     dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime, info.report.errorList.obstacle_classification,
                         info.report.errorList.obstacle_details, info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
-                        0, info.report.report_id], function(err, result) {
+                        1, info.report.report_id], function(err, result) {
                         if (err) {
                             return callback(err);
                         }
@@ -281,7 +343,7 @@ function updateReport(info, callback) {
                         'WHERE report_id=? AND work_details=101';
                     dbConn.query(update_setup2, [info.report.arrivalSETPUP.startTime, info.report.arrivalSETPUP.endTime,
                         info.report.errorList.errInfo, info.report.errorList.errSolution, info.report.errorList.startTime, info.report.errorList.endTime,
-                        0, info.report.report_id], function(err, result) {
+                        1, info.report.report_id], function(err, result) {
                         if (err) {
                             return callback(err);
                         }
@@ -362,7 +424,7 @@ function newReport(info, callback) {
                 if (err) {
                     return callback(err);
                 }
-                if (info.errCheck == 0) {
+                if (info.errCheck == 1) {
                     dbConn.query(sql_insert_details_err ,[me.insertId, 101, info.arrivalSETPUP.startTime, info.arrivalSETPUP.endTime,
                         info.errCheck, info.errorList.startTime, info.errorList.endTime, info.errorList.obstacle_classification,
                         info.errorList.obstacle_details, info.errorList.errInfo, info.errorList.errSolution],function(err, result) {
@@ -381,6 +443,108 @@ function newReport(info, callback) {
                 }
             });
         }
+    });
+}
+
+//FIXME : 수정사항
+function confirm(info, callback) {
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+
+        var confirmInfo = {};
+
+        async.series([selectResluts, selectPlan], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err);
+            }
+            dbConn.release();
+            callback(null, confirmInfo);
+        });
+
+        function selectResluts(callback) {
+            var select_err_measure_calls = "SELECT report_id, SUM(type) ErrCount, count(work_details) measure_inning, SUM(calls) calls "+
+                "FROM report_details "+
+                "WHERE report_id = ? "+
+                "AND work_details != 100 AND work_details !=101 "+
+                "GROUP BY report_id";
+            dbConn.query(select_err_measure_calls, [info.report_id] , function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                confirmInfo.ErrCount = result[0].ErrCount;
+                confirmInfo.measure_inning = result[0].measure_inning + "회차 측정완료";
+                confirmInfo.calls = result[0].calls;
+                callback(null, null);
+            });
+        }
+
+        function selectPlan(callback) {
+            var select_plan = "SELECT id, employee_id, date, calls, type "+
+                "FROM report "+
+                "WHERE employee_id = ? AND date=? AND type = 0";
+            dbConn.query(select_plan, [info.user_id, info.date] , function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                confirmInfo.planCalls = result[0].calls;
+                confirmInfo.callsPercentage = (confirmInfo.calls/confirmInfo.planCalls)*100;
+                callback(null, null);
+            });
+        }
+    });
+}
+
+function confirmUpdate(info, callback) {
+    var insert_detail = "INSERT INTO report_details(report_id, work_details, start_time, end_time) VALUE(?, ?, ?, ?)";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.beginTransaction(function(err) {
+            if (err) {
+                return callback(err);
+            }
+            async.series([function (callback) {
+                dbConn.query(insert_detail, [info.report_id, 102, info.move_start_time, info.move_end_time], function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, null);
+                });
+
+            }, function(callback) {
+                dbConn.query(insert_detail, [info.report_id, 103, info.stime, info.etime], function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, null);
+                });
+            }, function(callback) {
+                var update_report = "UPDATE report " +
+                    "SET refueling_price=?, car_significant=?, cause_of_incompletion=?, plan_of_incompletion=? "+
+                    "WHERE id = ? ";
+                dbConn.query(update_report,[info.refueling_price, info.car_significant, info.cause_of_incompletion, info.plan_of_incompletion, info.report_id],function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, null);
+                });
+            }], function(err, results) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null, null);
+                });
+            });
+        });
     });
 }
 
@@ -1674,6 +1838,8 @@ function getDetailErrorStatePerQuarter(reqData, callback) {
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
+module.exports.confirm = confirm;
+module.exports.confirmUpdate = confirmUpdate;
 module.exports.deleteReport = deleteReport;
 module.exports.updateReport = updateReport;
 module.exports.getReportsByteamId = getReportsByteamId;

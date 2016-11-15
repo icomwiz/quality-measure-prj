@@ -53,14 +53,13 @@
                 <p>조원 : </p>
                 <input type="text" name="group_member" id="group_member" value="<%= member%>" />
                 <p>측정장소 : </p>
-                <input type="text" name="measure_palce" id="measure_palce" value="<%= base.location%>"  />
+                <input type="text" name="measure_palce" id="measure_palce" value="<%= location%>"  />
                 <p>차량번호 : </p>
-                <input type="text" name="car_number" id="car_number" value="<%= base.car_number%>"  />
+                <input type="text" name="car_number" id="car_number" value="<%= car_number%>"  />
                 <p>차량종류 : </p>
-                <input type="text" name="car_kind" id="car_kind" value="<%= base.car_type%>"  />
+                <input type="text" name="car_kind" id="car_kind" value="<%= car_type%>"  />
                 <p>측정장비 :</p>
-                <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment.equipment_name%>">
-                <input type="hidden" name="myName" id="myName" value="<%= equipment.name%>">
+                <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment%>">
                 <p>시작전 KM :</p>
                 <input type="text" name="KM" id="KM" value="">
                 <p> KM</p>
@@ -109,13 +108,13 @@
                 <div class="ui-field-contain">
                     <label for="select-native-2">측정전 장애 발생 유무 : </label>
                     <select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
-                        <option value="1" selected>장애 미발생</option>
-                        <option value="0">장애 발생</option>
+                        <option value="0" selected>장애 미발생</option>
+                        <option value="1">장애 발생</option>
                     </select>
                 </div>
 
                 <!-- selectbox 에따른 hidden 옵션 -->
-                <div class="ErrSelect" style="display:none" class="obstacle_classification">
+                <div class="ErrSelect" id="ErrSelect" style="display:none">
                     <div class="ui-field-contain">
                         <label for="obstacle_classification">지연구분 : </label>
                         <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
@@ -238,14 +237,14 @@
             </div>
             <div class="ui-field-contain">
                 <label for="select-native-22">측정전 장애 발생 유무 : </label>
-                <select name="select-native-22" id="select-native-22" data-iconpos="left" onchange="ErrSelect(this.value);">
+                <select name="select-native-22" id="select-native-22" data-iconpos="left" onchange="ErrSelect2(this.value);">
                     <option value="0">장애 미발생</option>
                     <option value="1">장애 발생</option>
                 </select>
             </div>
 
             <!-- selectbox 에따른 hidden 옵션 -->
-            <div class="ErrSelect" id="ErrSelect2" style="display:none" >
+            <div class="ErrSelect2" id="ErrSelect2" style="display:none" >
                 <div class="ui-field-contain">
                     <label for="obstacle_classification2">지연구분 : </label>
                     <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
@@ -374,8 +373,8 @@
                     $('#move_end_time2').val(data.result.move.end_time); //집/대상지이동시간 - 종료
                     $('#setup_start_time2').val(data.result.setup.start_time);
                     $('#setup_end_time2').val(data.result.setup.end_time);
-                    if(data.result.setup.err_type == 0) {
-                        $('#select-native-22').val(0);
+                    if(data.result.setup.err_type == 1) {
+                        $('#select-native-22').val(1);
                         $('#ErrSelect2').css("display", "block");
                         $('#obstacle_classification2').val(data.result.setup.obstacle_classification);
                         $('#obstacle_details2').val(data.result.setup.obstacle_details);
@@ -385,7 +384,7 @@
                         $('#errSolution2').val(data.result.setup.obstacle_result);//장애대응내역
 
                     } else {
-                        $('#select-native-22').val(1);
+                        $('#select-native-22').val(0);
                         $('#ErrSelect2').css("display", "none");
                     }
                     return window.location.href = "#page3"; //이동 url
@@ -468,15 +467,19 @@
     });
 
     function ErrSelect(Val) {
-        if (Val === '0') {
-            $('.ErrSelect').css("display", "block");
+        if (Val === '1') {
+            $('#ErrSelect').css("display", "block");
+        } else if(Val ==='0') {
+            $('#ErrSelect').css("display", "none");
+        }
+    }
 
-            console.log(Val);
-        } else if(Val ==='1') {
-            $('.ErrSelect').css("display", "none");
-            //$('#errInfo').text('');
-            $('.errInfo').text();
-            $('.errSolution').text();
+    function ErrSelect2(Val) {
+        if (Val == '1') {
+            alert(Val);
+            $('#ErrSelect2').css("display", "block");
+        } else if(Val =='0') {
+            $('#ErrSelect2').css("display", "none");
         }
     }
     function date(){

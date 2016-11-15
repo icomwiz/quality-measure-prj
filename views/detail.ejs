@@ -10,7 +10,7 @@
 </head>
 <body>
     <div data-role="page" id="page1">
-        <div class="ui-bar ui-bar-a" style="text-align:center" >
+        <div class="ui-bar ui-bar-a" style="text-align:center">
             <h1><%= title %></h1>
         </div>
         <div data-role="content" >
@@ -36,6 +36,9 @@
                     <% } %>
                 <% } %>
             </ul>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <h1><button id="ConfirmBtn" value="">일일업무 완료</button></h1>
         </div>
     </div>
 
@@ -405,7 +408,9 @@
                 }
             });
         });
-
+        $("#ConfirmBtn").click(function() {
+            return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report;
+        });
     });
 
     function getUrlParams() {
