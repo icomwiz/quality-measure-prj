@@ -9,6 +9,8 @@ table {
     background-color: white;
     text-align: center;
     font-size: 1em;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 tr, td {
@@ -16,7 +18,7 @@ tr, td {
     border: 1px solid black;
 }
 
-.date {
+.week {
     background-color: lightgrey;
     height: 35px;
     font-weight: bold;

@@ -14,7 +14,7 @@
     <link rel='stylesheet' href='/stylesheets/parts-week-error-style.css' />
 </head>
 <body>
-<!-- 일별 에러 사항 페이지 -->
+<!-- 주별 에러 사항 페이지 -->
 <div data-role="page" id="main">
     <div data-role="header" data-position="fixed">
         <h1>주별 에러 사항</h1>
@@ -23,7 +23,7 @@
         <% for(var i = 0; i < result.length; i++ ) { %>
         <table>
             <tr>
-                <td class="date" colspan="<%=result[i].length + 1%>"><%=result[i][0].date%></td>
+                <td class="week" colspan="<%=result[i].length + 1%>"><%=result[i][0].week%></td>
             </tr>
             <tr>
                 <td class="team">조</td>
@@ -43,7 +43,8 @@
                 <%  if (parseInt(result[i][j].gpsError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].gpsError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="GPS"/>
                     </a>
                 </td>
@@ -58,7 +59,8 @@
                 <%  if (parseInt(result[i][j].notebookError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].notebookError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="노트북"/>
                     </a>
                 </td>
@@ -73,7 +75,8 @@
                 <%  if (parseInt(result[i][j].terminalError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].terminalError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="단말기"/>
                     </a>
                 </td>
@@ -88,7 +91,8 @@
                 <%  if (parseInt(result[i][j].equipmentError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].equipmentError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="장비"/>
                     </a>
                 </td>
@@ -103,7 +107,8 @@
                 <%  if (parseInt(result[i][j].measurererError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].measurererError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="측정자"/>
                     </a>
                 </td>
@@ -118,7 +123,8 @@
                 <%  if (parseInt(result[i][j].cableError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].cableError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="케이블"/>
                     </a>
                 </td>
@@ -133,7 +139,8 @@
                 <%  if (parseInt(result[i][j].programError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].programError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="프로그램"/>
                     </a>
                 </td>
@@ -148,7 +155,8 @@
                 <%  if (parseInt(result[i][j].etcError) != 0) { %>
                 <td class="error"><a href="#dialogPage" data-rel="dialog" class="error-detail"><%=result[i][j].etcError%>
                         <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                        <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
+                        <input type="hidden" name="startDay" value="<%=result[i][j].startDay%>"/>
+                        <input type="hidden" name="endDay" value="<%=result[i][j].endDay%>"/>
                         <input type="hidden" name="errorType" value="기타"/>
                     </a>
                 </td>
@@ -193,9 +201,10 @@
                 type: "GET",
                 dataType: "JSON",
                 data: {
-                    action: 4,
+                    action: 5,
                     teamId: $(this).children('input[name="teamId"]').val(),
-                    date: $(this).children('input[name="date"]').val(),
+                    startDay: $(this).children('input[name="startDay"]').val(),
+                    endDay: $(this).children('input[name="endDay"]').val(),
                     obstacleClassification: encodeURI($(this).children('input[name="errorType"]').val(), "UTF-8")
                 },
                 success: function(data) {

@@ -18,7 +18,7 @@ tr, td {
     border: 1px solid black;
 }
 
-.date {
+.month {
     background-color: lightgrey;
     height: 35px;
     font-weight: bold;

@@ -1084,7 +1084,6 @@ function getReportDetailperDate(reqData, callback) {
 
 //일별 에러 통계
 function getErrorStatisticsPerDay(callback) {
-
     //실제 측정 리포트가 있는 날짜들을 가져옴
     var sql_select_day = 'SELECT DISTINCT(DATE_FORMAT(date, \'%Y-%m-%d\')) date ' +
                          'FROM report ' +
@@ -1184,11 +1183,11 @@ function getErrorStatisticsPerDay(callback) {
 function getErrorStatisticsPerWeek(callback) {
     //실제 측정 리포트가 있는 week들을 가져옴
     var sql_select_day = 'SELECT ' +
-                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date)) DAY), \'%Y-%m-%d\') startDay, ' +
-                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date)-6) DAY), \'%Y-%m-%d\') endDay ' +
+                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 2) DAY), \'%Y-%m-%d\') startDay, ' +
+                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 8) DAY), \'%Y-%m-%d\') endDay ' +
                          'FROM report ' +
                          'WHERE type = 1 ' +
-                         'GROUP BY startDay';
+                         'GROUP BY startDay DESC';
 
     //week에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_day =
@@ -1232,7 +1231,6 @@ function getErrorStatisticsPerWeek(callback) {
                         startDay: results[i].startDay,
                         endDay: results[i].endDay
                     });
-                    console.log(dates);
                 }
                 callback(null, dates);
             });
@@ -1246,14 +1244,32 @@ function getErrorStatisticsPerWeek(callback) {
 
         function getErrorPerWeek(dates, callback) {
             async.each(dates, function(date, callback) {
+                var dateObj = new Date();
+                var today = dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate();
+                var endDay = date.endDay.split('-');
+                if ((endDay[0] >= dateObj.getFullYear()) && (endDay[1] >= dateObj.getMonth() + 1) && (endDay[2] >= dateObj.getDate())) {
+                    date.endDay = today;
+                }
+
+                var week = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                var dayOfweek = week[dateObj.getDay()];
+
                 dbConn.query(sql_select_error_statistics_per_day, [date.startDay, date.endDay], function(err, results) {
                     if (err) {
                         return callback(err);
                     }
                     var data = [];
                     for (var i = 0; i < results.length; i++) {
+                        var week;
+                        if (date.endDay === today) {
+                            week = date.startDay + '(월요일)' + ' ~ ' + date.endDay + '(' + dayOfweek + ')';
+                        } else {
+                            week = date.startDay + '(월요일)' + ' ~ ' + date.endDay + '(일요일)';
+                        }
                         data.push({
-                            week: date.startDay + ' ~ ' + date.endDay,
+                            startDay: date.startDay,
+                            endDay: date.endDay,
+                            week: week,
                             teamId: results[i].teamId,
                             teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
                             teamLeader: results[i].teamLeader || '',
@@ -1282,13 +1298,205 @@ function getErrorStatisticsPerWeek(callback) {
 }
 
 //월별 에러 통계
-function getErrorStatisticsPerMonth() {
+function getErrorStatisticsPerMonth(callback) {
+    //실제 측정 리포트가 있는 날짜들을 가져옴
+    var sql_select_month =
+        'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
+        'FROM report ' +
+        'WHERE type = 1 ' +
+        'ORDER BY MONTH(date) DESC';
 
+    //날짜에 따라 에러사항 가져옴
+    var sql_select_error_statistics_per_month =
+        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
+        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
+        'FROM team t ' +
+        'WHERE t.team_no > 0 ' +
+        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
+        'FROM employee ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+        'JOIN team t ON(t.id = r.team_id) ' +
+        'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1 ' +
+        'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY a.teamId';
+
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+
+        var resData = [];
+
+        async.waterfall([function(callback) {
+            dbConn.query(sql_select_month, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var months = [];
+                for(var i = 0; i < results.length; i++) {
+                    months.push({
+                        year: results[i].year,
+                        month: results[i].month
+                    });
+                }
+                callback(null, months);
+            });
+        }, getErrorPerDay
+        ], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, resData);
+        });
+
+        function getErrorPerDay(months, callback) {
+            async.each(months, function(month, callback) {
+                dbConn.query(sql_select_error_statistics_per_month, [month.year, month.month], function(err, results) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    var data = [];
+                    for (var i = 0; i < results.length; i++) {
+                        data.push({
+                            teamId: results[i].teamId,
+                            year: month.year,
+                            month: month.month,
+                            teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                            teamLeader: results[i].teamLeader || '',
+                            gpsError: results[i].gpsError || 0,
+                            notebookError: results[i].notebookError || 0,
+                            terminalError: results[i].terminalError || 0,
+                            equipmentError: results[i].equipmentError || 0,
+                            measurererError: results[i].measurererError || 0,
+                            cableError: results[i].cableError || 0,
+                            programError: results[i].programError || 0,
+                            etcError: results[i].etcError || 0,
+                            sum: results[i].sum || 0
+                        });
+                    }
+                    resData.push(data);
+                    callback();
+                });
+            }, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    });
 }
 
 //분기별 에러 통계
-function getErrorStatisticsPerQuarter() {
+function getErrorStatisticsPerQuarter(callback) {
+    //실제 측정 리포트가 있는 날짜들을 가져옴
+    var sql_select_month =
+        'SELECT DISTINCT YEAR(date) year, QUARTER(date) quarter ' +
+        'FROM report ' +
+        'WHERE type = 1 ' +
+        'ORDER BY QUARTER(date) DESC';
 
+    //날짜에 따라 에러사항 가져옴
+    var sql_select_error_statistics_per_month =
+        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
+        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
+        'FROM team t ' +
+        'WHERE t.team_no > 0 ' +
+        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
+        'FROM employee ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+        'JOIN team t ON(t.id = r.team_id) ' +
+        'WHERE r.type = 1 AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 ' +
+        'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY a.teamId';
+
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var resData = [];
+        async.waterfall([function(callback) {
+            dbConn.query(sql_select_month, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var quarters = [];
+                for(var i = 0; i < results.length; i++) {
+                    quarters.push({
+                        year: results[i].year,
+                        quarter: results[i].quarter
+                    });
+                }
+                callback(null, quarters);
+            });
+        }, getErrorPerDay
+        ], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, resData);
+        });
+
+        function getErrorPerDay(quarters, callback) {
+            async.each(quarters, function(quarter, callback) {
+                dbConn.query(sql_select_error_statistics_per_month, [quarter.year, quarter.quarter], function(err, results) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    var data = [];
+                    for (var i = 0; i < results.length; i++) {
+                        data.push({
+                            teamId: results[i].teamId,
+                            year: quarter.year,
+                            quarter: quarter.quarter,
+                            teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                            teamLeader: results[i].teamLeader || '',
+                            gpsError: results[i].gpsError || 0,
+                            notebookError: results[i].notebookError || 0,
+                            terminalError: results[i].terminalError || 0,
+                            equipmentError: results[i].equipmentError || 0,
+                            measurererError: results[i].measurererError || 0,
+                            cableError: results[i].cableError || 0,
+                            programError: results[i].programError || 0,
+                            etcError: results[i].etcError || 0,
+                            sum: results[i].sum || 0
+                        });
+                    }
+                    resData.push(data);
+                    callback();
+                });
+            }, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    });
 }
 
 //일별 에러 통계의 자세한 에러 사항 보기
@@ -1334,6 +1542,134 @@ function getDetailErrorStatePerDay(reqData, callback) {
     });
 }
 
+//주별 에러 통계의 자세한 에러 사항 보기
+function getDetailErrorStatePerWeek(reqData, callback) {
+    var sql_detail_error_state =
+        'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+        'JOIN report_details rd ON (rd.report_id = r.id) ' +
+        'JOIN employee e ON (e.id = r.employee_id) ' +
+        'JOIN (SELECT e.name, t.id ' +
+        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
+        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+        'WHERE r.type = 1 AND t.id = ? AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 AND rd.obstacle_classification = ? ' +
+        'ORDER BY date DESC';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.startDay, reqData.endDay, reqData.obstacleClassification], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var resData = [];
+            for (var i = 0; i < results.length; i++) {
+                resData.push({
+                    date: results[i].date,
+                    teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                    teamLeader: results[i].teamLeader,
+                    errorGenerator: results[i].name,
+                    teamPosition: results[i].teamPosition,
+                    workDetails: results[i].workDetails,
+                    obstacleClassification: results[i].obstacleClassification,
+                    obstacleDetails: results[i].obstacleDetails,
+                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
+                    obstaclePhenomenon: results[i].obstaclePhenomenon,
+                    obstacleResult: results[i].obstacleResult
+                });
+            }
+            callback(null, resData);
+        });
+    });
+}
+
+//월별 에러 통계의 자세한 에러 사항 보기
+function getDetailErrorStatePerMonth(reqData, callback) {
+    var sql_detail_error_state =
+        'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+        'JOIN report_details rd ON (rd.report_id = r.id) ' +
+        'JOIN employee e ON (e.id = r.employee_id) ' +
+        'JOIN (SELECT e.name, t.id ' +
+        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
+        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+        'WHERE r.type = 1 AND t.id = ? AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1 AND rd.obstacle_classification = ? ' +
+        'ORDER BY date DESC';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.year, reqData.month, reqData.obstacleClassification], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var resData = [];
+            for (var i = 0; i < results.length; i++) {
+                resData.push({
+                    date: results[i].date,
+                    teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                    teamLeader: results[i].teamLeader,
+                    errorGenerator: results[i].name,
+                    teamPosition: results[i].teamPosition,
+                    workDetails: results[i].workDetails,
+                    obstacleClassification: results[i].obstacleClassification,
+                    obstacleDetails: results[i].obstacleDetails,
+                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
+                    obstaclePhenomenon: results[i].obstaclePhenomenon,
+                    obstacleResult: results[i].obstacleResult
+                });
+            }
+            callback(null, resData);
+        });
+    });
+}
+
+//분기별 에러 통계의 자세한 에러 사항 보기
+function getDetailErrorStatePerQuarter(reqData, callback) {
+    var sql_detail_error_state =
+        'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+        'JOIN report_details rd ON (rd.report_id = r.id) ' +
+        'JOIN employee e ON (e.id = r.employee_id) ' +
+        'JOIN (SELECT e.name, t.id ' +
+        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
+        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+        'WHERE r.type = 1 AND t.id = ? AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 AND rd.obstacle_classification = ? ' +
+        'ORDER BY date DESC';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.year, reqData.quarter, reqData.obstacleClassification], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var resData = [];
+            for (var i = 0; i < results.length; i++) {
+                resData.push({
+                    date: results[i].date,
+                    teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                    teamLeader: results[i].teamLeader,
+                    errorGenerator: results[i].name,
+                    teamPosition: results[i].teamPosition,
+                    workDetails: results[i].workDetails,
+                    obstacleClassification: results[i].obstacleClassification,
+                    obstacleDetails: results[i].obstacleDetails,
+                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
+                    obstaclePhenomenon: results[i].obstaclePhenomenon,
+                    obstacleResult: results[i].obstacleResult
+                });
+            }
+            callback(null, resData);
+        });
+    });
+}
 
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
@@ -1349,3 +1685,6 @@ module.exports.getErrorStatisticsPerWeek = getErrorStatisticsPerWeek;
 module.exports.getErrorStatisticsPerMonth = getErrorStatisticsPerMonth;
 module.exports.getErrorStatisticsPerQuarter = getErrorStatisticsPerQuarter;
 module.exports.getDetailErrorStatePerDay = getDetailErrorStatePerDay;
+module.exports.getDetailErrorStatePerWeek = getDetailErrorStatePerWeek;
+module.exports.getDetailErrorStatePerMonth = getDetailErrorStatePerMonth;
+module.exports.getDetailErrorStatePerQuarter = getDetailErrorStatePerQuarter;

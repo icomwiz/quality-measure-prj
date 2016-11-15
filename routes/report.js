@@ -169,7 +169,7 @@ router.post('/planner', function(req, res, next) {
                     } else if(z.substring(0, 1) === 'C') { //직책
                         plan.departmentPosition = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'D') { //파트
-                        plan.partName = worksheet1[z].v.split(',');
+                        plan.partName = (worksheet1[z].v).replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'E') { //팀
                         plan.teamName = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'F') { //조
@@ -240,6 +240,7 @@ router.post('/planner', function(req, res, next) {
     });
 });
 
+//에러 통계 보기
 router.get('/statistics', function(req, res, next) {
     var action = parseInt(req.query.action);
     if (action === 0) { //일별
@@ -261,15 +262,71 @@ router.get('/statistics', function(req, res, next) {
             });
         });
     } else if (action === 2) { //월별
-        
+        Report.getErrorStatisticsPerMonth(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-month-error', {
+                result: result
+            });
+        });
     } else if (action === 3) { //분기별
-        
+        Report.getErrorStatisticsPerQuarter(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-quarter-error', {
+                result: result
+            });
+        });
     } else if (action === 4) { //일별 자세한 에러 사항 보기
         var reqData = {};
         reqData.teamId = parseInt(req.query.teamId);
         reqData.date = req.query.date;
         reqData.obstacleClassification = decodeURI(req.query.obstacleClassification);
         Report.getDetailErrorStatePerDay(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 5) { //주별 자세한 에러 사항 보기
+        var reqData = {};
+        reqData.teamId = parseInt(req.query.teamId);
+        reqData.startDay = req.query.startDay;
+        reqData.endDay = req.query.endDay;
+        reqData.obstacleClassification = decodeURI(req.query.obstacleClassification);
+        Report.getDetailErrorStatePerWeek(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 6) { //월별 자세한 에러 사항 보기
+        var reqData = {};
+        reqData.teamId = parseInt(req.query.teamId);
+        reqData.year = parseInt(req.query.year);
+        reqData.month = parseInt(req.query.month);
+        reqData.obstacleClassification = decodeURI(req.query.obstacleClassification);
+        Report.getDetailErrorStatePerMonth(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 7) { //분기별 자세한 에러 사항 보기
+        var reqData = {};
+        reqData.teamId = parseInt(req.query.teamId);
+        reqData.year = parseInt(req.query.year);
+        reqData.quarter = parseInt(req.query.quarter);
+        reqData.obstacleClassification = decodeURI(req.query.obstacleClassification);
+        Report.getDetailErrorStatePerQuarter(reqData, function(err, result) {
             if (err) {
                 return next(err);
             }
