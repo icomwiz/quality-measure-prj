@@ -1694,11 +1694,11 @@ function getDetailErrorStatePerDay(reqData, callback) {
                    errorGenerator: results[i].name,
                    teamPosition: results[i].teamPosition,
                    workDetails: results[i].workDetails,
-                   obstacleClassification: results[i].obstacleClassification,
-                   obstacleDetails: results[i].obstacleDetails,
-                   obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
-                   obstaclePhenomenon: results[i].obstaclePhenomenon,
-                   obstacleResult: results[i].obstacleResult
+                   obstacleClassification: results[i].obstacleClassification || '',
+                   obstacleDetails: results[i].obstacleDetails || '',
+                   obstacleTime: (results[i].obstacleStartTime || '') + ' ~ ' + (results[i].obstacleEndTime || ''),
+                   obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                   obstacleResult: results[i].obstacleResult || ''
                });
            }
            callback(null, resData);
@@ -1737,11 +1737,11 @@ function getDetailErrorStatePerWeek(reqData, callback) {
                     errorGenerator: results[i].name,
                     teamPosition: results[i].teamPosition,
                     workDetails: results[i].workDetails,
-                    obstacleClassification: results[i].obstacleClassification,
-                    obstacleDetails: results[i].obstacleDetails,
-                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
-                    obstaclePhenomenon: results[i].obstaclePhenomenon,
-                    obstacleResult: results[i].obstacleResult
+                    obstacleClassification: results[i].obstacleClassification || '',
+                    obstacleDetails: results[i].obstacleDetails || '',
+                    obstacleTime: (results[i].obstacleStartTime || '') + ' ~ ' + (results[i].obstacleEndTime || ''),
+                    obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                    obstacleResult: results[i].obstacleResult || ''
                 });
             }
             callback(null, resData);
@@ -1780,11 +1780,11 @@ function getDetailErrorStatePerMonth(reqData, callback) {
                     errorGenerator: results[i].name,
                     teamPosition: results[i].teamPosition,
                     workDetails: results[i].workDetails,
-                    obstacleClassification: results[i].obstacleClassification,
-                    obstacleDetails: results[i].obstacleDetails,
-                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
-                    obstaclePhenomenon: results[i].obstaclePhenomenon,
-                    obstacleResult: results[i].obstacleResult
+                    obstacleClassification: results[i].obstacleClassification || '',
+                    obstacleDetails: results[i].obstacleDetails || '',
+                    obstacleTime: (results[i].obstacleStartTime || '') + ' ~ ' + (results[i].obstacleEndTime || ''),
+                    obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                    obstacleResult: results[i].obstacleResult || ''
                 });
             }
             callback(null, resData);
@@ -1823,11 +1823,11 @@ function getDetailErrorStatePerQuarter(reqData, callback) {
                     errorGenerator: results[i].name,
                     teamPosition: results[i].teamPosition,
                     workDetails: results[i].workDetails,
-                    obstacleClassification: results[i].obstacleClassification,
-                    obstacleDetails: results[i].obstacleDetails,
-                    obstacleTime: results[i].obstacleStartTime + ' ~ ' + results[i].obstacleEndTime,
-                    obstaclePhenomenon: results[i].obstaclePhenomenon,
-                    obstacleResult: results[i].obstacleResult
+                    obstacleClassification: results[i].obstacleClassification || '',
+                    obstacleDetails: results[i].obstacleDetails || '',
+                    obstacleTime: (results[i].obstacleStartTime || '') + ' ~ ' + (results[i].obstacleEndTime || ''),
+                    obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                    obstacleResult: results[i].obstacleResult || ''
                 });
             }
             callback(null, resData);

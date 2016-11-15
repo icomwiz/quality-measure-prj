@@ -48,3 +48,7 @@ tr, td {
 .error-kind {
     background-color: ghostwhite;
 }
+
+.excelDownBtn {
+    float: right;
+}

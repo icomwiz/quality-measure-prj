@@ -12,6 +12,9 @@
 
     <!-- 사용자 스타일 시트 파일 선언 -->
     <link rel='stylesheet' href='/stylesheets/parts-quarter-error-style.css' />
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 </head>
 <body>
 <!-- 월별 에러 사항 페이지 -->
@@ -21,9 +24,9 @@
     </div>
     <div data-role="content">
         <% for(var i = 0; i < result.length; i++ ) { %>
-        <table>
+        <table id="errorTbl<%=i%>">
             <tr>
-                <td class="quarter" colspan="<%=result[i].length + 1%>"><%=result[i][0].year%>-<%=result[i][0].quarter%>분기</td>
+                <th class="quarter" colspan="<%=result[i].length + 1%>"><%=result[i][0].year%>-<%=result[i][0].quarter%>분기</th>
             </tr>
             <tr>
                 <td class="team">조</td>
@@ -176,7 +179,8 @@
                 <% } %>
             </tr>
         </table>
-        <br/><br/>
+        <a data-role="button" class="excelDownBtn" data-inline="true" data-theme="b" id="<%=i%>">엑셀로 다운로드</a>
+        <br/><br/><br/><br/>
         <% } %>
     </div>
     <div data-role="footer" data-position="fixed">
@@ -249,6 +253,15 @@
                 error: function(data) {
                     console.log('실패');
                 }
+            });
+        });
+
+        $('.excelDownBtn').click(function() {
+            var tableId = 'errorTbl' + $(this).attr('id');
+            console.log(tableId);
+            $('#' + tableId).excelexportjs({
+                containerid: tableId,
+                datatype: 'table'
             });
         });
     });
