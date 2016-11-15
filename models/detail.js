@@ -46,6 +46,47 @@ function detailsList(report_id, callback) {
     });
 }
 
+function baseDetail(report_id, user_id, callback) {
+    var baseInfo = {};
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        async.series([function (callback) {
+            var me = "SELECT name FROM employee WHERE id = ?";
+            dbConn.query(me, [user_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                baseInfo.name = result[0].name;
+                callback(null, null);
+            });
+        }, function(callback) {
+            var sql_base_info = "SELECT team_member, location, car_number, car_type, equipment_name "+
+                "FROM report WHERE id = ?";
+            dbConn.query(sql_base_info, [report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                baseInfo.team_member = result[0].team_member;
+                baseInfo.location = result[0].location;
+                baseInfo.car_number = result[0].car_number;
+                baseInfo.car_type = result[0].car_type;
+                baseInfo.equipment_name = result[0].equipment_name;
+
+                callback(null, null);
+            });
+        }], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err);
+            }
+            dbConn.release();
+            callback(null, baseInfo);
+        });
+    });
+}
+
 function addDetail(info, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -193,6 +234,7 @@ function updateDetail(info, callback) {
 
 module.exports.detailsList = detailsList;
 module.exports.addDetail = addDetail;
+module.exports.baseDetail = baseDetail;
 module.exports.deleteDetail = deleteDetail;
 module.exports.updateDetailSelect = updateDetailSelect;
 module.exports.updateDetail = updateDetail;

@@ -8,18 +8,23 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
     var report_id = req.query.Report;
-    //console.log(report_id);
-
+    var user_id = req.user.id;
     Detail.detailsList(report_id, function(err, result) {
         var team_name = "";
         if (err) {
             return next(err);
         }
-        team_name = result[0].team_name+"/"+date();
-        res.render('detail', {
-            title: team_name,
-            id : req.query.Report,
-            detail : result
+        Detail.baseDetail(report_id, user_id, function(err, baseResult) {
+            if (err) {
+                return next(err);
+            }
+            team_name = result[0].team_name+"/"+date();
+            res.render('detail', {
+                title: team_name,
+                id : req.query.Report,
+                detail : result,
+                base : baseResult
+            });
         });
     });
 

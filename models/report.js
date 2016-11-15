@@ -455,16 +455,7 @@ function confirm(info, callback) {
 
         var confirmInfo = {};
 
-        async.series([selectResluts, selectPlan], function(err, results) {
-            if (err) {
-                dbConn.release();
-                return callback(err);
-            }
-            dbConn.release();
-            callback(null, confirmInfo);
-        });
-
-        function selectResluts(callback) {
+        async.series([function(callback) {
             var select_err_measure_calls = "SELECT report_id, SUM(type) ErrCount, count(work_details) measure_inning, SUM(calls) calls "+
                 "FROM report_details "+
                 "WHERE report_id = ? "+
@@ -474,14 +465,14 @@ function confirm(info, callback) {
                 if (err) {
                     return callback(err);
                 }
-                confirmInfo.ErrCount = result[0].ErrCount;
-                confirmInfo.measure_inning = result[0].measure_inning + "회차 측정완료";
-                confirmInfo.calls = result[0].calls;
+                if(result[0]) {
+                    confirmInfo.ErrCount = result[0].ErrCount;
+                    confirmInfo.measure_inning = result[0].measure_inning + "회차 측정완료";
+                    confirmInfo.calls = result[0].calls;
+                }
                 callback(null, null);
             });
-        }
-
-        function selectPlan(callback) {
+        }, function(callback) {
             var select_plan = "SELECT id, employee_id, date, calls, type "+
                 "FROM report "+
                 "WHERE employee_id = ? AND date=? AND type = 0";
@@ -493,7 +484,58 @@ function confirm(info, callback) {
                 confirmInfo.callsPercentage = (confirmInfo.calls/confirmInfo.planCalls)*100;
                 callback(null, null);
             });
-        }
+        }, function(callback) {
+            var team_leader = "SELECT b.name "+
+                              "FROM(SELECT id teamId, name teamName, team_no teamNo "+
+                              "FROM team t "+
+                              "WHERE t.team_no > 0 "+
+                              "GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId "+
+                              "FROM employee "+
+                              "WHERE team_position = 3) b ON(a.teamId = b.teamId) "+
+                              "WHERE a.teamId = (SELECT team_id FROM employee WHERE id = ?) ";
+            dbConn.query(team_leader, [info.user_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                confirmInfo.team_leader = result[0].name;
+                callback(null, null);
+            });
+        }, function(callback) {
+            var sql_base_info = "SELECT team_member, location, car_number, car_type, equipment_name, car_mileage_before, car_refuel_state "+
+                                "FROM report WHERE id = ?";
+            dbConn.query(sql_base_info, [info.report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                confirmInfo.team_member = result[0].team_member;
+                confirmInfo.location = result[0].location;
+                confirmInfo.car_number = result[0].car_number;
+                confirmInfo.car_type = result[0].car_type;
+                confirmInfo.equipment_name = result[0].equipment_name;
+                confirmInfo.car_mileage_before = result[0].car_mileage_before;
+
+                if(result[0].car_refuel_state == 1) {
+                    confirmInfo.car_refuel_state = '하'
+                } else if(result[0].car_refuel_state == 2) {
+                    confirmInfo.car_refuel_state = '중하'
+                } else if(result[0].car_refuel_state == 3) {
+                    confirmInfo.car_refuel_state = '중'
+                } else if(result[0].car_refuel_state == 4) {
+                    confirmInfo.car_refuel_state = '중상'
+                } else if(result[0].car_refuel_state == 5) {
+                    confirmInfo.car_refuel_state = '상'
+                }
+                callback(null, null);
+            });
+
+        }], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err);
+            }
+            dbConn.release();
+            callback(null, confirmInfo);
+        });
     });
 }
 

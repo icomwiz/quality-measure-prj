@@ -48,13 +48,13 @@
         </div>
         <div data-role="content" >
             <p>사용자 :</p>
-            <input type="text" class="group_leader" value="" />
+            <input type="text" class="group_leader" value="<%= base.name%>" />
             <p>조원 : </p>
-            <input type="text" class="group_member" value="" />
+            <input type="text" class="group_member" value="<%= base.team_member%>" />
             <p>측정 장소 : </p>
-            <input type="text" class="measure_palce" value="" />
+            <input type="text" class="measure_palce" value="<%= base.location%>" />
             <p>측정 장비 :</p>
-            <input type="text" class="measure_machine" value=""/>
+            <input type="text" class="measure_machine" value="<%= base.equipment_name%>"/>
             <p>측정 회차 : </p>
             <input type="number" class="work_details" value=""/>
             <p>측정 유형1 :</p>

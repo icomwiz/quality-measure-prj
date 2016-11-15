@@ -16,40 +16,22 @@
 </div>
 
 <div data-role="content" >
-    <p>조장 :</p>
-    <input type="text" name="group_leader" id="group_leader" value=""  />
-    <p>조원 : </p>
-    <input type="text" name="group_member" id="group_member" value="" />
-    <p>측정장소 : </p>
-    <input type="text" name="measure_palce" id="measure_palce" value=""  />
-    <p>차량번호 : </p>
-    <input type="text" name="car_number" id="car_number" value=""  />
-    <p>차량종류 : </p>
-    <input type="text" name="car_kind" id="car_kind" value=""  />
-    <p>측정장비 :</p>
-    <input type="text" name="measure_machine" id="measure_machine" value="">
-    <input type="hidden" name="myName" id="myName" value="">
-    <p>시작전 KM :</p>
-    <input type="text" name="KM" id="KM" value="">
-    <p> KM</p>
-    <div class="ui-grid-b">
-        <div class="ui-field-contain">
-            <label for="select-native-3">현재주유상태 : </label>
-            <select name="select-native-3" id="select-native-3" data-iconpos="left">
-                <option value="1">하</option>
-                <option value="2">중하</option>
-                <option value="3" selected>중</option>
-                <option value="4">중상</option>
-                <option value="5">상</option>
-            </select>
-        </div>
-    </div>
+    <p> 조장 : <%= team_leader%><br>
+        조원 : <%= team_member%><br>
+        측정장소 : <%= location%><br>
+        차량번호 : <%= car_number%><br>
+        차량종류 : <%= car_type%><br>
+        측정장비 : <%= equipment_name%><br>
+        시작전 KM : <%= car_mileage_before%>KM<br>
+        현재주유상태 : <%= car_refuel_state%>
+    </p>
+
     <p>호 완료율 : </p>
-    <input type="text" name="call" id="call" value="">
+    <input type="text" name="call" id="call" value="<%= callsPercentage%>">
     <p>총 측정 회차 : </p>
-    <input type="text" name="measure_inning" id="measure_inning" value="">
+    <input type="text" name="measure_inning" id="measure_inning" value="<%= measure_inning%>">
     <p>장애발생 유무 : </p>
-    <input type="text" name="ErrCount" id="ErrCount" value="">
+    <input type="text" name="ErrCount" id="ErrCount" value="<%= ErrCount%>">
 
     <p>금일 주유 금액</p>
     <input type="number" name="refueling_price" id="refueling_price" value="">
@@ -80,6 +62,7 @@
 <script>
     $(function() {
         var query = getUrlParams(); //쿼리스트링 받아오기
+        $('#date').val(date());
         $("#saveBtn").click(function() {
             var param = {
                 // report
@@ -111,11 +94,29 @@
                 }
             });
         });
-
+        $(".Cencel").click(function() {
+            window.location.href = "http://localhost:3000/details?Report="+ query.report;
+        });
         function getUrlParams() {
             const params = {};
             window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
             return params;
+        }
+
+        function date() {
+            var date = new Date();
+
+            var year  = date.getFullYear();
+            var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
+            var day   = date.getDate();
+
+            if(month < 10) {
+                month = "0"+month;
+            }
+            if(day < 10) {
+                day = "0"+day
+            }
+            return year +'-'+month+'-'+day;
         }
     });
 </script>

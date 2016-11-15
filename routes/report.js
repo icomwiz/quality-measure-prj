@@ -138,19 +138,27 @@ router.get('/confirm', function(req, res, next) {
     info.user_id = user_id;
     info.date = date();
     info.report_id = req.query.report;
-    console.log(info);
 
-    // Report.confirm(info, function(err, result) {
-    //     if (err) {
-    //         return next(err);
-    //     }
-    //     res.render('confirm', {
-    //         title : 'title'
-    //     });
-    // });
-
-    res.render('confirm', {
-        title : 'title'
+    Report.confirm(info, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.render('confirm', {
+            title : 'title',
+            ErrCount : result.ErrCount, //에러횟수
+            measure_inning : result.measure_inning, //측정진행상황
+            calls : result.calls, //콜 횟수
+            planCalls : result.planCalls, //계획된콜횟수
+            callsPercentage : result.callsPercentage+"% ("+result.calls+"/"+result.planCalls+")", //콜 백분위계산
+            team_leader : result.team_leader,
+            team_member : result.team_member,
+            location : result.location,
+            car_number : result.car_number,
+            car_type : result.car_type,
+            equipment_name : result.equipment_name,
+            car_mileage_before : result.car_mileage_before,
+            car_refuel_state : result.car_refuel_state
+        });
     });
 });
 
