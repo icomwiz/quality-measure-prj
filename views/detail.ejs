@@ -10,9 +10,12 @@
 </head>
 <body>
     <div data-role="page" id="page1">
-        <div class="ui-bar ui-bar-a" style="text-align:center">
-            <h1><%= title %></h1>
+        <div data-role="header" style="text-align: center">
+            <%= title %>
         </div>
+        <!--<div class="ui-bar ui-bar-a" style="text-align:center">-->
+            <!--<h1><%= title %></h1>-->
+        <!--</div>-->
         <div data-role="content" >
             <a href="#page2" data-role="button" id="addReport">+</a>
             <ul data-role="listview" data-inset="true">
@@ -20,13 +23,11 @@
                     <% for(var i = 0; i < detail.length ; i++) {%>
                     <li>
                         <div dat-role="controlgroup">
-                            <button style="width: 80%; float: left;" data-role="button" class="datailList" value="<%= detail[i].id%>">
-                                <p  style="float: left; text-align:left" >
+                                <div  style=" text-align:left" >
                                     측정회차 : <%= detail[i].work_Details+""+"차측정"%><br>
                                     측정장소 : <%= detail[i].location + " " + detail[i].locationDetail%><br>
                                     측정팀 : <%= detail[i].team_name%>
-                                </p>
-                            </button>
+                                </div>
                             <div style=" float: right">
                                 <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= detail[i].id%>"></button>
                                 <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= detail[i].id%>"></button>
@@ -37,8 +38,9 @@
                 <% } %>
             </ul>
         </div>
-        <div data-role="footer" data-position="fixed">
-            <h1><button id="ConfirmBtn" value="">일일업무 완료</button></h1>
+        <div data-role="footer" data-position="fixed" style="text-align: center">
+            <button id="BackBtn" value="">뒤로가기</button>
+            <button id="ConfirmBtn" value="">일일업무 완료</button>
         </div>
     </div>
 
@@ -53,15 +55,14 @@
                 측정장소 : <%= base.location%><br>
                 측정장비 : <%= base.equipment_name%><br>
             </p>
-            <input type="text" class="measure_machine" value=""/>
             <p>측정 회차 : </p>
-            <input type="number" class="work_details" value=""/>
-            <p>측정 유형1 :</p>
-            <input type="text" class="target1" value=""/>
-            <p>측정 유형2 :</p>
-            <input type="text" class="target2" value=""/>
-            <p>차정장소(동호수) : </p>
-            <input type="text" class="location" value=""/>
+            <input type="number" class="work_details" value="" placeholder="ex) 1 (숫자만입력)"/>
+            <p>측정 대상1 :</p>
+            <input type="text" class="target1" value="" placeholder="ex) 포도몰(건물명,측정방식)"/>
+            <p>측정 대상2 :</p>
+            <input type="text" class="target2" value="" placeholder="ex) 도로(주도로+이면도로)"/>
+            <p>세부지역(동호수) : </p>
+            <input type="text" class="location" value="" placeholder="ex) 신림동"/>
 
             <div class="ui-grid-d">
                 <p>측정 소요시간 : </p>
@@ -80,8 +81,7 @@
             </div>
 
             <p>측정 Call 횟수 : </p>
-            <input type="number" class="calls" value=""/>
-
+            <input type="number" class="calls" value="" placeholder="ex) 1 [숫자만입력]"/>
 
             <div class="ui-field-contain">
                 <label for="errCheck1">측정전 장애 발생 유무 : </label>
@@ -264,7 +264,7 @@
     $(function() {
         var query = getUrlParams(); //쿼리스트링 받아오기
         $(".Cencel").click(function() {
-            window.location.href = "http://localhost:3000/details?Report="+query.Report;
+            window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
         });
         $("#date1").val(date());
         $(".saveBtn").click(function() {
@@ -293,13 +293,13 @@
                 }
             };
             $.ajax({
-                url: "http://localhost:3000/details", // REST API
+                url: "http://192.168.0.28:3000/details", // REST API
                 type: "POST",
                 dataType: "json",
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/details?Report="+query.Report;
+                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
                     }
                     alert('작성실패');
                 },
@@ -311,12 +311,12 @@
         $(".deleteinfo").click(function() {
             var detail = $(this).val();
             $.ajax({
-                url: "http://localhost:3000/details/"+detail,
+                url: "http://192.168.0.28:3000/details/"+detail,
                 type: "DELETE",
                 dataType: "json",
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/details?Report="+query.Report;
+                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
                     }
                     alert('삭제실패');
                 },
@@ -328,7 +328,7 @@
         $(".btninfo").click(function() {
             var detail = $(this).val();
             $.ajax({
-                url: "http://localhost:3000/details/"+detail,
+                url: "http://192.168.0.28:3000/details/"+detail,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -392,13 +392,13 @@
                 obstacle_result : $('.obstacle_result2').val()
             };
             $.ajax({
-                url: "http://localhost:3000/details/"+detail_id, // REST API
+                url: "http://192.168.0.28:3000/details/"+detail_id, // REST API
                 type: "PUT",
                 dataType: "json",
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/details?Report="+query.Report;
+                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
                     }
                     alert('수정실패');
                 },
@@ -408,7 +408,10 @@
             });
         });
         $("#ConfirmBtn").click(function() {
-            return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report;
+            return window.location.href = "http://192.168.0.28:3000/reports/confirm?report="+query.Report;
+        });
+        $("#BackBtn").click(function() {
+            return window.location.href = "http://192.168.0.28:3000/reports?action=0";
         });
     });
 
