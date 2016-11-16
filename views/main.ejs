@@ -48,108 +48,124 @@
             </div>
 
             <div data-role="content" >
-                <p>조장 :</p>
-                <input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  />
-                <p>조원 : </p>
-                <input type="text" name="group_member" id="group_member" value="<%= member%>" />
-                <p>측정장소 : </p>
-                <input type="text" name="measure_palce" id="measure_palce" value="<%= location%>"  />
-                <p>차량번호 : </p>
-                <input type="text" name="car_number" id="car_number" value="<%= car_number%>"  />
-                <p>차량종류 : </p>
-                <input type="text" name="car_kind" id="car_kind" value="<%= car_type%>"  />
-                <p>측정장비 :</p>
-                <input type="text" name="measure_machine" id="measure_machine" value="<%= equipment%>">
-                <p>시작전 KM :</p>
-                <input type="text" name="KM" id="KM" value="">
-                <p> KM</p>
-                <div class="ui-grid-b">
-                    <div class="ui-field-contain">
-                        <label for="select-native-3">현재주유상태 : </label>
-                        <select name="select-native-3" id="select-native-3" data-iconpos="left">
-                            <option value="1">하</option>
-                            <option value="2">중하</option>
-                            <option value="3" selected>중</option>
-                            <option value="4">중상</option>
-                            <option value="5">상</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="ui-grid-d">
-                    <p>집/대상지 이동시간 : </p>
-                    <div class="ui-block-b">
-                        <input type="time" name="move_start_time" id="move_start_time" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c" >
-                        <input type="time" name="move_end_time" id="move_end_time" value="">
-                    </div>
-                    <div class="ui-block-c" >
-                        <p>종료</p>
-                    </div>
-                </div>
-                <div class="ui-grid-d">
-                    <p>대상지 도착후 SETUP : </p>
-                    <div class="ui-block-b">
-                        <input type="time" name="step_start_time" id="step_start_time" value="">
-                    </div>
-                    <div class="ui-block-b">
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c">
-                        <input type="time" name="step_end_time" id="step_end_time" value="">
-                    </div>
-                    <div class="ui-block-c" >
-                        <p>종료</p>
-                    </div>
-                </div>
-                <div class="ui-field-contain">
-                    <label for="select-native-2">측정전 장애 발생 유무 : </label>
-                    <select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
-                        <option value="0" selected>장애 미발생</option>
-                        <option value="1">장애 발생</option>
-                    </select>
-                </div>
-
+                <table>
+                    <tr>
+                        <td>조장 </td>
+                        <td><input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  /></td>
+                    </tr>
+                    <tr>
+                        <td>조원 </td>
+                        <td><input type="text" name="group_member" id="group_member" value="<%= member%>" /></td>
+                    </tr>
+                    <tr>
+                        <td>측정장소 </td>
+                        <td><input type="text" name="measure_palce" id="measure_palce" value="<%= location%>"  /></td>
+                    </tr>
+                    <tr>
+                        <td>차량번호 </td>
+                        <td><input type="text" name="car_number" id="car_number" value="<%= car_number%>"  /></td>
+                    </tr>
+                    <tr>
+                        <td>차량종류 </td>
+                        <td><input type="text" name="car_kind" id="car_kind" value="<%= car_type%>" /></td>
+                    </tr>
+                    <tr>
+                        <td>측정장비 </td>
+                        <td><input type="text" name="measure_machine" id="measure_machine" value="<%= equipment%>"></td>
+                    </tr>
+                    <tr>
+                        <td>시작전 KM</td>
+                        <td><input type="text" name="KM" id="KM" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>현재<br>주유상태</td>
+                        <td>
+                            <select name="select-native-3" id="select-native-3" data-iconpos="left">
+                                <option value="1">하</option>
+                                <option value="2">중하</option>
+                                <option value="3" selected>중</option>
+                                <option value="4">중상</option>
+                                <option value="5">상</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>집 / <br>대상지<br>이동시간</td>
+                        <td>
+                            <div class="ui-grid-b">
+                                <div class="ui-block-b">
+                                    <input type="time" name="move_start_time" id="move_start_time" value="">
+                                </div>
+                                <div class="ui-block-b" >
+                                    <p style="text-align: center">~</p>
+                                </div>
+                                <div class="ui-block-b" >
+                                    <input type="time" name="move_end_time" id="move_end_time" value="">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>대상지<br>도착후<br>SETUP</td>
+                        <td>
+                            <div class="ui-grid-b">
+                                <div class="ui-block-b">
+                                    <input type="time" name="step_start_time" id="step_start_time" value="">
+                                </div>
+                                <div class="ui-block-b">
+                                    <p style="text-align: center"> ~ </p>
+                                </div>
+                                <div class="ui-block-b">
+                                    <input type="time" name="step_end_time" id="step_end_time" value="">
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>측정전<br>장애발생<br>유무</td>
+                        <td><select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
+                                <option value="0" selected>장애 미발생</option>
+                                <option value="1">장애 발생</option>
+                            </select></td>
+                    </tr>
+                </table>
+                <div class="ui-field-contain"></div>
                 <!-- selectbox 에따른 hidden 옵션 -->
                 <div class="ErrSelect" id="ErrSelect" style="display:none">
-                    <div class="ui-field-contain">
-                        <label for="obstacle_classification">지연구분 : </label>
-                        <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
-                            <option value="측정자">측정자</option>
-                            <option value="장비">장비</option>
-                            <option value="노트북">노트북</option>
-                            <option value="프로그램">프로그램</option>
-                            <option value="단말기">단말기</option>
-                            <option value="기타">기타</option>
-                        </select>
-                    </div>
-
-                    <div class="ui-grid-d" class="obstacle_details">
-                        <div class="ui-block-b" >
-                            <p>세부내역</p>
-                        </div>
-                        <div class="ui-block-b">
-                            <input type="text" name="obstacle_details" id="obstacle_details" placeholder="ex)블루투스알람 등등 " value="">
-                        </div>
-                    </div>
-                    <div class="ui-grid-d">
-                        <div class="ui-block-b">
-                            <input type="time" name="err_start_time" id="err_start_time" value="">
-                        </div>
-                        <div class="ui-block-b" >
-                            <p>시작</p>
-                        </div>
-                        <div class="ui-block-c" >
-                            <input type="time" name="err_end_time" id="err_end_time" value="">
-                        </div>
-                        <div class="ui-block-c" >
-                            <p>종료</p>
-                        </div>
-                    </div>
-
+                    <table>
+                        <tr>
+                            <td>지연구분 : </td>
+                            <td>
+                                <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
+                                    <option value="측정자">측정자</option>
+                                    <option value="장비">장비</option>
+                                    <option value="노트북">노트북</option>
+                                    <option value="프로그램">프로그램</option>
+                                    <option value="단말기">단말기</option>
+                                    <option value="기타">기타</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>세부내역 : </td>
+                            <td><input type="text" name="obstacle_details" id="obstacle_details" placeholder="ex)블루투스알람 등등 " value=""></td>
+                        </tr>
+                        <tr>
+                            <td>시간 : </td>
+                            <td><div class="ui-grid-b">
+                                    <div class="ui-block-b">
+                                        <input type="time" name="err_start_time" id="err_start_time" value="">
+                                    </div>
+                                    <div class="ui-block-b">
+                                        <p style="text-align: center"> ~ </p>
+                                    </div>
+                                    <div class="ui-block-b">
+                                        <input type="time" name="err_end_time" id="err_end_time" value="">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
                     <div data-role="fieldcontain">
                         <label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>
                         <textarea name="errInfo" id="errInfo" class="errInfo"></textarea>
@@ -161,13 +177,58 @@
                     </div>
                 </div>
             </div>
+                    <!--<div class="ui-field-contain">-->
+                        <!--<label for="obstacle_classification">지연구분 : </label>-->
+                        <!--<select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">-->
+                            <!--<option value="측정자">측정자</option>-->
+                            <!--<option value="장비">장비</option>-->
+                            <!--<option value="노트북">노트북</option>-->
+                            <!--<option value="프로그램">프로그램</option>-->
+                            <!--<option value="단말기">단말기</option>-->
+                            <!--<option value="기타">기타</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+
+                    <!--<div class="ui-grid-d" class="obstacle_details">-->
+                        <!--<div class="ui-block-b" >-->
+                            <!--<p>세부내역</p>-->
+                        <!--</div>-->
+                        <!--<div class="ui-block-b">-->
+                            <!--<input type="text" name="obstacle_details" id="obstacle_details" placeholder="ex)블루투스알람 등등 " value="">-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <!--<div class="ui-grid-d">-->
+                        <!--<div class="ui-block-b">-->
+                            <!--<input type="time" name="err_start_time" id="err_start_time" value="">-->
+                        <!--</div>-->
+                        <!--<div class="ui-block-b" >-->
+                            <!--<p>시작</p>-->
+                        <!--</div>-->
+                        <!--<div class="ui-block-c" >-->
+                            <!--<input type="time" name="err_end_time" id="err_end_time" value="">-->
+                        <!--</div>-->
+                        <!--<div class="ui-block-c" >-->
+                            <!--<p>종료</p>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div data-role="fieldcontain">-->
+                        <!--<label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>-->
+                        <!--<textarea name="errInfo" id="errInfo" class="errInfo"></textarea>-->
+                    <!--</div>-->
+
+                    <!--<div data-role="fieldcontain">-->
+                        <!--<label for="errSolution">장애 대응 내역 (분석실 pm 대응 방안) :</label>-->
+                        <!--<textarea name="errSolution" id="errSolution" class="errSolution"></textarea>-->
+                    <!--</div>-->
+                <!--</div>-->
+
             <div data-role="footer">
                 <h1>
                     <a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>
                     <button data-icon="delete" class="Cencel" >취소</button>
                 </h1>
             </div>
-        <!-- </form> -->
     </div>
     <div data-role="page" id="page3">
         <div data-role='header' class="ui-grid-a">

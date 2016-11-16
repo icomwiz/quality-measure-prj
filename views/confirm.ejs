@@ -23,33 +23,61 @@
         차량종류 : <%= car_type%><br>
         측정장비 : <%= equipment_name%><br>
         시작전 KM : <%= car_mileage_before%>KM<br>
-        현재주유상태 : <%= car_refuel_state%>
+        현재주유상태 : <%= car_refuel_state%><br>
+        호 완료율 : <%= callsPercentage%><br>
+        총 측정 회차 : <%= measure_inning%><br>
+        장애발생 횟수 : <%= ErrCount%>
     </p>
-
-    <p>호 완료율 : </p>
-    <input type="text" name="call" id="call" value="<%= callsPercentage%>">
-    <p>총 측정 회차 : </p>
-    <input type="text" name="measure_inning" id="measure_inning" value="<%= measure_inning%>">
-    <p>장애발생 유무 : </p>
-    <input type="text" name="ErrCount" id="ErrCount" value="<%= ErrCount%>">
-
-    <p>금일 주유 금액</p>
-    <input type="number" name="refueling_price" id="refueling_price" value="">
-    <p>금일 차량 특이사항</p>
-    <input type="text" name="car_significant" id="car_significant" value="">
-    <p>금일 실적 미완료 원인</p>
-    <input type="text" name="cause_of_incompletion" id="cause_of_incompletion" value="">
-    <p>향후 실적 조치방안</p>
-    <input type="text" name="plan_of_incompletion" id="plan_of_incompletion" value="">
-
-    측정 종료 후 복귀 시간
-    <input type="time" name="move_start_time" id="move_start_time" value="">
-    <input type="time" name="move_end_time" id="move_end_time" value="">
-
-    FTP 측정 데이터 업로드
-    <input type="time" name="stime" id="stime" value="">
-    <input type="time" name="etime" id="etime" value="">
-
+    <table>
+        <tr>
+            <td>금일 주유 금액</td>
+            <td><input type="number" name="refueling_price" id="refueling_price" value=""></td>
+        </tr>
+    </table>
+    <div data-role="fieldcontain">
+        <label for="car_significant">금일 차량 특이사항</label>
+        <textarea name="car_significant" id="car_significant" value=""></textarea>
+        <br>
+        <label for="cause_of_incompletion">금일 실적 미완료 원인</label>
+        <textarea name="cause_of_incompletion" id="cause_of_incompletion" value=""></textarea>
+        <br>
+        <label for="cause_of_incompletion">향후 실적 조치방안</label>
+        <textarea name="plan_of_incompletion" id="plan_of_incompletion" value=""></textarea>
+    </div>
+    <table>
+        <tr>
+            <td>측정종료<br>복귀시간</td>
+            <td>
+                <div class="ui-grid-b">
+                    <div class="ui-block-b">
+                        <input type="time" name="move_start_time" id="move_start_time" value="">
+                    </div>
+                    <div class="ui-block-b">
+                        <p style="text-align: center"> ~ </p>
+                    </div>
+                    <div class="ui-block-b">
+                        <input type="time" name="move_end_time" id="move_end_time" value="">
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>FTP<br>측정데이터<br>업로드</td>
+            <td>
+                <div class="ui-grid-b">
+                    <div class="ui-block-b">
+                        <input type="time" name="stime" id="stime" value="">
+                    </div>
+                    <div class="ui-block-b">
+                        <p style="text-align: center"> ~ </p>
+                    </div>
+                    <div class="ui-block-b">
+                        <input type="time" name="etime" id="etime" value="">
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 <div data-role="footer">
     <h1>

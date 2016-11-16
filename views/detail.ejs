@@ -47,14 +47,13 @@
             <input id="date1" type="date" style="text-align: center;">
         </div>
         <div data-role="content" >
-            <p>사용자 :</p>
-            <input type="text" class="group_leader" value="<%= base.name%>" />
-            <p>조원 : </p>
-            <input type="text" class="group_member" value="<%= base.team_member%>" />
-            <p>측정 장소 : </p>
-            <input type="text" class="measure_palce" value="<%= base.location%>" />
-            <p>측정 장비 :</p>
-            <input type="text" class="measure_machine" value="<%= base.equipment_name%>"/>
+            <p>
+                사용자 : <%= base.name%><br>
+                조원 : <%= base.team_member%><br>
+                측정장소 : <%= base.location%><br>
+                측정장비 : <%= base.equipment_name%><br>
+            </p>
+            <input type="text" class="measure_machine" value=""/>
             <p>측정 회차 : </p>
             <input type="number" class="work_details" value=""/>
             <p>측정 유형1 :</p>
