@@ -11,6 +11,23 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
     var action = parseInt(req.query.action);
     var Reportid = parseInt(req.query.Reportid);
+    //FIXME : 수정사항
+    /*
+     throw err; // Rethrow non-MySQL errors
+     ^
+
+     TypeError: Cannot read property 'name' of undefined
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\routes\report.js:27:40
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\models\report.js:158:13
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:3853:9
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:484:16
+     at replenish (C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:1025:25)
+     at iterateeCallback (C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:1015:17)
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:988:16
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:3850:13
+     at apply (C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:41:25)
+     at C:\Users\11026\WebstormProjects\quality-measure-prj\node_modules\async\dist\async.js:76:12
+     */
     if (action === 0 && !Reportid) { //필주
         var user_id = req.user.id;
         Report.reportList(user_id, function(err, result) {
@@ -21,6 +38,7 @@ router.get('/', function(req, res, next) {
                 if (err) {
                     return next(err);
                 }
+                console.log("results[0] : "+results[0]);
                 res.render('main', {
                     title : 'Icomwiz',
                     report : result,
@@ -180,6 +198,7 @@ router.put('/:id', function(req, res, next) {
     info.report.report_id = req.params.id;
     info.report.user_id = req.user.id;
 
+    console.log(info.report);
     Report.updateReport(info, function(err, result) {
         if (err) {
             return next(err);

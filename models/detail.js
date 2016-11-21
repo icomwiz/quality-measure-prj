@@ -18,7 +18,6 @@ function detailsList(report_id, callback) {
                     "WHERE rd.report_id = ? "+
                     "AND rd.work_details != 101 "+
                     "AND rd.work_details = 100";
-
     var tmp = {};
 
     dbPool.getConnection(function(err, dbConn) {
@@ -34,13 +33,23 @@ function detailsList(report_id, callback) {
                 dbConn.release();
                 callback(null, result);
             } else {
-                dbConn.query(team_name, [report_id], function(err, result2) {
-                    dbConn.release();
-                    if (err) {
-                        return callback(err);
-                    }
-                    callback(null, result2)
-                });
+                dbConn.release();
+                var makeResult = {};
+                makeResult.work_Details = null;
+                makeResult.id = null;
+                makeResult.location = null;
+                makeResult.locationDetail = null;
+                makeResult.target1 = null;
+                makeResult.team_name = null;
+
+                callback(null, makeResult);
+                // dbConn.query(team_name, [report_id], function(err, result2) {
+                //     dbConn.release();
+                //     if (err) {
+                //         return callback(err);
+                //     }
+                //     callback(null, result2)
+                // });
             }
         });
     });
@@ -48,6 +57,7 @@ function detailsList(report_id, callback) {
 
 function baseDetail(report_id, user_id, callback) {
     var baseInfo = {};
+    baseInfo.check = 0;
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -68,12 +78,32 @@ function baseDetail(report_id, user_id, callback) {
                 if (err) {
                     return callback(err);
                 }
-                baseInfo.team_member = result[0].team_member;
-                baseInfo.location = result[0].location;
-                baseInfo.car_number = result[0].car_number;
-                baseInfo.car_type = result[0].car_type;
-                baseInfo.equipment_name = result[0].equipment_name;
+                if(result[0]) {
+                    baseInfo.team_member = result[0].team_member;
+                    baseInfo.location = result[0].location;
+                    baseInfo.car_number = result[0].car_number;
+                    baseInfo.car_type = result[0].car_type;
+                    baseInfo.equipment_name = result[0].equipment_name;
+                } else {
+                    baseInfo.team_member = null;
+                    baseInfo.location = null;
+                    baseInfo.car_number = null;
+                    baseInfo.car_type = null;
+                    baseInfo.equipment_name = null;
+                }
 
+                callback(null, null);
+            });
+        }, function(callback) {
+            var checkConfirm = "SELECT report_id FROM report_details "+
+                                "WHERE report_id = ? AND work_details > 101";
+            dbConn.query(checkConfirm, [report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                if(result[0]) {
+                    baseInfo.check = 1;
+                }
                 callback(null, null);
             });
         }], function(err, results) {

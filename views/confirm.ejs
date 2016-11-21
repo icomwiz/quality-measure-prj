@@ -16,22 +16,65 @@
 </div>
 
 <div data-role="content" >
-    <p> 조장 : <%= team_leader%><br>
-        조원 : <%= team_member%><br>
-        측정장소 : <%= location%><br>
-        차량번호 : <%= car_number%><br>
-        차량종류 : <%= car_type%><br>
-        측정장비 : <%= equipment_name%><br>
-        시작전 KM : <%= car_mileage_before%>KM<br>
-        현재주유상태 : <%= car_refuel_state%><br>
-        호 완료율 : <%= callsPercentage%><br>
-        총 측정 회차 : <%= measure_inning%><br>
-        장애발생 횟수 : <%= ErrCount%>
-    </p>
     <table>
         <tr>
+            <td>조장</td>
+            <td colspan="2"><%= team_leader%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>조원</td>
+            <td colspan="2"><%= team_member%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>측정장소</td>
+            <td colspan="2"><%= location%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>차량번호</td>
+            <td colspan="2"><%= car_number%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>차량종류</td>
+            <td colspan="2"><%= car_type%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>측정장비</td>
+            <td colspan="2"><%= equipment_name%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>시작전 KM</td>
+            <td colspan="2"><%= car_mileage_before%> KM</td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>현재주유상태</td>
+            <td colspan="2"><%= car_refuel_state%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>호 완료율</td>
+            <td colspan="2"><%= callsPercentage%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>총 측정 회차</td>
+            <td colspan="2"><%= measure_inning%></td>
+        </tr>
+        <tr><td></td></tr>
+        <tr>
+            <td>장애발생 횟수</td>
+            <td colspan="2"><%= ErrCount%></td>
+        </tr>
+        <tr>
             <td>금일 주유 금액</td>
-            <td><input type="number" name="refueling_price" id="refueling_price" value=""></td>
+            <td><input type="number" name="refueling_price" id="refueling_price" value="" placeholder="20000 [숫자만입력]"></td>
+            <td>원</td>
         </tr>
     </table>
     <div data-role="fieldcontain">
@@ -47,35 +90,15 @@
     <table>
         <tr>
             <td>측정종료<br>복귀시간</td>
-            <td>
-                <div class="ui-grid-b">
-                    <div class="ui-block-b">
-                        <input type="time" name="move_start_time" id="move_start_time" value="">
-                    </div>
-                    <div class="ui-block-b">
-                        <p style="text-align: center"> ~ </p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="time" name="move_end_time" id="move_end_time" value="">
-                    </div>
-                </div>
-            </td>
+            <td><input type="time" name="move_start_time" id="move_start_time" value=""></td>
+            <td>~</td>
+            <td><input type="time" name="move_end_time" id="move_end_time" value=""></td>
         </tr>
         <tr>
-            <td>FTP<br>측정데이터<br>업로드</td>
-            <td>
-                <div class="ui-grid-b">
-                    <div class="ui-block-b">
-                        <input type="time" name="stime" id="stime" value="">
-                    </div>
-                    <div class="ui-block-b">
-                        <p style="text-align: center"> ~ </p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="time" name="etime" id="etime" value="">
-                    </div>
-                </div>
-            </td>
+            <td>FTP<br><font size="2">측정데이터</font><br>업로드</td>
+            <td><input type="time" name="stime" id="stime" value=""></td>
+            <td>~</td>
+            <td> <input type="time" name="etime" id="etime" value=""></td>
         </tr>
     </table>
 </div>
@@ -92,38 +115,44 @@
         var query = getUrlParams(); //쿼리스트링 받아오기
         $('#date').val(date());
         $("#saveBtn").click(function() {
-            var param = {
-                // report
-                refueling_price : $('#refueling_price').val(), //주유금액
-                car_significant : $('#car_significant').val(), //차량특이사항
-                cause_of_incompletion : $('#cause_of_incompletion').val(), //금일실적미완료원인
-                plan_of_incompletion : $('#plan_of_incompletion').val(), //향후실적조치방안
+            if ($('#move_start_time').val() == '' || $('#move_end_time').val() == '') {
+                alert('측정종료 복귀시간을 입력해주세요.');
+            } else if ($('#stime').val() == '' || $('#etime').val() == '') {
+                alert('FTP측정데이터 업로드 시간을 입력해주세요.');
+            }  else {
+                var param = {
+                    // report
+                    refueling_price : $('#refueling_price').val(), //주유금액
+                    car_significant : $('#car_significant').val(), //차량특이사항
+                    cause_of_incompletion : $('#cause_of_incompletion').val(), //금일실적미완료원인
+                    plan_of_incompletion : $('#plan_of_incompletion').val(), //향후실적조치방안
 
-                // details
-                move_start_time : $('#move_start_time').val(),
-                move_end_time : $('#move_end_time').val(),  //측정종료후 복귀시간 - 102
+                    // details
+                    move_start_time : $('#move_start_time').val(),
+                    move_end_time : $('#move_end_time').val(),  //측정종료후 복귀시간 - 102
 
-                stime : $('#stime').val(),
-                etime : $('#etime').val()   //FTP측정 데이터 업로드시간 - 103
-            };
-            $.ajax({
-                url: "http://192.168.0.28:3000/reports/confirm?report="+ query.report, // API
-                type: "POST",
-                dataType: "json",
-                data: param,
-                success: function (data) {
-                    if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+                    stime : $('#stime').val(),
+                    etime : $('#etime').val()   //FTP측정 데이터 업로드시간 - 103
+                };
+                $.ajax({
+                    url: "http://localhost:3000/reports/confirm?report="+ query.report, // API
+                    type: "POST",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        if (data.result === 'ok') {
+                            return window.location.href = "http://localhost:3000/reports?action=0";
+                        }
+                        alert('작성실패');
+                    },
+                    error: function(data){
+                        alert("code:"+data.status+"\n");
                     }
-                    alert('작성실패');
-                },
-                error: function(data){
-                    alert("code:"+data.status+"\n");
-                }
-            });
+                });
+            }
         });
         $(".Cencel").click(function() {
-            window.location.href = "http://192.168.0.28:3000/details?Report="+ query.report;
+            window.location.href = "http://localhost:3000/details?Report="+ query.report;
         });
         function getUrlParams() {
             const params = {};

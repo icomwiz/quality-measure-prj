@@ -106,7 +106,16 @@ function addReport(user_id, callback) {
                 if (err) {
                     return callback(err);
                 }
-                callback(null, result[0]);
+                if(!result[0]) {
+                    var makeResult ={};
+                    makeResult.teamId = null;
+                    makeResult.teamName = null;
+                    makeResult.teamNo = null;
+                    makeResult.name = null;
+                    callback(null, makeResult);
+                } else {
+                    callback(null, result[0]);
+                }
             });
         }, function(callback) {
             //주소, 조원, 자동차타입, 장비
@@ -115,7 +124,6 @@ function addReport(user_id, callback) {
                 "WHERE employee_id = ? "+
                 "AND type = 0 "+
                 "AND date = ?";
-
             function date(){
                 var date = new Date();
 
@@ -131,12 +139,22 @@ function addReport(user_id, callback) {
                 }
                 return year +'-'+month+'-'+day;
             }
-
             dbConn.query(select_plan, [user_id, date()], function(err, result) {
                 if (err) {
                     return callback(err);
                 }
-                callback(null, result[0]);
+                if(!result[0]) {
+                    var makeResult = {};
+
+                    makeResult.location = null;
+                    makeResult.team_member = null;
+                    makeResult.car_number = null;
+                    makeResult.car_type = null;
+                    makeResult.equipment_name = null;
+                    callback(null, makeResult);
+                } else {
+                    callback(null, result[0]);
+                }
             });
 
         }], function(err, results) {
@@ -272,7 +290,7 @@ function updateReport(info, callback) {
         if(err) {
             return callback(err);
         }
-        async.series([Report, Details_move, Details_setup], function(err, results) {
+        async.series([baseUpdate, Report, Details_move, Details_setup], function(err, results) {
             if (err) {
                 return dbConn.rollback(function() {
                     dbConn.release();
@@ -284,6 +302,18 @@ function updateReport(info, callback) {
                 callback(null, "Success");
             });
         });
+
+        function baseUpdate(callback) {
+            var base_update = "UPDATE report " +
+                    "SET team_member=?, equipment_name=?, location=? " +
+                    "WHERE id = ?";
+            dbConn.query(base_update, [info.report.group_member, info.report.measure_machine, info.report.measure_place, info.report.report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, "Success Base");
+            })
+        }
 
         function Report(callback) {
             var report = 'UPDATE report '+
@@ -459,7 +489,7 @@ function confirm(info, callback) {
             var select_err_measure_calls = "SELECT report_id, SUM(type) ErrCount, count(work_details) measure_inning, SUM(calls) calls "+
                 "FROM report_details "+
                 "WHERE report_id = ? "+
-                "AND work_details != 100 AND work_details !=101 "+
+                "AND work_details < 100 "+
                 "GROUP BY report_id";
             dbConn.query(select_err_measure_calls, [info.report_id] , function(err, result) {
                 if (err) {
@@ -469,19 +499,28 @@ function confirm(info, callback) {
                     confirmInfo.ErrCount = result[0].ErrCount;
                     confirmInfo.measure_inning = result[0].measure_inning + "회차 측정완료";
                     confirmInfo.calls = result[0].calls;
+                } else {
+                    confirmInfo.ErrCount = 0;
+                    confirmInfo.measure_inning = 0 + "회차 측정완료";
+                    confirmInfo.calls = 0;
                 }
                 callback(null, null);
             });
         }, function(callback) {
             var select_plan = "SELECT id, employee_id, date, calls, type "+
-                "FROM report "+
-                "WHERE employee_id = ? AND date=? AND type = 0";
-            dbConn.query(select_plan, [info.user_id, info.date] , function(err, result) {
+                                  "FROM report "+
+                                  "WHERE employee_id = ? AND date = (SELECT date FROM report WHERE id = ?) AND type = 0";
+            dbConn.query(select_plan, [info.user_id, info.report_id] , function(err, result) {
                 if (err) {
                     return callback(err);
                 }
-                confirmInfo.planCalls = result[0].calls;
-                confirmInfo.callsPercentage = (confirmInfo.calls/confirmInfo.planCalls)*100;
+                if(!result[0]) {
+                    confirmInfo.callsPercentage = 0;
+                    confirmInfo.planCalls = 0;
+                } else {
+                    confirmInfo.planCalls = result[0].calls;
+                    confirmInfo.callsPercentage = (confirmInfo.calls/confirmInfo.planCalls)*100;
+                }
                 callback(null, null);
             });
         }, function(callback) {
@@ -497,7 +536,12 @@ function confirm(info, callback) {
                 if (err) {
                     return callback(err);
                 }
-                confirmInfo.team_leader = result[0].name;
+                if(result[0]) {
+                    confirmInfo.team_leader = result[0].name;
+                } else {
+                    confirmInfo.team_leader = null;
+                }
+
                 callback(null, null);
             });
         }, function(callback) {
@@ -552,7 +596,7 @@ function confirmUpdate(info, callback) {
             async.series([function (callback) {
                 dbConn.query(insert_detail, [info.report_id, 102, info.move_start_time, info.move_end_time], function(err, result) {
                     if (err) {
-                        return callback(err);
+                        callback(err);
                     }
                     callback(null, null);
                 });

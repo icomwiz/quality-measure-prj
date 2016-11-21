@@ -13,34 +13,37 @@
         <div data-role="header" style="text-align: center">
             <%= title %>
         </div>
-        <!--<div class="ui-bar ui-bar-a" style="text-align:center">-->
-            <!--<h1><%= title %></h1>-->
-        <!--</div>-->
         <div data-role="content" >
             <a href="#page2" data-role="button" id="addReport">+</a>
             <ul data-role="listview" data-inset="true">
-                <% if(detail[0].id) { %>
-                    <% for(var i = 0; i < detail.length ; i++) {%>
-                    <li>
-                        <div dat-role="controlgroup">
-                                <div  style=" text-align:left" >
-                                    측정회차 : <%= detail[i].work_Details+""+"차측정"%><br>
-                                    측정장소 : <%= detail[i].location + " " + detail[i].locationDetail%><br>
-                                    측정팀 : <%= detail[i].team_name%>
+                <% if(detail[0]) { %>
+                    <% if(detail[0].id) { %>
+                        <% for(var i = 0; i < detail.length ; i++) {%>
+                            <li>
+                                <div dat-role="controlgroup">
+                                    <div style="width: 75%; float: left; margin-right: 40px" class="datailList" >
+                                        <p  style="padding:10px; text-align:left; background-color: #f6f6f6; border-radius:10px; border: 1px solid #bcbcbc" >
+                                            측정회차 : <%= detail[i].work_Details+""+"차측정"%><br>
+                                            측정장소 : <%= detail[i].location + " " + detail[i].locationDetail%><br>
+                                            측정팀 : <%= detail[i].team_name%>
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <button data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= detail[i].id%>"></button>
+                                        <button data-icon="delete" data-iconpos="notext" class="deleteinfo" value="<%= detail[i].id%>"></button>
+                                    </div>
                                 </div>
-                            <div style=" float: right">
-                                <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= detail[i].id%>"></button>
-                                <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= detail[i].id%>"></button>
-                            </div>
-                        </div>
-                    </li>
+                            </li>
+                        <% } %>
                     <% } %>
                 <% } %>
             </ul>
         </div>
         <div data-role="footer" data-position="fixed" style="text-align: center">
             <button id="BackBtn" value="">뒤로가기</button>
-            <button id="ConfirmBtn" value="">일일업무 완료</button>
+            <%if(base.check == 0) { %>
+                <button id="ConfirmBtn" value="">일일업무 완료</button>
+            <% } %>
         </div>
     </div>
 
@@ -49,90 +52,93 @@
             <input id="date1" type="date" style="text-align: center;">
         </div>
         <div data-role="content" >
-            <p>
-                사용자 : <%= base.name%><br>
-                조원 : <%= base.team_member%><br>
-                측정장소 : <%= base.location%><br>
-                측정장비 : <%= base.equipment_name%><br>
-            </p>
-            <p>측정 회차 : </p>
-            <input type="number" class="work_details" value="" placeholder="ex) 1 (숫자만입력)"/>
-            <p>측정 대상1 :</p>
-            <input type="text" class="target1" value="" placeholder="ex) 포도몰(건물명,측정방식)"/>
-            <p>측정 대상2 :</p>
-            <input type="text" class="target2" value="" placeholder="ex) 도로(주도로+이면도로)"/>
-            <p>세부지역(동호수) : </p>
-            <input type="text" class="location" value="" placeholder="ex) 신림동"/>
+            <table>
+                <tr>
+                    <td>사용자 </td>
+                    <td colspan="3"><%= base.name%></td>
+                </tr>
+                <tr>
+                    <td>조원 </td>
+                    <td colspan="3"><%= base.team_member%></td>
+                </tr>
+                <tr>
+                    <td>측정장소 </td>
+                    <td colspan="3"><%= base.location%></td>
+                </tr>
+                <tr>
+                    <td>측정장비 </td>
+                    <td colspan="3"><%= base.equipment_name%></td>
+                </tr>
+                <tr>
+                    <td>측정회차</td>
+                    <td colspan="3"><input type="number" class="work_details" value="" placeholder="ex) 1 (숫자만입력)"/></td>
+                </tr>
+                <tr>
+                    <td>측정대상</td>
+                    <td colspan="3"><input type="text" class="target1" value="" placeholder="ex) 포도몰(건물명,측정방식)"/></td>
+                </tr>
+                <tr>
+                    <td>측정대상</td>
+                    <td colspan="3"><input type="text" class="target2" value="" placeholder="ex) 도로(주도로+이면도로)"/></td>
+                </tr>
+                <tr>
+                    <td>세부지역<br>(동호수)</td>
+                    <td colspan="3"><input type="text" class="location" value="" placeholder="ex) 신림동"/></td>
+                </tr>
+                <tr>
+                    <td>측정<br>Call횟수</td>
+                    <td colspan="3"><input type="number" class="calls" value="" placeholder="ex) 1 [숫자만입력]"/></td>
+                </tr>
+                <tr>
+                    <td>측정<br>소요시간</td>
+                    <td><input type="time" class="start_time" value=""></td>
+                    <td>~</td>
+                    <td><input type="time" class="end_time" value=""></td>
+                </tr>
+                <tr>
+                    <td>측정전<br>장애발생<br>유무</td>
+                    <td colspan="3">
+                        <select name="errCheck1" id="errCheck1" data-iconpos="left" onchange="ErrSelect(this.value);">
+                            <option value="0" selected>장애 미발생</option>
+                            <option value="1">장애 발생</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
 
-            <div class="ui-grid-d">
-                <p>측정 소요시간 : </p>
-                <div class="ui-block-b">
-                    <input type="time" class="start_time" value="">
-                </div>
-                <div class="ui-block-b" >
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c" >
-                    <input type="time" class="end_time" value="">
-                </div>
-                <div class="ui-block-c" >
-                    <p>종료</p>
-                </div>
-            </div>
+            <table class="ErrSelect" style="display:none" class="obstacle_classification">
+                <tr>
+                    <td>지연구분</td>
+                    <td colspan="3">
+                        <select name="obstacle_classification1" id="obstacle_classification1" data-iconpos="left">
+                            <option value="측정자">측정자</option>
+                            <option value="장비">장비</option>
+                            <option value="노트북">노트북</option>
+                            <option value="프로그램">프로그램</option>
+                            <option value="단말기">단말기</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>세부내역</td>
+                    <td colspan="3"><input type="text" class="obstacle_details" placeholder="ex)블루투스알람 등등 " value=""></td>
+                </tr>
+                <tr>
+                    <td>시간</td>
+                    <td><input type="time" class="obstacle_start_time" value=""></td>
+                    <td>~</td>
+                    <td><input type="time" class="obstacle_end_time" value=""></td>
+                </tr>
+            </table>
 
-            <p>측정 Call 횟수 : </p>
-            <input type="number" class="calls" value="" placeholder="ex) 1 [숫자만입력]"/>
-
-            <div class="ui-field-contain">
-                <label for="errCheck1">측정전 장애 발생 유무 : </label>
-                <select name="errCheck1" id="errCheck1" data-iconpos="left" onchange="ErrSelect(this.value);">
-                    <option value="0" selected>장애 미발생</option>
-                    <option value="1">장애 발생</option>
-                </select>
-            </div>
 
             <!-- selectbox 에따른 hidden 옵션 -->
             <div class="ErrSelect" style="display:none" class="obstacle_classification">
-                <div class="ui-field-contain">
-                    <label for="obstacle_classification1">지연구분 : </label>
-                    <select name="obstacle_classification1" id="obstacle_classification1" data-iconpos="left">
-                        <option value="측정자">측정자</option>
-                        <option value="장비">장비</option>
-                        <option value="노트북">노트북</option>
-                        <option value="프로그램">프로그램</option>
-                        <option value="단말기">단말기</option>
-                        <option value="기타">기타</option>
-                    </select>
-                </div>
-
-                <div class="ui-grid-d">
-                    <div class="ui-block-b" >
-                        <p>세부내역</p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="text" class="obstacle_details" placeholder="ex)블루투스알람 등등 " value="">
-                    </div>
-                </div>
-                <div class="ui-grid-d">
-                    <div class="ui-block-b">
-                        <input type="time" class="obstacle_start_time" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c" >
-                        <input type="time" class="obstacle_end_time" value="">
-                    </div>
-                    <div class="ui-block-c" >
-                        <p>종료</p>
-                    </div>
-                </div>
-
                 <div data-role="fieldcontain">
                     <label for="obstacle_phenomenon">장애 내역 (분석실 pm에 보고 내용) :</label>
                     <textarea id="obstacle_phenomenon" class="obstacle_phenomenon"></textarea>
                 </div>
-
                 <div data-role="fieldcontain">
                     <label for="obstacle_result">장애 대응 내역 (분석실 pm 대응 방안) :</label>
                     <textarea id="obstacle_result" class="obstacle_result"></textarea>
@@ -155,88 +161,90 @@
             <input id="date2" type="date" style="text-align: center;">
         </div>
         <div data-role="content" >
-            <p>사용자 :</p>
-            <input type="text" class="group_leader2" value="" />
-            <p>조원 : </p>
-            <input type="text" class="group_member2" value="" />
-            <p>측정 장소 : </p>
-            <input type="text" class="measure_palce2" value="" />
-            <p>측정 장비 :</p>
-            <input type="text" class="measure_machine2" value=""/>
-            <p>측정 회차 : </p>
-            <input type="number" class="work_details2" value=""/>
-            <p>측정 유형1 :</p>
-            <input type="text" class="target12" value=""/>
-            <p>측정 유형2 :</p>
-            <input type="text" class="target22" value=""/>
-            <p>차정장소(동호수) : </p>
-            <input type="text" class="location2" value=""/>
+            <table>
+                <tr>
+                    <td>사용자</td>
+                    <td colspan="3"><%= base.name%></td>
+                    <!--<td colspan="3"><input type="text" class="group_leader2" value="" /></td>-->
+                </tr>
+                <tr>
+                    <td>조원</td>
+                    <td colspan="3"><%= base.team_member%></td>
+                    <!--<td colspan="3"><input type="text" class="group_member2" value="" /></td>-->
+                </tr>
+                <tr>
+                    <td>측정장소</td>
+                    <td colspan="3"><%= base.location%></td>
+                    <!--<td colspan="3"><input type="text" class="measure_palce2" value="" /></td>-->
+                </tr>
+                <tr>
+                    <td>측정장비</td>
+                    <td colspan="3"><%= base.equipment_name%></td>
+                    <!--<td colspan="3"><input type="text" class="measure_machine2" value=""/></td>-->
+                </tr>
+                <tr>
+                    <td>측정회차</td>
+                    <td colspan="3"><input type="number" class="work_details2" value=""/></td>
+                </tr>
+                <tr>
+                    <td>측정유형</td>
+                    <td colspan="3"><input type="text" class="target12" value=""/></td>
+                </tr>
+                <tr>
+                    <td>측정유형</td>
+                    <td colspan="3"><input type="text" class="target22" value=""/></td>
+                </tr>
+                <tr>
+                    <td>측정장소<br>(동호수)</td>
+                    <td colspan="3"><input type="text" class="location2" value=""/></td>
+                </tr>
+                <tr>
+                    <td>측정<br>Call횟수</td>
+                    <td colspan="3"><input type="number" class="calls2" value=""/></td>
+                </tr>
+                <tr>
+                    <td>측정<br>소요시간</td>
+                    <td><input type="time" class="start_time2" value=""></td>
+                    <td>~</td>
+                    <td><input type="time" class="end_time2" value=""></td>
+                </tr>
+                <tr>
+                    <td>측정전<br>장애발생<br>유무</td>
+                    <td colspan="3">
+                        <select name="errCheck2" id="errCheck2" data-iconpos="left" onchange="ErrSelect2(this.value);">
+                            <option value="0">장애 미발생</option>
+                            <option value="1">장애 발생</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
 
-            <div class="ui-grid-d">
-                <p>측정 소요시간 : </p>
-                <div class="ui-block-b">
-                    <input type="time" class="start_time2" value="">
-                </div>
-                <div class="ui-block-b" >
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c" >
-                    <input type="time" class="end_time2" value="">
-                </div>
-                <div class="ui-block-c" >
-                    <p>종료</p>
-                </div>
-            </div>
-
-            <p>측정 Call 횟수 : </p>
-            <input type="number" class="calls2" value=""/>
-
-
-            <div class="ui-field-contain">
-                <label for="errCheck2">측정전 장애 발생 유무 : </label>
-                <select name="errCheck2" id="errCheck2" data-iconpos="left" onchange="ErrSelect2(this.value);">
-                    <option value="0">장애 미발생</option>
-                    <option value="1">장애 발생</option>
-                </select>
-            </div>
-
-            <!-- selectbox 에따른 hidden 옵션 -->
             <div class="ErrSelect" id="ErrSelect2" style="display:none" class="obstacle_classification">
-                <div class="ui-field-contain">
-                    <label for="obstacle_classification2">지연구분 : </label>
-                    <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
-                        <option value="측정자">측정자</option>
-                        <option value="장비">장비</option>
-                        <option value="노트북">노트북</option>
-                        <option value="프로그램">프로그램</option>
-                        <option value="단말기">단말기</option>
-                        <option value="기타">기타</option>
-                    </select>
-                </div>
-
-                <div class="ui-grid-d">
-                    <div class="ui-block-b" >
-                        <p>세부내역</p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="text" class="obstacle_details2" placeholder="ex)블루투스알람 등등 " value="">
-                    </div>
-                </div>
-                <div class="ui-grid-d">
-                    <div class="ui-block-b">
-                        <input type="time" class="obstacle_start_time2" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c" >
-                        <input type="time" class="obstacle_end_time2" value="">
-                    </div>
-                    <div class="ui-block-c" >
-                        <p>종료</p>
-                    </div>
-                </div>
-
+                <table>
+                    <tr>
+                        <td>지연구분</td>
+                        <td colspan="3">
+                            <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
+                                <option value="측정자">측정자</option>
+                                <option value="장비">장비</option>
+                                <option value="노트북">노트북</option>
+                                <option value="프로그램">프로그램</option>
+                                <option value="단말기">단말기</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>세부내역</td>
+                        <td colspan="3"><input type="text" class="obstacle_details2" placeholder="ex)블루투스알람 등등 " value=""></td>
+                    </tr>
+                    <tr>
+                        <td>시간</td>
+                        <td><input type="time" class="obstacle_start_time2" value=""></td>
+                        <td>~</td>
+                        <td><input type="time" class="obstacle_end_time2" value=""></td>
+                    </tr>
+                </table>
                 <div data-role="fieldcontain">
                     <label for="obstacle_phenomenon">장애 내역 (분석실 pm에 보고 내용) :</label>
                     <textarea id="obstacle_phenomenon" class="obstacle_phenomenon2"></textarea>
@@ -260,63 +268,78 @@
 
 </body>
 <script>
-
     $(function() {
         var query = getUrlParams(); //쿼리스트링 받아오기
         $(".Cencel").click(function() {
-            window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
+            window.location.href = "http://localhost:3000/details?Report="+query.Report;
         });
         $("#date1").val(date());
         $(".saveBtn").click(function() {
-            var param = {
-                Reportid: query.Report,
-                date: $("#date1").val(),
-                group_leader: $(".group_leader").val(),
-                group_member: $(".group_member").val(),
-                measure_place: $(".measure_palce").val(),
-                measure_machine : $("#measure_machine").val(),
-                work_details : $(".work_details").val(),
-                target1 : $(".target1").val(),
-                target2 : $(".target2").val(),
-                location : $(".location").val(),
-                start_time : $(".start_time").val(),
-                end_time : $(".end_time").val(),
-                calls : $('.calls').val(),
-                errCheck : $("#errCheck1").val(),
-                errorList : {
-                    obstacle_classification: $("#obstacle_classification1").val(),
-                    obstacle_details: $(".obstacle_details").val(),
-                    obstacle_start_time: $(".obstacle_start_time").val(),
-                    obstacle_end_time : $(".obstacle_end_time").val(),
-                    obstacle_phenomenon: $(".obstacle_phenomenon").val(),
-                    obstacle_result: $(".obstacle_result").val()
-                }
-            };
-            $.ajax({
-                url: "http://192.168.0.28:3000/details", // REST API
-                type: "POST",
-                dataType: "json",
-                data: param,
-                success: function (data) {
-                    if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
+            if($(".work_details").val() == '') {
+                alert('측정회차를 입력해주세요.');
+            } else if ($(".target1").val() == '') {
+                alert('측정대상을 입력해주세요.');
+            } else if ($(".location").val() == '') {
+                alert('세부지역을 입력해주세요.');
+            } else if ($(".start_time").val() == '' || $(".end_time").val() == '') {
+                alert('측정 소요시간을 입력해주세요.');
+            } else if ($('.calls').val() == '') {
+                alert('Call 횟수를 입력해주세요.');
+            } else if ($('.calls').val() < 0 ) {
+                alert('Call 횟수는 0이상으로 입력해주세요.');
+            } else if ($(".work_details").val() <= 0) {
+                alert('측정회차는 0이상으로 입력해주세요.');
+            } else {
+                var param = {
+                    Reportid: query.Report,
+                    date: $("#date1").val(),
+//                group_leader: $(".group_leader").val(),
+//                group_member: $(".group_member").val(),
+//                measure_place: $(".measure_palce").val(),
+//                measure_machine : $("#measure_machine").val(),
+                    work_details : $(".work_details").val(),
+                    target1 : $(".target1").val(),
+                    target2 : $(".target2").val(),
+                    location : $(".location").val(),
+                    start_time : $(".start_time").val(),
+                    end_time : $(".end_time").val(),
+                    calls : $('.calls').val(),
+                    errCheck : $("#errCheck1").val(),
+                    errorList : {
+                        obstacle_classification: $("#obstacle_classification1").val(),
+                        obstacle_details: $(".obstacle_details").val(),
+                        obstacle_start_time: $(".obstacle_start_time").val(),
+                        obstacle_end_time : $(".obstacle_end_time").val(),
+                        obstacle_phenomenon: $(".obstacle_phenomenon").val(),
+                        obstacle_result: $(".obstacle_result").val()
                     }
-                    alert('작성실패');
-                },
-                error: function(data){
-                    alert("code:"+data.status+"\n");
-                }
-            });
+                };
+                $.ajax({
+                    url: "http://localhost:3000/details", // REST API
+                    type: "POST",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        if (data.result === 'ok') {
+                            return window.location.href = "http://localhost:3000/details?Report="+query.Report;
+                        }
+                        alert('작성실패');
+                    },
+                    error: function(data){
+                        alert("code:"+data.status+"\n");
+                    }
+                });
+            }
         });
         $(".deleteinfo").click(function() {
             var detail = $(this).val();
             $.ajax({
-                url: "http://192.168.0.28:3000/details/"+detail,
+                url: "http://localhost:3000/details/"+detail,
                 type: "DELETE",
                 dataType: "json",
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
+                        return window.location.href = "http://localhost:3000/details?Report="+query.Report;
                     }
                     alert('삭제실패');
                 },
@@ -328,7 +351,7 @@
         $(".btninfo").click(function() {
             var detail = $(this).val();
             $.ajax({
-                url: "http://192.168.0.28:3000/details/"+detail,
+                url: "http://localhost:3000/details/"+detail,
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -392,13 +415,13 @@
                 obstacle_result : $('.obstacle_result2').val()
             };
             $.ajax({
-                url: "http://192.168.0.28:3000/details/"+detail_id, // REST API
+                url: "http://localhost:3000/details/"+detail_id, // REST API
                 type: "PUT",
                 dataType: "json",
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/details?Report="+query.Report;
+                        return window.location.href = "http://localhost:3000/details?Report="+query.Report;
                     }
                     alert('수정실패');
                 },
@@ -408,10 +431,10 @@
             });
         });
         $("#ConfirmBtn").click(function() {
-            return window.location.href = "http://192.168.0.28:3000/reports/confirm?report="+query.Report;
+            return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report;
         });
         $("#BackBtn").click(function() {
-            return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+            return window.location.href = "http://localhost:3000/reports?action=0";
         });
     });
 

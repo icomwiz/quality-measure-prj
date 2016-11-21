@@ -18,7 +18,11 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            team_name = result[0].team_name+"/"+date();
+            if(!result[0]) {
+                teamname = null;
+            } else {
+                team_name = result[0].team_name+"/"+date();
+            }
             res.render('detail', {
                 title: team_name,
                 id : req.query.Report,

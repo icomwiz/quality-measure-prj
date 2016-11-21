@@ -35,15 +35,17 @@
                 password: $("#password").val()
             };
             $.ajax({
-                url: "http://192.168.0.28:3000/auth",
+                url: "http://localhost:3000/auth",
                 type: "POST",
                 dataType: "json",
                 data: param,
                 success: function(data) {
                     if(data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+                        //return window.location.href = "http://localhost:3000/reports?action=0";
+                        // 뒤로가기방지 (뒤로가기자체를 삭제해버린다.)
+                        return location.replace('http://localhost:3000/reports?action=0');
                     } else if(data.result === 1 || data.result === 2) {
-                        return window.location.href = "http://192.168.0.28:3000/employees/partsmain";
+                        return window.location.href = "http://localhost:3000/employees/partsmain";
                     }
                     alert('ID나 PASSWORD를 확인해주세요.');
                 },

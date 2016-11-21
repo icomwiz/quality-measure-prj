@@ -18,23 +18,38 @@
             <ul data-role="listview" data-inset="true">
                 <% if(report[0].id) { %>
                     <% for(var i = 0; i < report.length ; i++) {%>
-                    <li>
-                        <div dat-role="controlgroup">
-                            <button style="width: 80%; float: left;" data-role="button" class="datailList" value="<%= report[i].id%>">
-                                <p  style="float: left; text-align:left" >
-                                    <%= report[i].date%><br>
-                                    <%= /*"측정장소 : "+report[i].location +" "+ report[i].location_detail */%>
-                                    <%= "측정장소 : "+report[i].location %><br>
-                                    <%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>
-                                    id : <%= report[i].id%>
-                                </p>
-                            </button>
-                            <div style=" float: right">
-                                <button data-role="button" data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>
-                                <button data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>
-                            </div>
+                    <!--<li>-->
+                        <!--<div dat-role="controlgroup">-->
+                            <!--<button style="width: 70%; float: left;"class="datailList" value="<%= report[i].id%>">-->
+                                <!--<p  style="float: left; text-align:left" >-->
+                                    <!--<%= "날짜 : "+ report[i].date%><br>-->
+                                    <!--<%= "측정장소 : "+report[i].location %><br>-->
+                                    <!--<%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>-->
+                                    <!--&lt;!&ndash;id : <%= report[i].id%>&ndash;&gt;-->
+                                <!--</p>-->
+                            <!--</button>-->
+                            <!--<div>-->
+                                <!--<button style="margin-top: 70px; margin-left: 10px"  data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>-->
+                                <!--<button style="margin-top: 70px" data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</li>-->
+                <li>
+                    <div dat-role="controlgroup">
+                        <button style="width: 75%; float: left; margin-right: 40px; background-color: #f6f6f6; border-radius:10px; border: 1px solid #bcbcbc" class="datailList" value="<%= report[i].id%>">
+                            <p  style="float: left; text-align:left" >
+                                <%= "날짜 : "+ report[i].date%><br>
+                                <%= "측정장소 : "+report[i].location %><br>
+                                <%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>
+                                <!--id : <%= report[i].id%>-->
+                            </p>
+                        </button>
+                        <div style="padding-top: 9px">
+                            <button style="margin-bottom: 5px"data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= report[i].id%>"></button>
+                            <button data-icon="delete" data-iconpos="notext" class="deleteinfo" value="<%= report[i].id%>"></button>
                         </div>
-                    </li>
+                    </div>
+                </li>
                     <% } %>
                 <% } %>
             </ul>
@@ -51,35 +66,36 @@
                 <table>
                     <tr>
                         <td>조장 </td>
-                        <td><input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  /></td>
+                        <td colspan="2"><input type="text" name="group_leader" id="group_leader" value="<%= leader%>"  /></td>
                     </tr>
                     <tr>
                         <td>조원 </td>
-                        <td><input type="text" name="group_member" id="group_member" value="<%= member%>" /></td>
+                        <td colspan="2"><input type="text" name="group_member" id="group_member" value="<%= member%>" /></td>
                     </tr>
                     <tr>
                         <td>측정장소 </td>
-                        <td><input type="text" name="measure_palce" id="measure_palce" value="<%= location%>"  /></td>
+                        <td colspan="2"><input type="text" name="measure_palce" id="measure_palce" value="<%= location%>"  /></td>
                     </tr>
                     <tr>
                         <td>차량번호 </td>
-                        <td><input type="text" name="car_number" id="car_number" value="<%= car_number%>"  /></td>
+                        <td colspan="2"><input type="text" name="car_number" id="car_number" value="<%= car_number%>"  /></td>
                     </tr>
                     <tr>
                         <td>차량종류 </td>
-                        <td><input type="text" name="car_kind" id="car_kind" value="<%= car_type%>" /></td>
+                        <td colspan="2"><input type="text" name="car_kind" id="car_kind" value="<%= car_type%>" /></td>
                     </tr>
                     <tr>
                         <td>측정장비 </td>
-                        <td><input type="text" name="measure_machine" id="measure_machine" value="<%= equipment%>"></td>
+                        <td colspan="2"><input type="text" name="measure_machine" id="measure_machine" value="<%= equipment%>"></td>
                     </tr>
                     <tr>
                         <td>시작전 KM</td>
-                        <td><input type="number" name="KM" id="KM" value="" placeholder="ex) 20 - 숫자만입력"></td>
+                        <td><input type="number" name="KM" id="KM" value="" placeholder="ex) 20 [숫자만입력]"></td>
+                        <td>KM</td>
                     </tr>
                     <tr>
                         <td>현재<br>주유상태</td>
-                        <td>
+                        <td colspan="2">
                             <select name="select-native-3" id="select-native-3" data-iconpos="left">
                                 <option value="1">하</option>
                                 <option value="2">중하</option>
@@ -91,44 +107,35 @@
                     </tr>
                     <tr>
                         <td>측정전<br>장애발생<br>유무</td>
-                        <td><select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
+                        <td colspan="2"><select name="select-native-2" id="select-native-2" data-iconpos="left" onchange="ErrSelect(this.value);">
                                 <option value="0" selected>장애 미발생</option>
                                 <option value="1">장애 발생</option>
                             </select></td>
                     </tr>
                 </table>
-                집/대상지 이동시간
-                <div class="ui-grid-b">
-                    <div class="ui-block-b">
-                        <input type="time" name="move_start_time" id="move_start_time" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p style="text-align: center">~</p>
-                    </div>
-                    <div class="ui-block-b" >
-                        <input type="time" name="move_end_time" id="move_end_time" value="">
-                    </div>
-                </div>
+                <table>
+                    <tr>
+                        <td>집/대상지<br>이동시간</td>
+                        <td><input type="time" name="move_start_time" id="move_start_time" value=""></td>
+                        <td>~</td>
+                        <td><input type="time" name="move_end_time" id="move_end_time" value=""></td>
+                    </tr>
+                    <tr>
+                        <td>대상지<br>도착후<br>SETUP</td>
+                        <td><input type="time" name="step_start_time" id="step_start_time" value=""></td>
+                        <td>~</td>
+                        <td><input type="time" name="step_end_time" id="step_end_time" value=""></td>
+                    </tr>
+                </table>
 
-                대상지 도착후 SETUP
-                <div class="ui-grid-b">
-                    <div class="ui-block-b">
-                        <input type="time" name="step_start_time" id="step_start_time" value="">
-                    </div>
-                    <div class="ui-block-b">
-                        <p style="text-align: center"> ~ </p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="time" name="step_end_time" id="step_end_time" value="">
-                    </div>
-                </div>
                 <div class="ui-field-contain"></div>
+
                 <!-- selectbox 에따른 hidden 옵션 -->
                 <div class="ErrSelect" id="ErrSelect" style="display:none">
                     <table>
                         <tr>
-                            <td>지연구분 : </td>
-                            <td>
+                            <td>지연구분</td>
+                            <td colspan="3">
                                 <select name="obstacle_classification" id="obstacle_classification" data-iconpos="left">
                                     <option value="측정자">측정자</option>
                                     <option value="장비">장비</option>
@@ -140,22 +147,17 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>세부내역 : </td>
-                            <td><input type="text" name="obstacle_details" id="obstacle_details" placeholder="ex)블루투스알람 등등 " value=""></td>
+                            <td>세부내역</td>
+                            <td colspan="3"><input type="text" name="obstacle_details" id="obstacle_details" placeholder="ex)블루투스알람 등등 " value=""></td>
+                        </tr>
+                        <tr>
+                            <td>시간</td>
+                            <td><input type="time" name="err_start_time" id="err_start_time" value=""></td>
+                            <td>~</td>
+                            <td><input type="time" name="err_end_time" id="err_end_time" value=""></td>
                         </tr>
                     </table>
-                    시간
-                    <div class="ui-grid-b">
-                            <div class="ui-block-b">
-                                <input type="time" name="err_start_time" id="err_start_time" value="">
-                            </div>
-                            <div class="ui-block-b">
-                                <p style="text-align: center"> ~ </p>
-                            </div>
-                            <div class="ui-block-b">
-                                <input type="time" name="err_end_time" id="err_end_time" value="">
-                            </div>
-                        </div>
+
                     <div data-role="fieldcontain">
                         <label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>
                         <textarea name="errInfo" id="errInfo" class="errInfo"></textarea>
@@ -182,108 +184,102 @@
         </div>
 
         <div data-role="content" >
+            <table>
+                <tr>
+                    <td>조장 </td>
+                    <td colspan="2"><input type="text" name="car_manager" id="car_manager" value=""  /></td>
+                </tr>
+                <tr>
+                    <td>조원 </td>
+                    <td colspan="2"><input type="text" name="team_member" id="team_member" value="" /></td>
+                </tr>
+                <tr>
+                    <td>측정장소 </td>
+                    <td colspan="2"><input type="text" name="location" id="location" value=""  /></td>
+                </tr>
+                <tr>
+                    <td>차량번호 </td>
+                    <td colspan="2"><input type="text" name="car_number2" id="car_number2" value=""  /></td>
+                </tr>
+                <tr>
+                    <td>차량종류 </td>
+                    <td colspan="2"><input type="text" name="car_type" id="car_type" value=""  /></td>
+                </tr>
+                <tr>
+                    <td>측정장비 </td>
+                    <td colspan="2"><input type="text" name="equipment_name" id="equipment_name" value=""></td>
+                </tr>
+                <tr>
+                    <td>시작전 KM</td>
+                    <td><input type="text" name="KM" id="KM" class="Km" value="" placeholder="ex) 20 [숫자만입력]"></td>
+                    <td>KM</td>
+                </tr>
+                <tr>
+                    <td>현재<br>주유상태</td>
+                    <td colspan="2">
+                        <select name="select-native-33" id="select-native-33" data-iconpos="left">
+                            <option value="1">하</option>
+                            <option value="2">중하</option>
+                            <option value="3" >중</option>
+                            <option value="4">중상</option>
+                            <option value="5">상</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>측정전<br>장애발생<br>유무</td>
+                    <td colspan="2">
+                        <select name="select-native-22" id="select-native-22" data-iconpos="left" onchange="ErrSelect2(this.value);">
+                            <option value="0">장애 미발생</option>
+                            <option value="1">장애 발생</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td>집/대상지<br>이동시간</td>
+                    <td><input type="time" name="move_start_time" id="move_start_time2" value=""></td>
+                    <td>~</td>
+                    <td><input type="time" name="move_end_time" id="move_end_time2" value=""></td>
+                </tr>
+                <tr>
+                    <td>대상지<br>도착후<br>SETUP</td>
+                    <td><input type="time" name="step_start_time" id="setup_start_time2" value=""></td>
+                    <td>~</td>
+                    <td><input type="time" name="step_end_time" id="setup_end_time2" value=""></td>
+                </tr>
+            </table>
             <input type="hidden" id="reportId" value="">
-            <p>조장 :</p>
-            <input type="text" name="car_manager" id="car_manager" value=""  />
-            <p>조원 : </p>
-            <input type="text" name="team_member" id="team_member" value="" />
-            <p>측정장소 : </p>
-            <input type="text" name="location" id="location" value=""  />
-            <p>차량번호 : </p>
-            <input type="text" name="car_number2" id="car_number2" value=""  />
-            <p>차량종류 : </p>
-            <input type="text" name="car_type" id="car_type" value=""  />
-            <p>측정장비 :</p>
-            <input type="text" name="equipment_name" id="equipment_name" value="">
-            <p>시작전 KM :</p>
-            <input type="text" name="KM" id="KM" class="Km" value="">
-            <p> KM</p>
-            <div class="ui-grid-b">
-                <div class="ui-field-contain">
-                    <label for="select-native-33">현재주유상태 : </label>
-                    <select name="select-native-33" id="select-native-33" data-iconpos="left">
-                        <option value="1">하</option>
-                        <option value="2">중하</option>
-                        <option value="3" >중</option>
-                        <option value="4">중상</option>
-                        <option value="5">상</option>
-                    </select>
-                </div>
-            </div>
-            <div class="ui-grid-d">
-                <p>집/대상지 이동시간 : </p>
-                <div class="ui-block-b">
-                    <input type="time" name="move_start_time" id="move_start_time2" value="">
-                </div>
-                <div class="ui-block-b" >
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c" >
-                    <input type="time" name="move_end_time" id="move_end_time2" value="">
-                </div>
-                <div class="ui-block-c" >
-                    <p>종료</p>
-                </div>
-            </div>
-            <div class="ui-grid-d">
-                <p>대상지 도착후 SETUP : </p>
-                <div class="ui-block-b">
-                    <input type="time" name="step_start_time" id="setup_start_time2" value="">
-                </div>
-                <div class="ui-block-b">
-                    <p>시작</p>
-                </div>
-                <div class="ui-block-c">
-                    <input type="time" name="step_end_time" id="setup_end_time2" value="">
-                </div>
-                <div class="ui-block-c" >
-                    <p>종료</p>
-                </div>
-            </div>
-            <div class="ui-field-contain">
-                <label for="select-native-22">측정전 장애 발생 유무 : </label>
-                <select name="select-native-22" id="select-native-22" data-iconpos="left" onchange="ErrSelect2(this.value);">
-                    <option value="0">장애 미발생</option>
-                    <option value="1">장애 발생</option>
-                </select>
-            </div>
+
 
             <!-- selectbox 에따른 hidden 옵션 -->
             <div class="ErrSelect2" id="ErrSelect2" style="display:none" >
-                <div class="ui-field-contain">
-                    <label for="obstacle_classification2">지연구분 : </label>
-                    <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
-                        <option value="측정자">측정자</option>
-                        <option value="장비">장비</option>
-                        <option value="노트북">노트북</option>
-                        <option value="프로그램">프로그램</option>
-                        <option value="단말기">단말기</option>
-                        <option value="기타">기타</option>
-                    </select>
-                </div>
-
-                <div class="ui-grid-d">
-                    <div class="ui-block-b" >
-                        <p>세부내역</p>
-                    </div>
-                    <div class="ui-block-b">
-                        <input type="text" name="obstacle_details" id="obstacle_details2" placeholder="ex)블루투스알람 등등 " value="">
-                    </div>
-                </div>
-                <div class="ui-grid-d">
-                    <div class="ui-block-b">
-                        <input type="time" name="err_start_time" id="err_start_time2" value="">
-                    </div>
-                    <div class="ui-block-b" >
-                        <p>시작</p>
-                    </div>
-                    <div class="ui-block-c" >
-                        <input type="time" name="err_end_time" id="err_end_time2" value="">
-                    </div>
-                    <div class="ui-block-c" >
-                        <p>종료</p>
-                    </div>
-                </div>
+                <table>
+                    <tr>
+                        <td>지연구분</td>
+                        <td colspan="3">
+                            <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
+                                <option value="측정자">측정자</option>
+                                <option value="장비">장비</option>
+                                <option value="노트북">노트북</option>
+                                <option value="프로그램">프로그램</option>
+                                <option value="단말기">단말기</option>
+                                <option value="기타">기타</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>세부내역</td>
+                        <td colspan="3"><input type="text" name="obstacle_details" id="obstacle_details2" placeholder="ex)블루투스알람 등등 " value=""></td>
+                    </tr>
+                    <tr>
+                        <td>시간</td>
+                        <td><input type="time" name="err_start_time" id="err_start_time2" value=""></td>
+                        <td>~</td>
+                        <td><input type="time" name="err_end_time" id="err_end_time2" value=""></td>
+                    </tr>
+                </table>
 
                 <div data-role="fieldcontain">
                     <label for="errInfo">장애 내역 (분석실 pm에 보고 내용) :</label>
@@ -310,57 +306,79 @@
             $('#date').val(date());
         });
         $(".Cencel").click(function() {
-            window.location.href = "http://192.168.0.28:3000/reports?action=0";
+            window.location.href = "http://localhost:3000/reports?action=0";
         });
         $("#saveBtn").click(function() {
-            var param = {
-                date: $("#date").val(),
-                group_leader: $("#group_leader").val(),
-                group_member: $("#group_member").val(),
-                measure_place: $("#measure_palce").val(),
-                car_kind: $("#car_kind").val(),
-                car_number: $("#car_number").val(),
-                measure_machine : $("#measure_machine").val(),
-                moveTime : {
-                    startTime: $("#move_start_time").val(),
-                    endTime: $("#move_end_time").val()
-                },
-                arrivalSETPUP : {
-                    startTime : $("#step_start_time").val(),
-                    endTime : $("#step_end_time").val()
-                },
-                errorList : {
-                    obstacle_classification: $("#obstacle_classification").val(),
-                    obstacle_details: $("#obstacle_details").val(),
-                    startTime: $("#err_start_time").val(),
-                    endTime : $("#err_end_time").val(),
-                    errInfo: $("#errInfo").val(),
-                    errSolution: $("#errSolution").val()
-                },
-                KM : $("#KM").val(),
-                car_refuel_state : $('#select-native-3').val(),
-                errCheck : $("#select-native-2").val()
-            };
-            $.ajax({
-                url: "http://192.168.0.28:3000/reports",
-                type: "POST",
-                dataType: "json",
-                data: param,
-                success: function (data) {
-                    if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+            if ($("#group_leader").val() == '') {
+                alert('조장을 입력해주세요.');
+            } else if ($("#group_member").val() == ''){
+                alert('조원을 입력해주세요.');
+            } else if ($("#measure_palce").val() == '') {
+                alert('측정장소를 입력해주세요.');
+            } else if ($("#car_kind").val() == '') {
+                alert('차종을 입력해주세요.');
+            } else if ($("#car_number").val() == '') {
+                alert('차량 번호를 입력해주세요.');
+            } else if ($("#measure_machine").val() == '') {
+                alert('측정장비를 입력해주세요.');
+            } else if ($("#move_start_time").val() == '' || $("#move_end_time").val() == '') {
+                alert('이동시간을 입력해주세요.');
+            } else if ($("#step_start_time").val() == '' || $("#step_end_time").val() == '') {
+                alert('SETUP시간을 입력해주세요.');
+            } else if ($("#KM").val() == '') {
+                alert('시작전 KM을 입력해주세요.');
+            } else if ($("#KM").val() <= 0 ) {
+                alert('시작전 KM는 양수를 입력해주세요.');
+            } else {
+                var param = {
+                    date: $("#date").val(),
+                    group_leader: $("#group_leader").val(),
+                    group_member: $("#group_member").val(),
+                    measure_place: $("#measure_palce").val(),
+                    car_kind: $("#car_kind").val(),
+                    car_number: $("#car_number").val(),
+                    measure_machine : $("#measure_machine").val(),
+                    moveTime : {
+                        startTime: $("#move_start_time").val(),
+                        endTime: $("#move_end_time").val()
+                    },
+                    arrivalSETPUP : {
+                        startTime : $("#step_start_time").val(),
+                        endTime : $("#step_end_time").val()
+                    },
+                    errorList : {
+                        obstacle_classification: $("#obstacle_classification").val(),
+                        obstacle_details: $("#obstacle_details").val(),
+                        startTime: $("#err_start_time").val(),
+                        endTime : $("#err_end_time").val(),
+                        errInfo: $("#errInfo").val(),
+                        errSolution: $("#errSolution").val()
+                    },
+                    KM : $("#KM").val(),
+                    car_refuel_state : $('#select-native-3').val(),
+                    errCheck : $("#select-native-2").val()
+                };
+                $.ajax({
+                    url: "http://localhost:3000/reports",
+                    type: "POST",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        if (data.result === 'ok') {
+                            return window.location.href = "http://localhost:3000/reports?action=0";
+                        }
+                        alert('작성실패');
+                    },
+                    error: function(data){
+                        alert("code:"+data.status+"\n");
                     }
-                    alert('작성실패');
-                },
-                error: function(data){
-                    alert("code:"+data.status+"\n");
-                }
-            });
+                });
+            }
         });
         $(".btninfo").click(function() {
             var Reportid = $(this).val();
             $.ajax({
-                url: "http://192.168.0.28:3000/reports?action=0&Reportid="+Reportid, //Server 에서 받아올 url
+                url: "http://localhost:3000/reports?action=0&Reportid="+Reportid, //Server 에서 받아올 url
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
@@ -404,12 +422,12 @@
         $(".deleteinfo").click(function() {
             var Reportid = $(this).val();
             $.ajax({
-                url: "http://192.168.0.28:3000/reports/"+Reportid,
+                url: "http://localhost:3000/reports/"+Reportid,
                 type: "DELETE",
                 dataType: "json",
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+                        return window.location.href = "http://localhost:3000/reports?action=0";
                     }
                     alert('삭제실패');
                 },
@@ -450,13 +468,13 @@
                 errCheck : $("#select-native-22").val()
             };
             $.ajax({
-                url: "http://192.168.0.28:3000/reports/"+reportId,
+                url: "http://localhost:3000/reports/"+reportId,
                 type: "PUT",
                 dataType: "json",
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://192.168.0.28:3000/reports?action=0";
+                        return window.location.href = "http://localhost:3000/reports?action=0";
                     }
                     alert('수정실패');
                 },
@@ -467,7 +485,7 @@
         });
         $(".datailList").click(function() {
             var Reportid = $(this).val();
-            return window.location.href = "http://192.168.0.28:3000/details?Report="+Reportid;
+            return window.location.href = "http://localhost:3000/details?Report="+Reportid;
         });
     });
 
@@ -481,7 +499,6 @@
 
     function ErrSelect2(Val) {
         if (Val == '1') {
-            alert(Val);
             $('#ErrSelect2').css("display", "block");
         } else if(Val =='0') {
             $('#ErrSelect2').css("display", "none");
