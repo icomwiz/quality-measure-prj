@@ -1294,7 +1294,26 @@ function getReportDetailperDate(reqData, callback) {
                     resData.carManager = results[i].carManager || '';
                     resData.carMileageBefore = results[i].carMileageBefore || '';
                     resData.carMileageAfter = results[i].carMileageAfter || '';
-                    resData.carRefuelState = results[i].carRefuelState || '';
+                    switch (results[i].carRefuelState) {
+                        case 0:
+                            resData.carRefuelState = '';
+                            break;
+                        case 1:
+                            resData.carRefuelState = '하';
+                            break;
+                        case 2:
+                            resData.carRefuelState = '중하';
+                            break;
+                        case 3:
+                            resData.carRefuelState = '중';
+                            break;
+                        case 4:
+                            resData.carRefuelState = '중상';
+                            break;
+                        case 5:
+                            resData.carRefuelState = '상';
+                            break;
+                    }
                 }
                 callback(null);
             });
@@ -1918,6 +1937,68 @@ function getDetailErrorStatePerQuarter(reqData, callback) {
             }
             callback(null, resData);
         });
+    });
+}
+
+//월별 차량 상태
+function getCarState(callback) {
+    //리포트의 년과 월을 가져온다.
+    var select_reports_year_and_month =
+        'SELECT DISTINCT year(date) year, month(date) month ' +
+        'FROM report ' +
+        'WHERE type = 1 ' +
+        'ORDER BY date DESC';
+
+    //년과 월을 통해 마지막 날짜를 구함
+    var select_last_day_of_month =
+        'SELECT DAYOFMONTH(LAST_DAY(STR_TO_DATE(?, \'%Y-%m\')))';
+
+    //년 월 일을 통해 그날 차량탑승팀 구하기
+    var select_team_and_cars_by_date =
+        'SELECT a.carType, a.carNumber, b.teamName, b.teamMember ' +
+        'FROM(SELECT DISTINCT car_type carType, car_number carNumber ' +
+             'FROM ' +
+             'report) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber ' +
+                                  'FROM report ' +
+        'WHERE type = 1 AND date = STR_TO_DATE(?, \'%Y-%m-%d\')) b ON (a.carNumber = b.carNumber) ' +
+        'ORDER BY a.carNumber';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var resData = [];
+        function getYearAndMonth(callback) {
+            dbConn.query(select_reports_year_and_month, [], function(err, results) {
+                if (err) {
+                    callback(err);
+                }
+                for (var i = 0; i < results.length; i++) {
+                    resData.push({
+                        year: results[i].year,
+                        month: results[i].month,
+
+                    });
+                }
+            });
+        }
+
+        function getLastDay(callback) {
+            dbConn.query(select_last_day_of_month, [], function(err, results) {
+                if (err) {
+                    callback(err);
+                }
+
+            });
+        }
+
+        function getCarAndTeamInfo(callback) {
+            dbConn.query(select_team_and_cars_by_date, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+            });
+        }
     });
 }
 

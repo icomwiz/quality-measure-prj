@@ -409,4 +409,16 @@ router.get('/statistics', function(req, res, next) {
     }
 });
 
+//차량들 정보 보기
+router.get('/cars', function(req, res, next) {
+    Report.getCarState(function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.render('parts-car-state', {
+
+        });
+    })
+});
+
 module.exports = router;

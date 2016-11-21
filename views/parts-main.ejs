@@ -27,6 +27,8 @@
             <label class="partsmain-radio-labels" for="file-upload">파일 업로드</label>
             <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
             <label class="partsmain-radio-labels" for="error-state">오류 현황</label>
+            <input type="radio" name="radio-choice-1" id="car-state" value="choice-4"/>
+            <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
         </fieldset>
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
@@ -155,6 +157,11 @@
             //오류현황 탭이 클릭 되었을 시
             $("#error-state").click(function() {
                 errorState();
+            });
+
+            //차량현황 탭이 클릭 되었을 시
+            $("#car-state").click(function() {
+                return window.location.href = "http://localhost:3000/reports/cars";
             });
 
             //파일 업로드 버튼이 클릭 되었을 시
