@@ -38,7 +38,6 @@ router.get('/', function(req, res, next) {
                 if (err) {
                     return next(err);
                 }
-                console.log("results[0] : "+results[0]);
                 res.render('main', {
                     title : 'Icomwiz',
                     report : result,
@@ -198,7 +197,6 @@ router.put('/:id', function(req, res, next) {
     info.report.report_id = req.params.id;
     info.report.user_id = req.user.id;
 
-    console.log(info.report);
     Report.updateReport(info, function(err, result) {
         if (err) {
             return next(err);

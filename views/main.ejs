@@ -45,8 +45,21 @@
                             </p>
                         </button>
                         <div style="padding-top: 9px">
-                            <button style="margin-bottom: 5px"data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= report[i].id%>"></button>
-                            <button data-icon="delete" data-iconpos="notext" class="deleteinfo" value="<%= report[i].id%>"></button>
+                            <!-- 수정버튼 -->
+                            <button style="margin-bottom: 5px" data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= report[i].id%>"></button>
+                            <!-- 삭제버튼 -->
+                            <a href="#popupDialog" data-rel="popup" data-role="button" data-icon="delete" data-position-to="window" data-iconpos="notext" data-transition="pop"></a>
+                            <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="a" data-dismissible="false">
+                                <div data-role="header" data-theme="a">
+                                    <h1>Delete?</h1>
+                                </div>
+                                <div role="main" class="ui-content" style="text-align: center">
+                                    <h3 class="ui-title">Report를 삭제 하겠습니까?</h3>
+                                    <button class="deleteinfo" data-inline="true" value="<%= report[i].id%>">삭제</button>
+                                    <button class="deleteinfoCancle" data-inline="true"  >취소</button>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </li>
@@ -432,10 +445,13 @@
                     alert('삭제실패');
                 },
                 error: function(data){
-                    alert("code:"+data.status+"\n");
+                    alert("data : "+data+"\n"+"code:"+data.status+"\n");
                 }
             });
 
+        });
+        $(".deleteinfoCancle").click(function() {
+            return window.location.href = "";
         });
         $("#updateBtn").click(function() {
             var reportId = $('#reportId').val();

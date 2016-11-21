@@ -30,7 +30,18 @@
                                     </div>
                                     <div>
                                         <button data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= detail[i].id%>"></button>
-                                        <button data-icon="delete" data-iconpos="notext" class="deleteinfo" value="<%= detail[i].id%>"></button>
+                                        <!--<button data-icon="delete" data-iconpos="notext" class="deleteinfo" value="<%= detail[i].id%>"></button>-->
+                                        <a href="#popupDialog" data-rel="popup" data-role="button" data-icon="delete" data-position-to="window" data-iconpos="notext" data-transition="pop"></a>
+                                        <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="a" data-dismissible="false">
+                                            <div data-role="header" data-theme="a">
+                                                <h1>Delete?</h1>
+                                            </div>
+                                            <div role="main" class="ui-content" style="text-align: center">
+                                                <h3 class="ui-title">Report를 삭제 하겠습니까?</h3>
+                                                <button class="deleteinfo" data-inline="true" value="<%= detail[i].id%>">삭제</button>
+                                                <button class="deleteinfoCancle" data-inline="true"  >취소</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </li>
@@ -347,6 +358,9 @@
                     alert("code:"+data.status+"\n");
                 }
             });
+        });
+        $(".deleteinfoCancle").click(function() {
+            return window.location.href = "";
         });
         $(".btninfo").click(function() {
             var detail = $(this).val();
