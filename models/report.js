@@ -12,8 +12,9 @@ function reportList(user_id, callback) {
     var sql_select_report = "SELECT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
     "r.location location, t.name teamName, t.team_no "+
     "FROM report r " +
-    "JOIN team t ON (t.id = r.team_id)" +
-    "WHERE type = 1 AND employee_id = ?";
+    "JOIN team t ON (t.id = r.team_id) " +
+    "WHERE type = 1 AND employee_id = ? " +
+    "ORDER BY r.id DESC";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -476,7 +477,6 @@ function newReport(info, callback) {
     });
 }
 
-//FIXME : 수정사항
 function confirm(info, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
