@@ -21,13 +21,13 @@
     <div data-role="content">
         <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
-            <input type="radio" name="radio-choice-1" id="owns-team" value="choice-1" checked="checked"/>
+            <input type="radio" name="radio-choice-1" id="owns-team" value="1" checked="checked"/>
             <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">팀 관리</label>
-            <input type="radio" name="radio-choice-1" id="file-upload" value="choice-2"/>
+            <input type="radio" name="radio-choice-1" id="file-upload" value="2"/>
             <label class="partsmain-radio-labels" for="file-upload">파일 업로드</label>
-            <input type="radio" name="radio-choice-1" id="error-state" value="choice-3"/>
+            <input type="radio" name="radio-choice-1" id="error-state" value="3"/>
             <label class="partsmain-radio-labels" for="error-state">오류 현황</label>
-            <input type="radio" name="radio-choice-1" id="car-state" value="choice-4"/>
+            <input type="radio" name="radio-choice-1" id="car-state" value="4"/>
             <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
         </fieldset>
         <ul id="listArea" data-role="listview" data-inset="true">
@@ -135,9 +135,20 @@
 
         //html파싱이 완료 된 후 실행되는 function
         $(function() {
-            //팀관리 라디오가 체크되었을 시
-            if ($('input:radio[name=radio-choice-1]:checked')) {
-                teamManagement();
+            var radioChecked = $('input:radio[name=radio-choice-1]:checked').val();
+            switch (radioChecked) {
+                case '1':
+                    teamManagement();
+                    break;
+                case '2':
+                    fileUpload();
+                    break;
+                case '3':
+                    errorState();
+                    break;
+                case '4':
+
+                    break;
             }
 
             $('#home').click(function() {

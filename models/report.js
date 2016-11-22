@@ -1951,55 +1951,218 @@ function getCarState(callback) {
 
     //년과 월을 통해 마지막 날짜를 구함
     var select_last_day_of_month =
-        'SELECT DAYOFMONTH(LAST_DAY(STR_TO_DATE(?, \'%Y-%m\')))';
+        'SELECT DAYOFMONTH(LAST_DAY(STR_TO_DATE(?, \'%Y-%m\'))) lastDay';
 
-    //년 월 일을 통해 그날 차량탑승팀 구하기
+    //년 월을 통해 차량 탑승팀 구하기
     var select_team_and_cars_by_date =
-        'SELECT a.carType, a.carNumber, b.teamName, b.teamMember ' +
+        'SELECT a.carType, a.carNumber, b.day1, b.day2, b.day3, b.day4, b.day5, b.day6, b.day7, b.day8, b.day9, b.day10, b.day11, b.day12, b.day13, b.day14, b.day15, b.day16, b.day17, b.day18, b.day19, b.day20, b.day21, b.day22, b.day23, b.day24, b.day25, b.day26, b.day27, b.day28, b.day29, b.day30, b.day31 ' +
         'FROM(SELECT DISTINCT car_type carType, car_number carNumber ' +
-             'FROM ' +
-             'report) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber ' +
-                                  'FROM report ' +
-        'WHERE type = 1 AND date = STR_TO_DATE(?, \'%Y-%m-%d\')) b ON (a.carNumber = b.carNumber) ' +
+        'FROM ' +
+        'report ' +
+        'WHERE Year(date) = ? AND MONTH(date) = ?) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber, ' +
+        'CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, ' +
+        'CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, ' +
+        'CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, ' +
+        'CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, ' +
+        'CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, ' +
+        'CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, ' +
+        'CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, ' +
+        'CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, ' +
+        'CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, ' +
+        'CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, ' +
+        'CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, ' +
+        'CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, ' +
+        'CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, ' +
+        'CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, ' +
+        'CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, ' +
+        'CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, ' +
+        'CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, ' +
+        'CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, ' +
+        'CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, ' +
+        'CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, ' +
+        'CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, ' +
+        'CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, ' +
+        'CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, ' +
+        'CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, ' +
+        'CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, ' +
+        'CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, ' +
+        'CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, ' +
+        'CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, ' +
+        'CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, ' +
+        'CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, ' +
+        'CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31, date ' +
+        'FROM report ' +
+        'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? ' +
+        'GROUP BY date) b ON (a.carNumber = b.carNumber) ' +
         'ORDER BY a.carNumber';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        var resData = [];
+        async.waterfall([getYearAndMonth, getLastDay, getCarAndTeamInfo], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result);
+        });
+
         function getYearAndMonth(callback) {
             dbConn.query(select_reports_year_and_month, [], function(err, results) {
                 if (err) {
                     callback(err);
                 }
+                var resDatas = [];
                 for (var i = 0; i < results.length; i++) {
-                    resData.push({
+                    resDatas.push({
                         year: results[i].year,
                         month: results[i].month,
-
+                        lastDay: '',
+                        dayDatas: []
                     });
                 }
+                callback(null, resDatas);
             });
         }
 
-        function getLastDay(callback) {
-            dbConn.query(select_last_day_of_month, [], function(err, results) {
-                if (err) {
-                    callback(err);
-                }
-
-            });
-        }
-
-        function getCarAndTeamInfo(callback) {
-            dbConn.query(select_team_and_cars_by_date, [], function(err, results) {
+        function getLastDay(resDatas, callback) {
+            async.each(resDatas, function(data, callback) {
+                dbConn.query(select_last_day_of_month, [data.year + '-' + data.month], function(err, results) {
+                    if (err) {
+                        callback(err);
+                    }
+                    data.lastDay = results[0].lastDay;
+                    callback();
+                });
+            }, function(err) {
                 if (err) {
                     return callback(err);
                 }
+                callback(null, resDatas);
+            });
+        }
+
+        function getCarAndTeamInfo(resDatas, callback) {
+            //객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
+            function findWithAttr(array, attr, value) {
+                for(var i = 0; i < array.length; i += 1) {
+                    if(array[i][attr] === value) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+            async.each(resDatas, function(data, callback) {
+                dbConn.query(select_team_and_cars_by_date, [data.year, data.month, data.year, data.month], function(err, results) {
+                    if (err) {
+                        callback(err);
+                    }
+                    for (var i = 0; i < results.length; i++) {
+                        var index = findWithAttr(data.dayDatas, 'carNumber', results[i].carNumber);
+                        if (index === -1) { //배열에 그 car가 없을 때
+                            data.dayDatas.push({
+                                carType: results[i].carType,
+                                carNumber: results[i].carNumber,
+                                day1: results[i].day1,
+                                day2: results[i].day2,
+                                day3: results[i].day3,
+                                day4: results[i].day4,
+                                day5: results[i].day5,
+                                day6: results[i].day6,
+                                day7: results[i].day7,
+                                day8: results[i].day8,
+                                day9: results[i].day9,
+                                day10: results[i].day10,
+                                day11: results[i].day11,
+                                day12: results[i].day12,
+                                day13: results[i].day13,
+                                day14: results[i].day14,
+                                day15: results[i].day15,
+                                day16: results[i].day16,
+                                day17: results[i].day17,
+                                day18: results[i].day18,
+                                day19: results[i].day19,
+                                day20: results[i].day20,
+                                day21: results[i].day21,
+                                day22: results[i].day22,
+                                day23: results[i].day23,
+                                day24: results[i].day24,
+                                day25: results[i].day25,
+                                day26: results[i].day26,
+                                day27: results[i].day27,
+                                day28: results[i].day28,
+                                day29: results[i].day29,
+                                day30: results[i].day30,
+                                day31: results[i].day31
+                            });
+                        } else { //배열 속에 이미 car가 있을 때
+                            for (var j = 1; j <= 31; j++) {
+                                var day = 'day' + j;
+                                if (!data.dayDatas[index][day]) {
+                                    data.dayDatas[index][day] = results[i][day];
+                                }
+                            }
+                        }
+                    }
+                    callback();
+                });
+            }, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, resDatas);
             });
         }
     });
+}
+
+//월별 차량 자세한 정보
+function getDetailCarState(reqData, callback) {
+    var select_detail_car_state =
+        'SELECT a.teamName, b.teamLeader, a.teamMember, a.startTime, a.endTime, a.location1, a.location2, a.target1, a.target2, a.carType, a.carNumber, a.carMileageBefore, a.carMileageAfter, a.carRefuelState, a.refuelingPrice, a.carSignificant ' +
+        'FROM(SELECT DISTINCT r.team_name teamName, r.team_member teamMember, rd.start_time startTime, rd.end_time endTime, r.location location1, rd.location location2, rd.target1, rd.target2, car_type carType, car_number carNumber, car_manager carManager, car_mileage_before carMileageBefore, car_mileage_after carMileageAfter, car_refuel_state carRefuelState, car_significant carSignificant, refueling_price refuelingPrice ' +
+        'FROM report r LEFT JOIN report_details rd ON (r.id = rd.report_id) ' +
+        'WHERE r.type = 1 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
+        'ORDER BY rd.start_time) a JOIN(SELECT e.name teamLeader, r.team_name teamName ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE type = 0 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON (a.teamName = b.teamName)';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(select_detail_car_state, [reqData.teamName, reqData.date, reqData.teamName, reqData.date], function(err, results) {
+            if (err) {
+                return callback(err);
+            }
+            var resData = {};
+            if (!results) {
+                resData.code = 0;
+                return callback(null, resData);
+            }
+            resData.code = 1;
+            resData.date = reqData.date;
+            resData.teamName = results[0].teamName || '미작성';
+            resData.teamLeader = results[0].teamLeader || '미작성';
+            resData.teamMember = results[0].teamMember || '미작성';
+            resData.carType = results[0].carType || '미작성';
+            resData.carNumber = results[0].carNumber || '미작성';
+            resData.carMileageBefore = results[0].carMileageBefore || '미작성';
+            resData.carMileageAfter = results[0].carMileageAfter || '미작성';
+            resData.carRefuelState = results[0].carRefuelState || '미작성';
+            resData.refuelingPrice = results[0].refuelingPrice || '미작성';
+            resData.carSignificant = results[0].carSignificant || '미작성';
+            resData.carDriveInfo = [];
+            for(var i = 0; i < results.length; i++) {
+                resData.carDriveInfo.push({
+                    time: (results[i].startTime || '') + ' ~ ' + (results[i].endTime || ''),
+                    location: (results[i].location1 || '') + ' ' + (results[i].location2 || '') + ' ' + (results[i].target1 || '')
+                });
+            }
+            callback(null, resData);
+        });
+    })
 }
 
 module.exports.reportList = reportList;
@@ -2021,3 +2184,5 @@ module.exports.getDetailErrorStatePerDay = getDetailErrorStatePerDay;
 module.exports.getDetailErrorStatePerWeek = getDetailErrorStatePerWeek;
 module.exports.getDetailErrorStatePerMonth = getDetailErrorStatePerMonth;
 module.exports.getDetailErrorStatePerQuarter = getDetailErrorStatePerQuarter;
+module.exports.getCarState = getCarState;
+module.exports.getDetailCarState = getDetailCarState;

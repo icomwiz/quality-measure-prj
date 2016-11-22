@@ -414,9 +414,24 @@ router.get('/cars', function(req, res, next) {
             return next(err);
         }
         res.render('parts-car-state', {
-
+            result: result
         });
-    })
+    });
+});
+
+//차량들 자세한 정보 가져오기
+router.get('/detailcarinfo', function(req, res, next) {
+    var reqData = {};
+    reqData.date = req.query.year + '-' + req.query.month + '-' + req.query.day;
+    reqData.teamName = decodeURI(req.query.teamName);
+    Report.getDetailCarState(reqData, function(err, result) {
+       if (err) {
+           return next(err);
+       }
+       res.send({
+           detailResult: result
+       });
+    });
 });
 
 module.exports = router;

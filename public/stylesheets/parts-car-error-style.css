@@ -1,0 +1,51 @@
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    text-align: center;
+    font-size: 1.1em;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    table-layout: inherit;
+    border: 1px solid black;
+}
+
+tr,td {
+    margin: 3px;
+    border: 1px solid black;
+}
+
+thead {
+    background-color: lightgrey;
+    height: 35px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.excelDownBtn {
+    float: right;
+}
+
+#teamAndCarInfo {
+    width: 600px;
+    height: auto;
+    padding: 3px;
+}
+
+li {
+    height: 20px;
+}
+
+#driveInfo {
+    text-align: left;
+    background-color: gainsboro;
+}
+
+.property {
+    font-weight: bold;
+}
