@@ -72,6 +72,11 @@
             <td colspan="2"><%= ErrCount%></td>
         </tr>
         <tr>
+            <td>측정후 KM</td>
+            <td><input type="number" name="car_mileage_after" id="car_mileage_after" value="" placeholder="331241 [숫자만입력]"></td>
+            <td>KM</td>
+        </tr>
+        <tr>
             <td>금일 주유 금액</td>
             <td><input type="number" name="refueling_price" id="refueling_price" value="" placeholder="20000 [숫자만입력]"></td>
             <td>원</td>
@@ -123,6 +128,7 @@
                 var param = {
                     // report
                     refueling_price : $('#refueling_price').val(), //주유금액
+                    car_mileage_after : $('#car_mileage_after').val(), //측정이후 km
                     car_significant : $('#car_significant').val(), //차량특이사항
                     cause_of_incompletion : $('#cause_of_incompletion').val(), //금일실적미완료원인
                     plan_of_incompletion : $('#plan_of_incompletion').val(), //향후실적조치방안

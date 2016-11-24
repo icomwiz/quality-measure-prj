@@ -51,9 +51,18 @@
                 <% } %>
             </ul>
         </div>
-        <div style="text-align: right">
-            <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
+        <div data-role="footer" data-position="fixed" style="text-align: center">
+            <h1>
+                <!--<button id="Change_pw" >비밀번호변경</button>-->
+                <button id="logoutBtn" >로그아웃</button>
+            </h1>
         </div>
+        <!--<div data-role="footer">-->
+            <!--<h1>-->
+                <!--<a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>-->
+                <!--<button data-icon="delete" class="Cencel" >취소</button>-->
+            <!--</h1>-->
+        <!--</div>-->
     </div>
     <div data-role="page" id="page2">
             <div data-role='header' class="ui-grid-a">
@@ -164,7 +173,7 @@
                     </div>
 
                     <div data-role="fieldcontain">
-                        <label for="errSolution">장애 대응 내역 (분석실 pm 대응 방안) :</label>
+                        <label for="errSolution">장애 조치 내역 :</label>
                         <textarea name="errSolution" id="errSolution" class="errSolution"></textarea>
                     </div>
                 </div>
@@ -287,7 +296,7 @@
                 </div>
 
                 <div data-role="fieldcontain">
-                    <label for="errSolution">장애 대응 내역 (분석실 pm 대응 방안) :</label>
+                    <label for="errSolution">장애 조치 내역 :</label>
                     <textarea name="errSolution" id="errSolution2" class="errSolution"></textarea>
                 </div>
             </div>

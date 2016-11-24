@@ -610,9 +610,9 @@ function confirmUpdate(info, callback) {
                 });
             }, function(callback) {
                 var update_report = "UPDATE report " +
-                    "SET refueling_price=?, car_significant=?, cause_of_incompletion=?, plan_of_incompletion=? "+
+                    "SET refueling_price=?, car_significant=?, cause_of_incompletion=?, plan_of_incompletion=?, car_mileage_after=?"+
                     "WHERE id = ? ";
-                dbConn.query(update_report,[info.refueling_price, info.car_significant, info.cause_of_incompletion, info.plan_of_incompletion, info.report_id],function(err, result) {
+                dbConn.query(update_report,[info.refueling_price, info.car_significant, info.cause_of_incompletion, info.plan_of_incompletion, info.car_mileage_after, info.report_id],function(err, result) {
                     if (err) {
                         return callback(err);
                     }
