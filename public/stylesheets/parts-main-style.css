@@ -43,3 +43,7 @@ li {
 #error-state-div {
   display: none;
 }
+
+#logoutBtn {
+  float: right;
+}

@@ -38,6 +38,7 @@
             <input class="error-state" type="button" id="monthErrorBtn" value="월별 에러 현황"/>
             <input class="error-state" type="button" id="quarterErrorBtn" value="분기별 에러 현황"/>
         </div>
+        <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
     </div>
     <div data-role="footer" data-position="fixed">
         <h4>icomwiz</h4>
@@ -224,6 +225,12 @@
             $('#quarterErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=3";
             });
+
+            //로그아웃
+            $('#logoutBtn').click(function() {
+                alert('로그아웃 합니다.');
+                return window.location.href = "http://localhost:3000/auth/logout"
+            })
         });
     </script>
 </body>

@@ -71,4 +71,13 @@ router.post('/', function(req, res, next) {
     }
 });
 
+router.get('/logout', function(req, res, next) {
+   req.session.destroy(function(err) {
+       if (err) {
+           return next(err);
+       }
+       res.render('login', { title: 'Icomwiz'});
+   });
+});
+
 module.exports = router;
