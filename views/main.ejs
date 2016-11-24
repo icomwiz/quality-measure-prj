@@ -18,54 +18,41 @@
             <ul data-role="listview" data-inset="true">
                 <% if(report[0].id) { %>
                     <% for(var i = 0; i < report.length ; i++) {%>
-                    <!--<li>-->
-                        <!--<div dat-role="controlgroup">-->
-                            <!--<button style="width: 70%; float: left;"class="datailList" value="<%= report[i].id%>">-->
-                                <!--<p  style="float: left; text-align:left" >-->
-                                    <!--<%= "날짜 : "+ report[i].date%><br>-->
-                                    <!--<%= "측정장소 : "+report[i].location %><br>-->
-                                    <!--<%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>-->
-                                    <!--&lt;!&ndash;id : <%= report[i].id%>&ndash;&gt;-->
-                                <!--</p>-->
-                            <!--</button>-->
-                            <!--<div>-->
-                                <!--<button style="margin-top: 70px; margin-left: 10px"  data-icon="edit" data-iconpos="notext" data-inline="true" class="btninfo" value="<%= report[i].id%>"></button>-->
-                                <!--<button style="margin-top: 70px" data-icon="delete" data-mini="true" data-iconpos="notext" data-inline="true" class="deleteinfo" value="<%= report[i].id%>"></button>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</li>-->
-                <li>
-                    <div dat-role="controlgroup">
-                        <button style="width: 75%; float: left; margin-right: 40px; background-color: #f6f6f6; border-radius:10px; border: 1px solid #bcbcbc" class="datailList" value="<%= report[i].id%>">
-                            <p  style="float: left; text-align:left" >
-                                <%= "날짜 : "+ report[i].date%><br>
-                                <%= "측정장소 : "+report[i].location %><br>
-                                <%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>
-                                <!--id : <%= report[i].id%>-->
-                            </p>
-                        </button>
-                        <div style="padding-top: 9px">
-                            <!-- 수정버튼 -->
-                            <button style="margin-bottom: 5px" data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= report[i].id%>"></button>
-                            <!-- 삭제버튼 -->
-                            <a href="#popupDialog" data-rel="popup" data-role="button" data-icon="delete" data-position-to="window" data-iconpos="notext" data-transition="pop"></a>
-                            <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="a" data-dismissible="false">
-                                <div data-role="header" data-theme="a">
-                                    <h1>Delete?</h1>
-                                </div>
-                                <div role="main" class="ui-content" style="text-align: center">
-                                    <h3 class="ui-title">Report를 삭제 하겠습니까?</h3>
-                                    <button class="deleteinfo" data-inline="true" value="<%= report[i].id%>">삭제</button>
-                                    <button class="deleteinfoCancle" data-inline="true"  >취소</button>
+                        <li>
+                            <div dat-role="controlgroup">
+                                <button style="width: 75%; float: left; margin-right: 40px; background-color: #f6f6f6; border-radius:10px; border: 1px solid #bcbcbc" class="datailList" value="<%= report[i].id%>">
+                                    <p  style="float: left; text-align:left" >
+                                        <%= "날짜 : "+ report[i].date%><br>
+                                        <%= "측정장소 : "+report[i].location %><br>
+                                        <%= "측정팀 : " +report[i].teamName + "" + report[i].team_no + "조"%><br>
+                                        <!--id : <%= report[i].id%>-->
+                                    </p>
+                                </button>
+                                <div style="padding-top: 9px">
+                                    <!-- 수정버튼 -->
+                                    <button style="margin-bottom: 5px" data-icon="edit" data-iconpos="notext" class="btninfo" value="<%= report[i].id%>"></button>
+                                    <!-- 삭제버튼 -->
+                                    <a href="#popupDialog" data-rel="popup" data-role="button" data-icon="delete" data-position-to="window" data-iconpos="notext" data-transition="pop"></a>
+                                    <div data-role="popup" id="popupDialog" data-overlay-theme="a" data-theme="a" data-dismissible="false">
+                                        <div data-role="header" data-theme="a">
+                                            <h1>Delete?</h1>
+                                        </div>
+                                        <div role="main" class="ui-content" style="text-align: center">
+                                            <h3 class="ui-title">Report를 삭제 하겠습니까?</h3>
+                                            <button class="deleteinfo" data-inline="true" value="<%= report[i].id%>">삭제</button>
+                                            <button class="deleteinfoCancle" data-inline="true"  >취소</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
-
-                        </div>
-                    </div>
-                </li>
+                        </li>
                     <% } %>
                 <% } %>
             </ul>
+        </div>
+        <div style="text-align: right">
+            <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
         </div>
     </div>
     <div data-role="page" id="page2">
@@ -315,6 +302,10 @@
 </body>
 <script>
     $(function() {
+        $('#logoutBtn').click(function() {
+            alert('로그아웃 합니다.');
+            return window.location.href = "http://localhost:3000/auth/logout"
+        })
         $("#addReport").click(function() {
             $('#date').val(date());
         });
