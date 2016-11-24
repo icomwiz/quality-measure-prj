@@ -1,8 +1,6 @@
 function isAuthenticated(req, res, next) {
     if (!req.user) {
-        return res.render({
-
-        });
+        res.redirect('http://124.137.28.247:8080/auth');
     }
     next();
 }

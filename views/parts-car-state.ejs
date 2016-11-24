@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
 
     <!-- 사용자 스타일 시트 파일 선언 -->
-    <link rel='stylesheet' href='/stylesheets/parts-car-error-style.css' />
+    <link rel='stylesheet' href='/stylesheets/parts-car-state-style.css' />
 
     <!-- table을 excel로 export하기 위한 library 선언 -->
     <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
@@ -106,6 +106,10 @@
                     <td id="popupTblrefuelingState"></td>
                 </tr>
                 <tr>
+                    <td class="property">주유 금액</td>
+                    <td id="popupTblrefuelingPrice"></td>
+                </tr>
+                <tr>
                     <td class="property">금일 차량 특이사항</td>
                     <td id="popupTblcarSignificant"></td>
                 </tr>
@@ -153,11 +157,33 @@
                         $('#popupTblTeamLeader').text(data.detailResult.teamLeader); //조장
                         $('#popupTblcarMileageBefore').text(data.detailResult.carMileageBefore); //측정 전 주행 Km
                         $('#popupTblcarMileageAfter').text(data.detailResult.carMileageAfter); //측정 후 주행 Km
-                        $('#popupTblrefuelingState').text(data.detailResult.carRefuelState); //주유상태
+                        var carRefuelState = data.detailResult.carRefuelState;
+                        switch (carRefuelState) {
+                            case 0:
+                                carRefuelState = '미입력';
+                                break;
+                            case 1:
+                                carRefuelState = '하';
+                                break;
+                            case 2:
+                                carRefuelState = '중하';
+                                break;
+                            case 3:
+                                carRefuelState = '중';
+                                break;
+                            case 4:
+                                carRefuelState = '중상';
+                                break;
+                            case 5:
+                                carRefuelState = '상';
+                                break;
+                        }
+                        $('#popupTblrefuelingState').text(carRefuelState); //주유상태
+                        $('#popupTblrefuelingPrice').text(data.detailResult.refuelingPrice); //주유 금액
                         $('#popupTblcarSignificant').text(data.detailResult.carSignificant); //금일 차량 특이사항
                         var tagList = '';
                         for (var i = 0; i < data.detailResult.carDriveInfo.length; i++) {
-                            tagList += '<tr>' + '<td colspan="2">' + data.detailResult.carDriveInfo[i].location + ' ' + data.detailResult.carDriveInfo[i].time + '</td>' + '</tr>';
+                            tagList += '<tr>' + '<td colspan="2">' + '<span id="carDriveInfoLocation">' + data.detailResult.carDriveInfo[i].location + '</span>' + ' ' + '<span id="carDriveInfoTime">' + data.detailResult.carDriveInfo[i].time + '</span>' + '</td>' + '</tr>';
                         }
                         $('#driveInfo').empty();
                         $('#driveInfo').append(tagList);
@@ -165,7 +191,7 @@
                     }
                 },
                 error: function(data) {
-                    alert('fail')
+                    alert('fail');
                 }
             });
         });

@@ -218,31 +218,31 @@ router.post('/planner', function(req, res, next) {
                         var plan = {};
                         plan.date = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'B') { //부서
-                        plan.department = worksheet1[z].v;
+                        plan.department = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'C') { //직책
-                        plan.departmentPosition = worksheet1[z].v;
+                        plan.departmentPosition = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'D') { //파트
                         plan.partName = (worksheet1[z].v).replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'E') { //팀
-                        plan.teamName = worksheet1[z].v;
+                        plan.teamName = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'F') { //조
                         plan.teamNo = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'G') { //조원
                         plan.teamMember = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'H') { //직위
-                        plan.teamPosition = worksheet1[z].v;
+                        plan.teamPosition = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'I') { //이름
-                        plan.name = worksheet1[z].v;
+                        plan.name = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'J') { //휴대폰 번호
-                        plan.phoneNumber = worksheet1[z].v;
+                        plan.phoneNumber = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'K') { //이메일
-                        plan.email = worksheet1[z].v;
+                        plan.email = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'L') { //측정장비
-                        plan.equipmentName = worksheet1[z].v;
+                        plan.equipmentName = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'M') { //차량번호
-                        plan.carNumber = worksheet1[z].v;
+                        plan.carNumber = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'N') { //차량종류
-                        plan.carType = worksheet1[z].v;
+                        plan.carType = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'O') { //업무후 차량 관리자
                         plan.carManager = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'P') { //측정지역

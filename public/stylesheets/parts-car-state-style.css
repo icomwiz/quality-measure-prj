@@ -11,11 +11,9 @@ table {
     font-size: 1.1em;
     margin-top: 5px;
     margin-bottom: 5px;
-    table-layout: inherit;
-    border: 1px solid black;
 }
 
-tr,td {
+tr, td {
     margin: 3px;
     border: 1px solid black;
 }
@@ -43,9 +41,19 @@ li {
 
 #driveInfo {
     text-align: left;
-    background-color: gainsboro;
+    background-color: ghostwhite;
 }
 
 .property {
     font-weight: bold;
+}
+
+#carDriveInfoLocation {
+    color: black;
+    font-size: 1.1em;
+}
+
+#carDriveInfoTime {
+    color: darkgrey;
+    font-size: 0.9em;
 }
