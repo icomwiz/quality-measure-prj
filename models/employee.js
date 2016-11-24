@@ -96,6 +96,24 @@ function findEmployeeById(employeeId, callback) {
     });
 }
 
+function passwordChange(employee, callback) {
+    var updatePassword = "UPDATE employee SET password = HEX(AES_ENCRYPT(SHA2(?, 512), 'wiz')) WHERE id=?;"
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(updatePassword, [employee.password, employee.id], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, {
+                message : "Password 변경완료"
+            });
+        });
+    });
+}
 module.exports.findEmployeeByEmail = findEmployeeByEmail;
 module.exports.verifyPassword = verifyPassword;
 module.exports.findEmployeeById = findEmployeeById;
+module.exports.passwordChange = passwordChange;

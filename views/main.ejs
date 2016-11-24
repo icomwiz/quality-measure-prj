@@ -43,7 +43,6 @@
                                             <button class="deleteinfoCancle" data-inline="true"  >취소</button>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </li>
@@ -53,16 +52,21 @@
         </div>
         <div data-role="footer" data-position="fixed" style="text-align: center">
             <h1>
-                <!--<button id="Change_pw" >비밀번호변경</button>-->
+                <a href="#popupChange" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-transition="pop">비밀번호변경</a>
+                <div data-role="popup" id="popupChange" data-theme="a" class="ui-corner-all">
+                    <div style="padding:10px 20px;">
+                        <h3>변경할 비밀번호를 입력해주세요</h3>
+                        <input type="password" name="pw1" id="pw1" value="" placeholder="변경할비밀번호" data-theme="a">
+                        <input type="password" name="pw2" id="pw2" value="" placeholder="변경할비밀번호" data-theme="a">
+                        <div style="text-align: center">
+                            <button id="Change_pw" data-inline="true">변경</button>
+                            <button id="Cancle_pw" data-inline="true">취소</button>
+                        </div>
+                    </div>
+                </div>
                 <button id="logoutBtn" >로그아웃</button>
             </h1>
         </div>
-        <!--<div data-role="footer">-->
-            <!--<h1>-->
-                <!--<a href="" data-role="button" id="saveBtn" data-icon="edit">저장</a>-->
-                <!--<button data-icon="delete" class="Cencel" >취소</button>-->
-            <!--</h1>-->
-        <!--</div>-->
     </div>
     <div data-role="page" id="page2">
             <div data-role='header' class="ui-grid-a">
@@ -311,6 +315,40 @@
 </body>
 <script>
     $(function() {
+        $('#Change_pw').click(function() {
+            var pw1 = $("#pw1").val();
+            var pw2 = $("#pw2").val();
+            if (pw1 !== pw2) {
+                alert("비밀번호가 같지 않습니다.");
+            } else if(pw1 == '' || pw2 == '') {
+                alert("비밀번호를 입력해주세요");
+            } else if(pw1 === pw2){
+                param ={
+                 password : pw1
+                }
+                $.ajax({
+                    url: "http://localhost:3000/employees",
+                    type: "PUT",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        if (data.result === 'ok') {
+                            return (function(){
+                                window.location.href = "http://localhost:3000/reports?action=0";
+                                alert('비밀번호 변경 성공');
+                            }());
+                        }
+                        alert('비밀번호 변경 실패');
+                    },
+                    error: function(data){
+                        alert("code:"+data.status+"\n");
+                    }
+                });
+            }
+        });
+        $('#Cancle_pw').click(function() {
+            window.location.href = "http://localhost:3000/reports?action=0";
+        });
         $('#logoutBtn').click(function() {
             alert('로그아웃 합니다.');
             return window.location.href = "http://localhost:3000/auth/logout"
