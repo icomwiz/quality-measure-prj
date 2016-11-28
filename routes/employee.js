@@ -2,9 +2,10 @@ var express = require('express');
 var router = express.Router();
 var Team = require('../models/team');
 var Employee = require('../models/employee');
+var isAuthenticatedForAnalyst = require('./common').isAuthenticatedForAnalyst;
 
 /* GET home page. */
-router.get('/partsmain', function(req, res, next) {
+router.get('/partsmain', isAuthenticatedForAnalyst, function(req, res, next) {
     var employeesInfo = {
         name: req.user.name,
         departmentPosition: req.user.departmentPosition,
@@ -39,7 +40,5 @@ router.put('/', function(req, res, next) {
         });
     });
 });
-
-
 
 module.exports = router;

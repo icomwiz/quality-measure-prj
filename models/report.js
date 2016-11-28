@@ -2174,13 +2174,13 @@ function getCallsPerDay(callback) {
         'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
         'FROM employee ' +
         'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT a.team_id teamId, a.team_member teamMember, a.name, a.equipment_name equipmentName, a.calls planCalls, realCalls ' +
-        'FROM(SELECT r.team_id, r.team_member, e.id, e.name, r.equipment_name, r.calls ' +
+        'FROM(SELECT e.id employeeId, r.team_id, r.team_member, e.id, e.name, r.equipment_name, r.calls ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a LEFT JOIN (SELECT r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
+        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a LEFT JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'JOIN report_details rd ON(r.id = rd.report_id) ' +
         'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.type = 1 ' +
-        'GROUP BY r.id) b ON (a.team_id = b.team_id)) b ON (a.teamId = b.teamId)';
+        'GROUP BY r.id) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId)';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {

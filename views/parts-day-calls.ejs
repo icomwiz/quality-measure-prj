@@ -35,7 +35,7 @@
         <!-- Default panel contents -->
         <div class="panel-heading"><%=result[i].date%></div>
         <!-- Table -->
-        <table class="table">
+        <table class="table" id="callsTbl<%=i%>">
             <thead>
                 <tr class="date">
                     <td colspan="<%=result[i].teams.length%>"><%=result[i].date%></td>
@@ -76,16 +76,19 @@
                                 totalResult = (realCalls / planCalls * 100).toFixed(2);
                             }
                         %>
-                        전체 달성: <%=totalResult%>%<br>(<%=realCalls%>calls/<%=planCalls%>calls)<br><br>
+                        전체 달성: <small><%=totalResult%>%</small><br>(<%=realCalls%>calls/<%=planCalls%>calls)<br><br>
                         <%  for (var k = 0; k < result[i].teams[j].measureInfo.length;k ++ ) {
-                                if ( result[i].teams[j].measureInfo[k].planCalls !== 0) { %>
-                        <%=result[i].teams[j].measureInfo[k].equipmentName%>(<%=result[i].teams[j].measureInfo[k].measurer%>):<br>
+                                if ( result[i].teams[j].measureInfo[k].planCalls !== null) { %>
+                        <%=result[i].teams[j].measureInfo[k].equipmentName%>(<%=result[i].teams[j].measureInfo[k].measurer%>):
+                        <small><%=(result[i].teams[j].measureInfo[k].realCalls/result[i].teams[j].measureInfo[k].planCalls).toFixed(2) * 100%>%</small><br>
+                        (<%=result[i].teams[j].measureInfo[k].realCalls || 0%>calls/<%=result[i].teams[j].measureInfo[k].planCalls%>calls)<br><br>
                         <%      } %>
                         <%  } %>
                     </td>
                     <% } %>
                 </tr>
             </tbody>
+            <button type="button" class="btn btn-success" id="<%=i%>" style="float: right;">엑셀 다운로드</button>
         </table>
     </div>
     <% } %>
@@ -112,6 +115,15 @@
                     });
                 }
             }
+        });
+
+        $('.btn').click(function() {
+            var tableId = 'callsTbl' + $(this).attr('id');
+            console.log(tableId);
+            $('#' + tableId).excelexportjs({
+                containerid: tableId,
+                datatype: 'table'
+            });
         });
     });
 </script>
