@@ -44,6 +44,10 @@ li {
   display: none;
 }
 
+#calls-state-div {
+  display: none;
+}
+
 #logoutBtn {
   float: right;
 }

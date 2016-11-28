@@ -1,0 +1,20 @@
+.panel {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+.date {
+    display: none;
+}
+
+small {
+    color: blue;
+}
+
+td {
+    text-align: center;
+}
+
+thead {
+    font-weight: bold;
+}

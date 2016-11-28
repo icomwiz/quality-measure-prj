@@ -2044,15 +2044,7 @@ function getCarState(callback) {
         }
 
         function getCarAndTeamInfo(resDatas, callback) {
-            //객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
-            function findWithAttr(array, attr, value) {
-                for(var i = 0; i < array.length; i += 1) {
-                    if(array[i][attr] === value) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
+
             async.each(resDatas, function(data, callback) {
                 dbConn.query(select_team_and_cars_by_date, [data.year, data.month, data.year, data.month], function(err, results) {
                     if (err) {
@@ -2165,6 +2157,142 @@ function getDetailCarState(reqData, callback) {
     })
 }
 
+//일별 콜수 정보
+function getCallsPerDay(callback) {
+    var select_day =
+        'SELECT DISTINCT(DATE_FORMAT(date, \'%Y-%m-%d\')) date ' +
+        'FROM report ' +
+        'WHERE type = 1 ' +
+        'ORDER BY date DESC';
+
+    var select_calls_info =
+        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
+        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
+        'FROM team t ' +
+        'WHERE t.team_no > 0 ' +
+        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
+        'FROM employee ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT a.team_id teamId, a.team_member teamMember, a.name, a.equipment_name equipmentName, a.calls planCalls, realCalls ' +
+        'FROM(SELECT r.team_id, r.team_member, e.id, e.name, r.equipment_name, r.calls ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a LEFT JOIN (SELECT r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'JOIN report_details rd ON(r.id = rd.report_id) ' +
+        'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.type = 1 ' +
+        'GROUP BY r.id) b ON (a.team_id = b.team_id)) b ON (a.teamId = b.teamId)';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var resData = [];
+
+        async.waterfall([getDays, getCallsInfo], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results === 0) {
+                return callback(null, 0);
+            }
+            callback(null, resData);
+        });
+
+        function getDays(callback) {
+            dbConn.query(select_day, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var dates = [];
+                if (!results) { //리포트가 없을 경우
+                    return callback(err, 0);
+                } else { //리포트가 있을 경우
+                    for(var i = 0; i < results.length; i++) {
+                        dates.push(results[i].date);
+                    }
+                    callback(null, dates);
+                }
+            });
+        }
+
+        function getCallsInfo(dates, callback) {
+            if (dates === 0) {
+                return callback(null, 0);
+            } else {
+                async.each(dates, function(date, callback) {
+                    dbConn.query(select_calls_info, [date, date], function(err, results) {
+                        if (err) {
+                            callback(err);
+                        }
+                        var callsInfo = {};
+                        callsInfo.date = date;
+                        callsInfo.teams = [];
+                        for (var i = 0; i < results.length; i++) {
+                            var index = findWithAttr(callsInfo.teams, 'teamId', results[i].teamId);
+                            if (index === -1) { //팀 배열에 팀이 없다면
+                                var team ={};
+                                team.measureInfo = [];
+                                team.teamId = results[i].teamId;
+                                team.teamName = results[i].teamName + ' ' + results[i].teamNo + '조';
+                                team.teamLeader = results[i].teamLeader;
+                                team.teamMember = results[i].teamMember || '계획서 미업로드';
+                                var measureInfo = {};
+                                measureInfo.measurer = results[i].measurer;
+                                measureInfo.equipmentName = results[i].equipmentName;
+                                measureInfo.planCalls = results[i].planCalls;
+                                measureInfo.realCalls = results[i].realCalls;
+                                team.measureInfo.push(measureInfo);
+                                callsInfo.teams.push(team);
+                            } else { //팀 배열에 이미 팀이 있다면
+                                var measureInfo = {};
+                                measureInfo.measurer = results[i].measurer;
+                                measureInfo.equipmentName = results[i].equipmentName;
+                                measureInfo.planCalls = results[i].planCalls;
+                                measureInfo.realCalls = results[i].realCalls;
+                                callsInfo.teams[index].measureInfo.push(measureInfo);
+                            }
+
+                        }
+                        resData.push(callsInfo);
+                        callback();
+                    });
+                }, function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
+        }
+    });
+}
+
+//주별 콜수 정보
+function getCallsPerWeek(callback) {
+
+}
+
+//월별 콜수 정보
+function getCallsPerMonth(callback) {
+
+}
+
+//분기별 콜수 정보
+function getCallsPerQuarter(callback) {
+
+}
+
+//객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
+function findWithAttr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
@@ -2186,3 +2314,7 @@ module.exports.getDetailErrorStatePerMonth = getDetailErrorStatePerMonth;
 module.exports.getDetailErrorStatePerQuarter = getDetailErrorStatePerQuarter;
 module.exports.getCarState = getCarState;
 module.exports.getDetailCarState = getDetailCarState;
+module.exports.getCallsPerDay = getCallsPerDay;
+module.exports.getCallsPerWeek = getCallsPerWeek;
+module.exports.getCallsPerMonth = getCallsPerMonth;
+module.exports.getCallsPerQuarter = getCallsPerQuarter;

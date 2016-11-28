@@ -9,11 +9,19 @@ router.get('/partsmain', function(req, res, next) {
         name: req.user.name,
         departmentPosition: req.user.departmentPosition,
         partId: req.user.partId,
-        partName: req.user.partName
+        partName: req.user.partName,
+        teamPosition: req.user.teamPosition
     };
     res.render('parts-main', {
         result: employeesInfo
     });
+});
+
+//관리자 페이지 API
+router.get('/admin', function(req, res, next) {
+   res.render('parts-admin-page', {
+      result: ''
+   });
 });
 
 router.put('/', function(req, res, next) {
@@ -31,5 +39,7 @@ router.put('/', function(req, res, next) {
         });
     });
 });
+
+
 
 module.exports = router;

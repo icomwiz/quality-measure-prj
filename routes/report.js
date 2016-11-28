@@ -417,4 +417,100 @@ router.get('/detailcarinfo', function(req, res, next) {
     });
 });
 
+//콜수 현황 보기
+router.get('/calls', function(req, res, next) {
+    var action = parseInt(req.query.action);
+    if (action === 0) { //일별 호량
+        Report.getCallsPerDay(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (result === 0 ) {
+                res.send({
+                    result: 0
+                });
+            } else {
+                res.render('parts-day-calls', {
+                    result: result
+                });
+            }
+        });
+    } else if (action === 1) { //주별 호량
+        Report.getCallsPerWeek(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-week-calls', {
+                result: result
+            });
+        });
+    } else if (action === 2) { //월별 호량
+        Report.getCallsPerMonth(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-month-calls', {
+                result: result
+            });
+        });
+    } else if (action === 3) { //분기별 호량
+        Report.getCallsPerQuarter(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('parts-quarter-calls', {
+                result: result
+            });
+        });
+    }
+});
+
+//<script>코드에서 morrisjs라이브러리 사용하여 그래프 표현을 위해 ajax로 콜수 현황 다시 불러오기
+router.get('/calls/ajax', function(req, res, next) {
+    var action = parseInt(req.query.action);
+    if (action === 0) { //일별 호량
+        Report.getCallsPerDay(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (result === 0 ) {
+                res.send({
+                    result: 0
+                });
+            } else {
+                res.send({
+                    result: result
+                });
+            }
+        });
+    } else if (action === 1) { //주별 호량
+        Report.getCallsPerWeek(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 2) { //월별 호량
+        Report.getCallsPerMonth(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 3) { //분기별 호량
+        Report.getCallsPerQuarter(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
+    }
+});
+
 module.exports = router;

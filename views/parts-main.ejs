@@ -27,8 +27,14 @@
             <label class="partsmain-radio-labels" for="file-upload">파일 업로드</label>
             <input type="radio" name="radio-choice-1" id="error-state" value="3"/>
             <label class="partsmain-radio-labels" for="error-state">오류 현황</label>
+            <input type="radio" name="radio-choice-1" id="call-state" value="5"/>
+            <label class="partsmain-radio-labels" for="call-state">콜수 현황</label>
             <input type="radio" name="radio-choice-1" id="car-state" value="4"/>
             <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
+            <% if (result.teamPosition === 0) { %>
+            <input type="radio" name="radio-choice-1" id="admin-page" value="6"/>
+            <label class="partsmain-radio-labels" for="admin-page">관리자 페이지</label>
+            <% } %>
         </fieldset>
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
@@ -37,6 +43,12 @@
             <input class="error-state" type="button" id="weekErrorBtn" value="주별 에러 현항"/>
             <input class="error-state" type="button" id="monthErrorBtn" value="월별 에러 현황"/>
             <input class="error-state" type="button" id="quarterErrorBtn" value="분기별 에러 현황"/>
+        </div>
+        <div id="calls-state-div">
+            <input class="call-state" type="button" id="dayCallsBtn" value="일별 콜수 현황"/>
+            <input class="call-state" type="button" id="weekCallsBtn" value="주별 콜수 현항"/>
+            <input class="call-state" type="button" id="monthCallsBtn" value="월별 콜수 현황"/>
+            <input class="call-state" type="button" id="quarterCallsBtn" value="분기별 콜수 현황"/>
         </div>
         <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
     </div>
@@ -75,6 +87,7 @@
 
         //팀관리 탭을 선택했을 때 실행되는 function
         function teamManagement() {
+            $('#calls-state-div').hide();
             $('#error-state-div').hide();
             $.get("http://localhost:3000/teams/simple", function(data) {
                 $('#listArea').empty();
@@ -115,6 +128,7 @@
 
         //파일업로드 탭을 선택했을 때 실행되는 function
         function fileUpload() {
+            $('#calls-state-div').hide();
             $('#error-state-div').hide();
             $('#listArea').empty();
             $('#listArea').append("<li>" +
@@ -131,7 +145,25 @@
         //오류현황 탭을 선택했을 때 폼을 실행되는 function
         function errorState() {
             $('#listArea').empty();
+            $('#calls-state-div').css('display','none');
             $('#error-state-div').show();
+            $('#listArea').listview('refresh');
+        }
+
+        //콜수 현황 탭을 선택했을 때 실행되는 function
+        function callState() {
+            $('#listArea').empty();
+            $('#error-state-div').css('display','none');
+            $('#calls-state-div').show();
+            $('#listArea').listview('refresh');
+        }
+
+        //관리자 페이지 탭을 선택했을 때 실행되는 fucntion
+        function adminPage() {
+            alert('a');
+            $('#calls-state-div').hide();
+            $('#error-state-div').hide();
+            return window.location.href = "http://localhost:3000/employees/admin";
         }
 
         //html파싱이 완료 된 후 실행되는 function
@@ -148,7 +180,13 @@
                     errorState();
                     break;
                 case '4':
-
+                    //
+                    break;
+                case '5':
+                    callState();
+                    break;
+                case '6':
+                    adminPage();
                     break;
             }
 
@@ -171,9 +209,20 @@
                 errorState();
             });
 
+            $("#call-state").click(function() {
+                callState();
+            })
+
             //차량현황 탭이 클릭 되었을 시
             $("#car-state").click(function() {
+                $('#calls-state-div').hide();
+                $('#error-state-div').hide();
                 return window.location.href = "http://localhost:3000/reports/cars";
+            });
+
+            //관리자 페이지 탭이 클릭 되었을 시
+            $('#admin-page').click(function() {
+                adminPage();
             });
 
             //파일 업로드 버튼이 클릭 되었을 시
@@ -212,7 +261,7 @@
                 return window.location.href = "http://localhost:3000/reports" + queryStr;
             });
 
-            // 오류현황 탭의 select가 선택되었을 시
+            // 오류현황 탭의 목록이 선택되었을 시
             $('#dayErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=0";
             });
@@ -224,6 +273,20 @@
             });
             $('#quarterErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=3";
+            });
+
+            //콜수 현황탭의 목록이 선택되었을 시
+            $('#dayCallsBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/calls?action=0";
+            });
+            $('#weekCallsBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/calls?action=1";
+            });
+            $('#monthCallsBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/calls?action=2";
+            });
+            $('#quarterCallsBtn').click(function() {
+                return window.location.href = "http://localhost:3000/reports/calls?action=3";
             });
 
             //로그아웃
