@@ -141,13 +141,13 @@
                     etime : $('#etime').val()   //FTP측정 데이터 업로드시간 - 103
                 };
                 $.ajax({
-                    url: "http:http://localhost:3000/reports/confirm?report="+ query.report, // API
+                    url: "http://localhost:3000/reports/confirm?report="+ query.report, // API
                     type: "POST",
                     dataType: "json",
                     data: param,
                     success: function (data) {
                         if (data.result === 'ok') {
-                            return window.location.href = "http:http://localhost:3000/reports?action=0";
+                            return window.location.href = "http://localhost:3000/reports?action=0";
                         }
                         alert('작성실패');
                     },
@@ -158,7 +158,7 @@
             }
         });
         $(".Cencel").click(function() {
-            window.location.href = "http:http://localhost:3000/details?Report="+ query.report;
+            window.location.href = "http://localhost:3000/details?Report="+ query.report;
         });
         function getUrlParams() {
             const params = {};

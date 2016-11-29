@@ -18,10 +18,31 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
     <style>
+        body {
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
         td {
+            padding: 0;
             text-align: center;
         }
+        td > input {
+            border: 0px;
+            width: 100%;
+            text-align: center;
+        }
+
         th {
+            background-color: #bcbcbc;
+            text-align: center;
+        }
+        .base {
+            background-color: #FFFFC9;
+        }
+        .Total {
+            background-color: #FFCC00;
+        }
+        .date {
             text-align: center;
         }
     </style>
@@ -30,18 +51,17 @@
 <body>
 <h1 style="text-align: center">품질측정팀_일일업무보고</h1>
 <div style="text-align: right">
-    <input type="date">
+    <input type="date" class="D_date" onchange="Change_date(value)">
 </div>
-<div>1. 인력운영현황</div>
-    <table border='1'>
+    <table border='1' style="width: 100%">
+        <caption><h3>1. 인력운영현황</h3></caption>
         <tr>
             <th colspan="3" rowspan="2">구성</th>
-            <th rowspan="2">조<br>배정</th>
+            <th rowspan="2">조배정</th>
             <th rowspan="2">장비</th>
             <th rowspan="2">배정<br>인원</th>
-            <td colspan="3">
-
-            </td>
+            <th colspan="3">투입인원</th>
+            <th rowspan="2"></th>
         </tr>
         <tr>
             <th>측정팀</th>
@@ -49,73 +69,135 @@
             <th>소계</th>
         </tr>
         <tr>
-            <td rowspan="5">품질측정팀</td>
-            <td>정기</td>
+            <td rowspan="3" class="base">품질측정팀</td>
+            <td class="base">정기</td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <!--<td class="AssignedPerson"><input type="number" class="AssignedPerson_1" value="" onchange="AssignedPerson_Sum(this.value)"></td>-->
+            <td><input type="number" class="AssignedPerson_1" onchange="AssignedPerson_Sum(this)" style="background-color: #FDE9D9;"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number" style="background-color:#DAEEF3;"></td>
+            <td><a href="" style="margin-right: 5px;">추가</a>|<a href="" style="margin-left: 5px;">삭제</a></td>
+        </tr>
+        <tr>
+            <td class="base">QOE</td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <!--<td class="AssignedPerson"><input type="number" class="AssignedPerson_1" value=""  onchange="AssignedPerson_Sum(this.value)"></td>-->
+            <td><input type="number" class="AssignedPerson_1" onchange="AssignedPerson_Sum(this)" style="background-color: #FDE9D9;"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number" style="background-color:#DAEEF3;"></td>
+            <td><a href="" style="margin-right: 5px;">추가</a>|<a href="" style="margin-left: 5px;">삭제</a></td>
+        </tr>
+        <tr>
+            <td rowspan="1" class="base">테마</td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" class="AssignedPerson_1" onchange="AssignedPerson_Sum(this)" style="background-color: #FDE9D9;"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number" style="background-color:#DAEEF3;"></td>
+            <td><a href="" style="margin-right: 5px;">추가</a>|<a href="" style="margin-left: 5px;">삭제</a></td>
+        </tr>
+
+
+        <tr>
+            <td colspan="5" class="base">휴/공가</td>
+            <td><input type="number" class="AssignedPerson_1_vacation" onchange="AssignedPerson_Sum(this)" style="background-color: #FDE9D9;"></td>
+            <td><input type="number"></td>
+            <td><input type="number"></td>
+            <td><input type="number" style="background-color:#DAEEF3;"></td>
             <td><input type="text"></td>
-            <td>5</td>
-            <td>OTPis-P8E<br>N_PM10</td>
-            <td><input type="number"></td>
-            <td>11</td>
-            <td><input type="number"></td>
-            <td>11</td>
         </tr>
         <tr>
-            <td>k1</td>
-            <td><input type="text"></td>
-            <td>5</td>
-            <td>OTPis-P8E<br>N_PM10</td>
-            <td><input type="number"></td>
-            <td>11</td>
-            <td><input type="number"></td>
-            <td>11</td>
-        </tr>
-        <tr>
-            <td rowspan="3">테마</td>
-            <td><input type="text"></td>
-            <td>5</td>
-            <td>OTPis-P8E<br>N_PM10</td>
-            <td><input type="number"></td>
-            <td>11</td>
-            <td><input type="number"></td>
-            <td>11</td>
-        </tr>
-        <tr>
-            <td><input type="text"></td>
-            <td>5</td>
-            <td>OTPis-P8E<br>N_PM10</td>
-            <td><input type="number"></td>
-            <td>11</td>
-            <td><input type="number"></td>
-            <td>11</td>
-        </tr>
-        <tr>
-            <td><input type="text"></td>
-            <td>5</td>
-            <td>OTPis-P8E<br>N_PM10</td>
-            <td><input type="number"></td>
-            <td>11</td>
-            <td><input type="number"></td>
-            <td>11</td>
-        </tr>
-        <tr>
-            <td colspan="5">휴/공가</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-        </tr>
-        <tr>
-            <td colspan="5">소계</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td colspan="5" class="Total">소계</td>
+            <td class="Total"><div id="AssignedPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+            <td class="Total">0명</td>
+            <td class="Total">0명</td>
+            <td class="Total">0명</td>
+            <td class="Total"><input type="text" style="width: 100%; background-color: #FFCC00; text-align: center"></td>
         </tr>
     </table>
+
+    <br>
+    <table border="1" style="width: 100%">
+        <caption><h3>2. 업무현황</h3></caption>
+        <tr>
+            <th style="width: 20%">파트</th>
+            <th style="width: 20%">이름</th>
+            <th style="width: 20%">출근</th>
+            <th style="width: 20%">퇴근</th>
+            <th style="width: 20%">측정조 특이사항</th>
+        </tr>
+
+        <% if(result) { %>
+            <% for(var i = 0; i < result.length ; i++) {%>
+                <tr>
+                    <td><%= result[i].team_name%></td>
+                    <td><%= result[i].name%></td>
+                    <td><%= result[i].start_time%></td>
+                    <td><%= result[i].end_time%></td>
+                    <td><textarea class="" style="width: 100%; text-align: center" value="<%= result[0].id%>"></textarea></td>
+                </tr>
+            <% } %>
+        <% } %>
+    </table>
+
+    <div style="padding: 1em; text-align: right">
+        <button>저장</button>
+        <button>취소</button>
+    </div>
 </body>
 <script>
     $(function() {
+        var query = getUrlParams() //Query String을 받아오기위하여 선언
+        $(".D_date").val(query.date);
 
+        /*
+        배정인원소계
+        1. 덧셈
+        2. 뺄셈
+         */
+        var befor_value;
+        $(".AssignedPerson_1").on('focus', function() {
+            befor_value = this.value;
+        }).change(function() {
+            if(befor_value < this.value) {
+                $("#AssignedPerson_total").text(parseInt($("#AssignedPerson_total").text()) + (this.value - befor_value));
+            } else if (befor_value > this.value){
+                $("#AssignedPerson_total").text(parseInt($("#AssignedPerson_total").text()) - (befor_value - this.value));
+            }
+            befor_value = this.value;
+        });
+
+        $(".AssignedPerson_1_vacation").on('focus', function() {
+            befor_value = this.value;
+        }).change(function() {
+            if(befor_value < this.value) {
+                $("#AssignedPerson_total").text(parseInt($("#AssignedPerson_total").text()) - (this.value - befor_value));
+            } else if (befor_value > this.value){
+                $("#AssignedPerson_total").text(parseInt($("#AssignedPerson_total").text()) + (befor_value - this.value));
+            }
+            befor_value = this.value;
+        });
     });
+
+    function Change_date(value) {
+        return window.location.href = "http://localhost:3000/employees/admin?date="+value;
+    }
+
+    //Query String을 위한함수
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+        return params;
+    }
+
+//return window.location.href = "http://localhost:3000/employees/admin?date="+date();
 </script>
 </html>
