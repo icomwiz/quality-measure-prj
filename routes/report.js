@@ -435,30 +435,12 @@ router.get('/calls', function(req, res, next) {
                 });
             }
         });
-    } else if (action === 1) { //주별 호량
-        Report.getCallsPerWeek(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.render('parts-week-calls', {
-                result: result
-            });
-        });
-    } else if (action === 2) { //월별 호량
+    } else if (action === 1) { //월별 호량
         Report.getCallsPerMonth(function (err, result) {
             if (err) {
                 return next(err);
             }
             res.render('parts-month-calls', {
-                result: result
-            });
-        });
-    } else if (action === 3) { //분기별 호량
-        Report.getCallsPerQuarter(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.render('parts-quarter-calls', {
                 result: result
             });
         });
@@ -483,26 +465,8 @@ router.get('/calls/ajax', function(req, res, next) {
                 });
             }
         });
-    } else if (action === 1) { //주별 호량
-        Report.getCallsPerWeek(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                result: result
-            });
-        });
-    } else if (action === 2) { //월별 호량
+    } else if (action === 1) { //월별 호량
         Report.getCallsPerMonth(function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            res.send({
-                result: result
-            });
-        });
-    } else if (action === 3) { //분기별 호량
-        Report.getCallsPerQuarter(function (err, result) {
             if (err) {
                 return next(err);
             }

@@ -2268,20 +2268,11 @@ function getCallsPerDay(callback) {
     });
 }
 
-//주별 콜수 정보
-function getCallsPerWeek(callback) {
-
-}
-
 //월별 콜수 정보
 function getCallsPerMonth(callback) {
 
 }
 
-//분기별 콜수 정보
-function getCallsPerQuarter(callback) {
-
-}
 
 //객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
 function findWithAttr(array, attr, value) {
@@ -2315,6 +2306,4 @@ module.exports.getDetailErrorStatePerQuarter = getDetailErrorStatePerQuarter;
 module.exports.getCarState = getCarState;
 module.exports.getDetailCarState = getDetailCarState;
 module.exports.getCallsPerDay = getCallsPerDay;
-module.exports.getCallsPerWeek = getCallsPerWeek;
 module.exports.getCallsPerMonth = getCallsPerMonth;
-module.exports.getCallsPerQuarter = getCallsPerQuarter;

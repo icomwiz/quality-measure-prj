@@ -11,8 +11,22 @@ li {
   list-style: none;
 }
 
-#btnLogin {
-  cursor: pointer;
+table {
+  width:100%;
+  border-collapse: collapse;
+  background-color: white;
+  text-align: center;
+  font-size: 1em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+thead {
+  background-color: gainsboro;
+}
+
+tr, td {
+  border: 1px solid black;
 }
 
 .teamList {

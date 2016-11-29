@@ -21,10 +21,12 @@
     <div data-role="content">
         <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
-            <input type="radio" name="radio-choice-1" id="owns-team" value="1" checked="checked"/>
-            <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">팀 관리</label>
+            <input type="radio" name="radio-choice-1" id="analyst-report" value="7" checked="checked"/>
+            <label class="partsmain-radio-labels" id="analyst-report-label" for="analyst-report">내근자 업무 보고</label>
+            <input type="radio" name="radio-choice-1" id="owns-team" value="1"/>
+            <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">외근팀 관리</label>
             <input type="radio" name="radio-choice-1" id="file-upload" value="2"/>
-            <label class="partsmain-radio-labels" for="file-upload">파일 업로드</label>
+            <label class="partsmain-radio-labels" for="file-upload">계획서 업로드</label>
             <input type="radio" name="radio-choice-1" id="error-state" value="3"/>
             <label class="partsmain-radio-labels" for="error-state">오류 현황</label>
             <input type="radio" name="radio-choice-1" id="call-state" value="5"/>
@@ -36,26 +38,86 @@
             <label class="partsmain-radio-labels" for="admin-page">관리자 페이지</label>
             <% } %>
         </fieldset>
+
+        <!-- 내근자 업무보고 탭, 팀 관리 탭, 계획서 업로드 탭 -->
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
+
+        <!-- 오류 현황 탭 -->
         <div id="error-state-div">
             <input class="error-state" type="button" id="dayErrorBtn" value="일별 에러 현황"/>
             <input class="error-state" type="button" id="weekErrorBtn" value="주별 에러 현항"/>
             <input class="error-state" type="button" id="monthErrorBtn" value="월별 에러 현황"/>
             <input class="error-state" type="button" id="quarterErrorBtn" value="분기별 에러 현황"/>
         </div>
+
+        <!-- 콜수 현황 탭 -->
         <div id="calls-state-div">
             <input class="call-state" type="button" id="dayCallsBtn" value="일별 콜수 현황"/>
-            <input class="call-state" type="button" id="weekCallsBtn" value="주별 콜수 현항"/>
             <input class="call-state" type="button" id="monthCallsBtn" value="월별 콜수 현황"/>
-            <input class="call-state" type="button" id="quarterCallsBtn" value="분기별 콜수 현황"/>
         </div>
+
         <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
     </div>
     <div data-role="footer" data-position="fixed">
         <h4>icomwiz</h4>
     </div>
     <script>
+        //내근자 업무보고 탭을 눌렀을 때 실행되는 function
+        function analystReport() {
+            $('#calls-state-div').hide();
+            $('#error-state-div').hide();
+            $.get('http://localhost:3000/analystReports/me', function(data) {
+                $('#listArea').empty();
+                $.each(data.result, function() {
+                    $('#listArea').append("<li data-role=\"collapsible\" data-iconpos=\"right\" data-shadow=\"false\" data-corners=\"false\">" +
+                                            "<h2>" + this.date + " 업무 보고" + "</h2>" +
+                                            "<div>" +
+                                                "<table>" +
+                                                    "<thead>" +
+                                                        "<tr>" +
+                                                            "<td colspan='2'>" + '근태 현황' + "</td>" + "<td>" + "주 업무" + "</td>" +
+                                                        "</tr>" +
+                                                    "</thead>" +
+                                                    "<tbody>" +
+                                                        "<tr>" +
+                                                            "<td>" + '출근' + "</td>" + "<td>" + (this.workStartTime || '') + "</td>" + "<td rowspan='2'>" + this.majorJob + "</td>" +
+                                                        "<tr>" +
+                                                            "<td>" + '퇴근' + "</td>" + "<td>" + (this.workEndTime || '') + "</td>" +
+                                                        "</tr>" +
+                                                            "<td>" + '기타' + "</td>" + "<td>" + (this.etc ||'') + "</td>" + "<td>" + "</td>" +
+                                                        "<tr>" +
+                                                            "<td>" + '야근' + "</td>" + "<td>" + (this.overTime || '') + "</td>" + "<td>" + "</td>" +
+                                                        "</tr>" +
+                                                            "<td>" + '휴가' + "</td>" + "<td>" + (this.vacation || '') + "</td>" + "<td>" + "</td>" +
+                                                        "<tr>" +
+                                                    "</tbody>" +
+                                                "</table>" +
+                                            "</div>" +
+                                            "<ul id=" + "\"" + this.date +"\"" + " data-role=\"listview\" data-theme=\"d\" data-inset=\"true\"></ul>" +
+                                          "</li>");
+                    $('#listArea li').collapsible();
+                    var dateSelector = '#' + this.date;
+                    $.ajax({
+                        url: "http://localhost:3000/analystReportDetails",
+                        type: "GET",
+                        dataType: "JSON",
+                        data: { date: this.date },
+                        success: function(data) {
+                            for (var i = 0; i < data.result.length; i++) {
+                                $(dateSelector).append('<li>' + 'hi' + '</li>');
+                            }
+                            $('#listArea').trigger('create');
+                            $(dateSelector).listview('refresh');
+                        },
+                        error: function(data) {
+                            alert("접속 에러");
+                        }
+                    });
+                });
+            });
+        }
+
         //팀을 선택시 해당 팀의 날짜별 report들을 불러오는 function
         function getReport(teamId) {
             $.ajax({
@@ -205,10 +267,18 @@
                 case '6':
                     //
                     break;
+                case '7':
+                    analystReport();
+                    break;
             }
 
             $('#home').click(function() {
                 $("#owns-team-label").trigger('click');
+            });
+
+            //내근자 업무보고 탭이 클릭 되었을 시
+            $("#analyst-report").click(function() {
+                analystReport();
             });
 
             //팀관리 탭이 클릭되었을 시
@@ -296,14 +366,8 @@
             $('#dayCallsBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/calls?action=0";
             });
-            $('#weekCallsBtn').click(function() {
-                return window.location.href = "http://localhost:3000/reports/calls?action=1";
-            });
             $('#monthCallsBtn').click(function() {
-                return window.location.href = "http://localhost:3000/reports/calls?action=2";
-            });
-            $('#quarterCallsBtn').click(function() {
-                return window.location.href = "http://localhost:3000/reports/calls?action=3";
+                return window.location.href = "http://localhost:3000/reports/calls?action=1";
             });
 
             //로그아웃

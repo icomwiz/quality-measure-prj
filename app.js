@@ -17,7 +17,8 @@ var team = require('./routes/team');
 var report = require('./routes/report');
 var employee = require('./routes/employee');
 var detail = require('./routes/detail');
-
+var analystReport = require('./routes/analystReport');
+var analystReportDetails = require('./routes/analystReportDetails');
 
 var app = express();
 
@@ -57,6 +58,8 @@ app.use('/reports', report);
 app.use('/teams', team);
 app.use('/employees', employee);
 app.use('/details', detail);
+app.use('/analystReports', analystReport);
+app.use('/analystReportDetails', analystReportDetails);
 app.use('/excelforms', express.static(path.join(__dirname, 'planners/form/excelform.xlsx')));
 app.use('/imgs', express.static(path.join(__dirname, 'public/img')));
 
