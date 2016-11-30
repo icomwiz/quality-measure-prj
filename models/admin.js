@@ -23,6 +23,7 @@ function measureTaskReport(reportDate, callback) {
             return callback(err);
         }
         dbConn.query(sql_start_TaskStatus, [reportDate, reportDate], function(err, result) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
