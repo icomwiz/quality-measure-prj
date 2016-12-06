@@ -19,10 +19,9 @@ router.get('/partsmain', function(req, res, next) {
     });
 });
 
-//관리자 페이지 API
+//관리자 페이지(품질측정팀_일일업무보고)작성 API
 router.get('/admin', function(req, res, next) {
-    //date, userid, name,
-
+    //작성페이지 불러오기
     var reportDate = req.query.date;
     Admin.measureTaskReport(reportDate, function(err, result) {
         if (err) {
@@ -32,7 +31,22 @@ router.get('/admin', function(req, res, next) {
             result: result
         });
     });
+});
 
+//관리자 페이지(품질측정팀_일일업무보고)저장 API
+router.post('/admin', function(req, res, next) {
+    var info = {};
+    info = req.body;
+    info.Date = req.query.date;
+
+    Admin.daily_briefing(info, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result : 'ok'
+        });
+    });
 });
 
 router.put('/', function(req, res, next) {
