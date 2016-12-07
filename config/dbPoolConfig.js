@@ -3,7 +3,7 @@ var dbPoolConfig = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    connectionLimit: 20,
+    connectionLimit: 50,
 };
 
 module.exports = dbPoolConfig;

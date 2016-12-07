@@ -23,17 +23,71 @@ router.get('/partsmain', function(req, res, next) {
 router.get('/admin', function(req, res, next) {
     //작성페이지 불러오기
     var reportDate = req.query.date;
-    Admin.measureTaskReport(reportDate, function(err, result) {
-        if (err) {
-            return next(err);
-        }
-        res.render('parts-admin-page', {
-            result: result
+    if (req.query.action==0) {
+
+        Admin.daily_briefingView(reportDate, function(err, data_daily_briefing, daily_briefing_id, briefing) {
+            if (err) {
+                return next(err);
+            }
+            if(daily_briefing_id[0]) {
+                console.log("수정모드");
+                res.render('parts-admin-page', {
+                    result: data_daily_briefing,
+                    daily_briefing_id : daily_briefing_id[0].id,
+                    briefing : briefing
+                });
+            } else {
+                console.log("삽입모드");
+                res.render('parts-admin-page', {
+                    result: data_daily_briefing,
+                    daily_briefing_id : null,
+                    briefing : briefing
+                });
+            }
         });
-    });
+
+        // Admin.measureTaskReport(reportDate, function(err, result, daily_briefing_id) {
+        //     if (err) {
+        //         return next(err);
+        //     }
+        //
+        //     if(daily_briefing_id[0]) {
+        //         console.log("수정모드");
+        //         res.render('parts-admin-page', {
+        //             result: result,
+        //             daily_briefing_id : daily_briefing_id[0].id
+        //         });
+        //     } else {
+        //         console.log("삽입모드");
+        //         res.render('parts-admin-page', {
+        //             result: result,
+        //             daily_briefing_id : null
+        //         });
+        //     }
+        // });
+    } else {
+        Admin.daily_briefingView(reportDate, function(err, data_daily_briefing, daily_briefing_id, briefing) {
+            if (err) {
+                return next(err);
+            }
+            if(daily_briefing_id[0]) {
+                res.render('parts-admin-page-view', {
+                    result: data_daily_briefing,
+                    daily_briefing_id : daily_briefing_id[0].id,
+                    briefing : briefing
+                });
+            } else {
+                res.render('parts-admin-page-view', {
+                    result: data_daily_briefing,
+                    daily_briefing_id : null,
+                    briefing : briefing
+                });
+            }
+        });
+    }
 });
 
-//관리자 페이지(품질측정팀_일일업무보고)저장 API
+//관리자 페이지(품질측정팀_일일업무보고)삽입 API
 router.post('/admin', function(req, res, next) {
     var info = {};
     info = req.body;

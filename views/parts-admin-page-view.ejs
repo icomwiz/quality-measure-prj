@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 메타 정보 선언 -->
+    <meta charset="utf-8"/>
+
+    <!-- 제이쿼리 라이브러리 파일 선언 -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
+
+    <!-- 부트스트랩 -->
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <style>
+        body {
+            padding-left: 0.5em;
+            padding-right: 0.5em;
+        }
+        td {
+            padding: 0;
+            text-align: center;
+        }
+        td > input {
+            border: 0px;
+            width: 100%;
+            text-align: center;
+        }
+
+        th {
+            background-color: #bcbcbc;
+            text-align: center;
+        }
+        .base {
+            background-color: #FFFFC9;
+        }
+        .Total {
+            background-color: #FFCC00;
+        }
+        .date {
+            text-align: center;
+        }
+        span {
+            cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+<h1 style="text-align: center">품질측정팀_일일업무보고</h1>
+
+<% if(daily_briefing_id) { %>
+<div style="display: none" id="daily_briefing_id"> <%= daily_briefing_id%> </div>
+<% } %>
+
+<div style="text-align: right">
+    <input type="date" class="D_date" onchange="Change_date(value)">
+</div>
+<table border='1' style="width: 100%" id="table1">
+    <caption><h3>1. 인력운영현황</h3></caption>
+    <tr>
+        <th colspan="3" rowspan="2">구성</th>
+        <th rowspan="2" style="width: 10%">조배정</th>
+        <th rowspan="2" style="width: 10%">장비</th>
+        <th rowspan="2" style="width: 10%">배정인원</th>
+        <th colspan="3">투입인원</th>
+        <th rowspan="2" style="width: 10%"></th>
+    </tr>
+    <tr>
+        <th>측정팀</th>
+        <th>지원인력</th>
+        <th>소계</th>
+    </tr>
+
+    <!-- 정 기 -->
+    <% var rowspanCount = 0;%>
+    <% for (var i = 0 ; i < briefing.routine.length ; i++) { %>
+    <% rowspanCount++;%>
+    <% } %>
+    <% for (var i = 0 ; i < briefing.k1.length ; i++) { %>
+    <% rowspanCount++;%>
+    <% } %>
+    <% for (var i = 0 ; i < briefing.theme.length ; i++) { %>
+    <% rowspanCount++;%>
+    <% } %>
+
+    <% if (rowspanCount < 3) { rowspanCount = 2 }%>
+    <% if (!briefing.routine[0] ) { %>
+        <% rowspanCount = rowspanCount+1;%>
+    <% } %>
+
+    <% if(briefing.routine[0]) { %>
+        <tr class="item1">
+            <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
+            <td class="base" >정기</td>
+            <td><input type="text" id="composition" placeholder="QOE측정" value="<%= briefing.routine[0].composition%>" readonly="readonly" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement1" placeholder="0" value="<%= briefing.routine[0].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.routine[0].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson1" placeholder="0" value="<%= briefing.routine[0].allocation_of_people%>" readonly="readonly" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson1"  placeholder="0" value="<%= briefing.routine[0].measurement_team%>" readonly="readonly"></td>
+            <td><input type="number" id="supportPerson1" placeholder="0" value="<%= briefing.routine[0].support_staff%>" readonly="readonly"></td>
+            <td style="width: 10%"><div id="subtotal_Sum1" style="background-color:#DAEEF3;"><%= briefing.routine[0].measurement_team + briefing.routine[0].support_staff%></div></td>
+            <td>
+            </td>
+        </tr>
+
+        <% for (var i = 1 ;i <  briefing.routine.length; i ++) { %>
+            <tr class="item<%= i+1%>">
+                <td class="base" >정기</td>
+                <td><input type="text" id="composition<%= i+1%>" value="<%= briefing.routine[i].composition%>" readonly="readonly" style=" background-color: #FFFFC9;"></td>
+                <td><input type="number" id="group_placement<%= i+1%>" value="<%= briefing.routine[i].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+                <td><input type="text" id="equipment<%= i+1%>" value="<%= briefing.routine[i].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+                <td><input type="number" id="AssignedPerson<%= i+1%>" value="<%= briefing.routine[i].allocation_of_people%>" readonly="readonly" style="background-color: #FDE9D9;"></td>
+                <td><input type="number" id="measurePerson<%= i+1%>" value="<%= briefing.routine[i].measurement_team%>" readonly="readonly"></td>
+                <td><input type="number" id="supportPerson<%= i+1%>" value="<%= briefing.routine[i].support_staff%>" readonly="readonly"></td>
+                <td style="width: 10%"><div id="subtotal_Sum<%= i+1%>" style="background-color:#DAEEF3;"><%= briefing.routine[i].measurement_team + briefing.routine[i].support_staff%></div></td>
+                <td>
+                </td>
+            </tr>
+        <% } %>
+
+    <% } else { %>
+    <tr class="item1">
+        <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition1" placeholder="QOE측정" value="미작성" readonly="readonly" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement1" placeholder="0" value="0" readonly="readonly" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson1" placeholder="0" value="0" readonly="readonly" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson1"  placeholder="0" value="0" readonly="readonly" value=""></td>
+        <td><input type="number" id="supportPerson1" placeholder="0" value="0" readonly="readonly" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum1" style="background-color:#DAEEF3;">0</div></td>
+        <td></td>
+    </tr>
+    <% } %>
+
+
+    <!-- k1 -->
+    <% if (briefing.k1[0]) { %>
+        <% for (var i = 0 ;i <  briefing.k1.length; i ++) { %>
+            <tr class="item<%= i+6%>">
+                <td class="base">K1</td>
+                <td><input type="text" id="composition6" placeholder="자율측정" value="<%= briefing.k1[i].composition%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+                <td><input type="number" id="group_placement<%= i+6%>" placeholder="0" value="<%= briefing.k1[i].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+                <td><input type="text" id="equipment<%= i+6%>" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.k1[i].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+                <td><input type="number" id="AssignedPerson<%= i+6%>" placeholder="0" value="<%= briefing.k1[i].allocation_of_people%>" readonly="readonly" style="background-color: #FDE9D9;"></td>
+                <td><input type="number" id="measurePerson<%= i+6%>" placeholder="0" value="<%= briefing.k1[i].measurement_team%>" readonly="readonly" ></td>
+                <td><input type="number" id="supportPerson<%= i+6%>" placeholder="0" value="<%= briefing.k1[i].support_staff%>" readonly="readonly" ></td>
+                <td><div id="subtotal_Sum<%= i+6%>" style="background-color:#DAEEF3;"><%= briefing.k1[i].measurement_team + briefing.k1[i].support_staff%></div></td>
+                <td></td>
+            </tr>
+        <% } %>
+    <% } else { %>
+        <tr class="item6">
+            <td class="base">K1</td>
+            <td><input type="text" id="composition6" placeholder="자율측정" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="group_placement6" value="0" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment6" placeholder="OPTis-Solo, N_PM10" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson6" value="0" readonly="readonly" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson6" value="0" readonly="readonly" ></td>
+            <td><input type="number" id="supportPerson6" value="0" readonly="readonly" ></td>
+            <td><div id="subtotal_Sum6" style="background-color:#DAEEF3;">0</div></td>
+            <td></td>
+        </tr>
+    <% }%>
+
+    <!-- 테 마 -->
+    <% if (briefing.theme[0]) { %>
+        <% for (var i = 0 ;i <  briefing.theme.length; i ++) { %>
+        <tr class="item<%= i+11%>">
+            <td class="base">테마</td>
+            <td><input type="text" id="composition<%= i+11%>" placeholder="자율측정" value="<%= briefing.theme[i].composition%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="group_placement<%= i+11%>" placeholder="0" value="<%= briefing.theme[i].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment<%= i+11%>" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.theme[i].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson<%= i+11%>" placeholder="0" value="<%= briefing.theme[i].allocation_of_people%>" readonly="readonly" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson<%= i+11%>" placeholder="0" value="<%= briefing.theme[i].measurement_team%>" readonly="readonly" ></td>
+            <td><input type="number" id="supportPerson<%= i+11%>" placeholder="0" value="<%= briefing.theme[i].support_staff%>" readonly="readonly" ></td>
+            <td><div id="subtotal_Sum<%= i+11%>" style="background-color:#DAEEF3;"><%= briefing.theme[i].measurement_team + briefing.theme[i].support_staff%></div></td>
+            <td></td>
+        </tr>
+        <% } %>
+    <% } else { %>
+        <tr class="item11">
+            <td class="base">테마</td>
+            <td><input type="text" id="composition11" placeholder="자율측정" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="group_placement11" value="0" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment11" placeholder="OPTis-Solo, N_PM10" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson11"  value="0" readonly="readonly" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson11"  value="0" readonly="readonly" ></td>
+            <td><input type="number" id="supportPerson11" value="0" readonly="readonly" ></td>
+            <td><div id="subtotal_Sum11" style="background-color:#DAEEF3;">0</div></td>
+            <td></td>
+        </tr>
+    <% }%>
+
+    <!-- 휴/공가 -->
+    <% if (briefing.holiyday) { %>
+    <tr>
+        <td colspan="5" class="base">휴/공가</td>
+        <td><input type="number" id="AssignedPerson16" placeholder="0" value="<%= briefing.holiyday.allocation_of_people%>" readonly="readonly" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson16" placeholder="0" value="<%= briefing.holiyday.measurement_team%>" readonly="readonly"></td>
+        <td><input type="number" id="supportPerson16" placeholder="0" value="<%= briefing.holiyday.support_staff%>" readonly="readonly"></td>
+        <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;"><%= briefing.holiyday.measurement_team+ briefing.holiyday.support_staff %></div></td>
+        <td><input type="text" ></td>
+    </tr>
+    <% } else { %>
+    <tr>
+        <td colspan="5" class="base">휴/공가</td>
+        <td><input type="number" id="AssignedPerson16" value="0" readonly="readonly" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson16" value="0" readonly="readonly"></td>
+        <td><input type="number" id="supportPerson16" value="0" readonly="readonly"></td>
+        <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;">0</div></td>
+        <td><input type="text" readonly="readonly"></td>
+    </tr>
+    <% } %>
+
+    <tr>
+        <td colspan="5" class="Total">소계</td>
+        <td class="Total"><div id="AssignedPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="measurePerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="supportPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="total_Sum" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><input type="text" style="width: 100%; background-color: #FFCC00; text-align: center"></td>
+    </tr>
+
+</table>
+
+<br>
+<table border="1" style="width: 100%" id = "BusinessStatus">
+    <caption><h3>2. 업무현황</h3></caption>
+    <tr>
+        <th style="width: 20%">파트</th>
+        <th style="width: 20%">이름</th>
+        <th style="width: 20%">출근</th>
+        <th style="width: 20%">퇴근</th>
+        <th style="width: 20%">측정조 특이사항</th>
+    </tr>
+
+    <% if(result) { %>
+    <% for(var i = 0; i < result.length ; i++) {%>
+    <tr>
+        <td style="display: none" ><div class="user_id<%= i%>"><%= result[i].id%></div></td>
+        <td style="display: none" ><div class="report_id<%= i%>"><%= result[i].report_id%></div></td>
+        <td><%= result[i].team_name%></td>
+        <td><%= result[i].name%></td>
+        <td><%= result[i].start_time%></td>
+        <td><%= result[i].end_time%></td>
+        <td><textarea id="unusual_matters" style="width: 100%; text-align: center" class="unusual_matters<%= i%>"><%= result[i].unusual_matters%></textarea></td>
+    </tr>
+    <% } %>
+    <% } %>
+</table>
+<div style="padding: 1em; text-align: right">
+    <button id="SaveBtn">작성</button>
+</div>
+
+</body>
+<script>
+    var rowspan;
+    $(function() {
+        var query = getUrlParams() //Query String을 받아오기위하여 선언
+        $(".D_date").val(query.date);
+
+        var tmpSum1 = 0;
+        var tmpSum2 = 0;
+        var tmpSum3 = 0;
+
+        // 소계를위한 함수
+        for(var j = 1 ; j < 17 ; j++) {
+            //배정인원소계
+            tmpSum1 += parseInt($('#AssignedPerson'+j).val()) || 0;
+
+            //투입인원소계
+            tmpSum2 += parseInt($('#measurePerson'+j).val()) || 0;
+            tmpSum3 += parseInt($('#supportPerson'+j).val()) || 0;
+        }
+        $('#AssignedPerson_total').text(tmpSum1);
+        $('#measurePerson_total').text(tmpSum2);
+        $('#supportPerson_total').text(tmpSum3);
+        $('#total_Sum').text(tmpSum1+tmpSum2+tmpSum3);
+
+        $('#SaveBtn').click(function() {
+            return window.location.href = "http://localhost:3000/employees/admin?date="+query.date+"&action=0"
+        });
+
+        /*
+         가로로 소계
+         가로 * 세로 소계 위한 함수
+         */
+        function horizontalSum() {
+            var tmpSum = 0;
+            for(var i = 1 ; i < 17; i++) {
+                $('#subtotal_Sum'+i).text((parseInt($('#measurePerson'+i).val()) || 0) + (parseInt($('#supportPerson'+i).val()) || 0));
+                tmpSum += parseInt($('#subtotal_Sum'+i).text())
+                $('#total_Sum').text(tmpSum);
+            }
+        }
+
+        // 세로로 소계하기위한 함수
+        // id1 더할값 / id2 토탈값
+        function VerticalSum(id1, id2) {
+            var tmpSum = 0;
+            for(var i = 1 ; i < 17; i++) {
+                tmpSum += (parseInt($(id1+i).val()) || 0)
+            }
+            $(id2).text(tmpSum);
+        }
+    });
+
+    function Change_date(date_val) {
+        return window.location.href = "http://localhost:3000/employees/admin?date="+date_val ;
+    }
+    //Query String을 위한함수
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+        return params;
+    }
+
+
+</script>
+</html>

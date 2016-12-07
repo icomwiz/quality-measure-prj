@@ -52,248 +52,506 @@
 
 <body>
 <h1 style="text-align: center">품질측정팀_일일업무보고</h1>
+
+<% if(daily_briefing_id) { %>
+    <div style="display: none" id="daily_briefing_id"> <%= daily_briefing_id%> </div>
+<% } %>
+
 <div style="text-align: right">
     <input type="date" class="D_date" onchange="Change_date(value)">
 </div>
-    <table border='1' style="width: 100%" id="table1">
-        <caption><h3>1. 인력운영현황</h3></caption>
-        <tr>
-            <th colspan="3" rowspan="2">구성</th>
-            <th rowspan="2" style="width: 10%">조배정</th>
-            <th rowspan="2" style="width: 10%">장비</th>
-            <th rowspan="2" style="width: 10%">배정인원</th>
-            <th colspan="3">투입인원</th>
-            <th rowspan="2" style="width: 10%"></th>
-        </tr>
-        <tr>
-            <th>측정팀</th>
-            <th>지원인력</th>
-            <th>소계</th>
-        </tr>
 
-        <!-- 정 기 -->
+<!-- 수정모드 -->
+<% if(daily_briefing_id) { %>
+<table border='1' style="width: 100%" id="table1">
+    <caption><h3>1. 인력운영현황</h3></caption>
+    <tr>
+        <th colspan="3" rowspan="2">구성</th>
+        <th rowspan="2" style="width: 10%">조배정</th>
+        <th rowspan="2" style="width: 10%">장비</th>
+        <th rowspan="2" style="width: 10%">배정인원</th>
+        <th colspan="3">투입인원</th>
+        <th rowspan="2" style="width: 10%"></th>
+    </tr>
+    <tr>
+        <th>측정팀</th>
+        <th>지원인력</th>
+        <th>소계</th>
+    </tr>
+
+
+    <% var rowspanCount = 0;%>
+    <% var routineCount = 1;%>
+    <% var k1Count = 6;%>
+    <% var themeCount = 11;%>
+
+    <% for (var i = 0 ; i < briefing.routine.length ; i++) { %>
+        <% rowspanCount++;%>
+    <% } %>
+    <% for (var i = 0 ; i < briefing.k1.length ; i++) { %>
+        <% rowspanCount++;%>
+    <% } %>
+    <% for (var i = 0 ; i < briefing.theme.length ; i++) { %>
+        <% rowspanCount++;%>
+    <% } %>
+
+
+    <% if (rowspanCount < 3) { rowspanCount = 2 }%>
+    <% if (!briefing.routine[0] ) { %>
+    <% rowspanCount = rowspanCount+1;%>
+    <% } %>
+
+    <!-- 정 기 -->
+    <% if(briefing.routine[0]) { %>
+    <tr class="item1">
+        <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition1" placeholder="QOE측정" value="<%= briefing.routine[0].composition%>" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement1" placeholder="0" value="<%= briefing.routine[0].group_placement%>" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.routine[0].equipment%>"  style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson1" placeholder="0" value="<%= briefing.routine[0].allocation_of_people%>" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson1"  placeholder="0" value="<%= briefing.routine[0].measurement_team%>"></td>
+        <td><input type="number" id="supportPerson1" placeholder="0" value="<%= briefing.routine[0].support_staff%>"></td>
+        <td style="width: 10%"><div id="subtotal_Sum1" style="background-color:#DAEEF3;"><%= briefing.routine[0].measurement_team + briefing.routine[0].support_staff%></div></td>
+        <td><span id="addRoutine1">추가</span></td>
+        <td style="display: none"><input type="number" id="rootine_num" value="<%= briefing.routine.length + 1%>" readonly="readonly"></td>
+    </tr>
+    <% } else { %>
         <tr class="item1">
-            <td rowspan="3" class="base" id="measurePersonTeam">품질측정팀</td>
+            <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
             <td class="base" >정기</td>
-            <td><input type="text" id="composition1" style=" background-color: #FFFFC9;"></td>
-            <td><input type="number" id="group_placement1" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment1" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson1" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson1" value=""></td>
-            <td><input type="number" id="supportPerson1" value=""></td>
+            <td><input type="text" id="composition1" placeholder="QOE측정" value="" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement1" placeholder="0" value="" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value=""  style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson1" placeholder="0" value="" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson1"  placeholder="0" value=""></td>
+            <td><input type="number" id="supportPerson1" placeholder="0" value=""></td>
             <td style="width: 10%"><div id="subtotal_Sum1" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span id="addRoutine1">추가</span>
-            </td>
+            <td><span id="addRoutine1">추가</span></td>
         </tr>
-        <tr class="item2" style="display: none;">
-            <td class="base" >정기</td>
-            <td><input type="text" id="composition2" style=" background-color: #FFFFC9;"></td>
-            <td><input type="number" id="group_placement2" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment2" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson2" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson2" value=""></td>
-            <td><input type="number" id="supportPerson2" value=""></td>
-            <td style="width: 10%"><div id="subtotal_Sum2" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                </span><span class="deleteRoutine">삭제</span>
-            </td>
+    <% } %>
+    <% for (var i = 1 ;i <  briefing.routine.length; i ++) { %>
+    <% routineCount++%>
+        <tr class="item<%= i+1%>">
+            <td class="base" >정기 <%= routineCount%></td>
+            <td><input type="text" id="composition<%= i+1%>" value="<%= briefing.routine[i].composition%>" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement<%= i+1%>" value="<%= briefing.routine[i].group_placement%>"style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment<%= i+1%>" value="<%= briefing.routine[i].equipment%>" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson<%= i+1%>" value="<%= briefing.routine[i].allocation_of_people%>"style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson<%= i+1%>" value="<%= briefing.routine[i].measurement_team%>"></td>
+            <td><input type="number" id="supportPerson<%= i+1%>" value="<%= briefing.routine[i].support_staff%>"></td>
+            <td style="width: 10%"><div id="subtotal_Sum<%= i+1%>" style="background-color:#DAEEF3;"><%= briefing.routine[i].measurement_team + briefing.routine[i].support_staff%></div></td>
+            <td></span><span class="deleteRoutine">삭제</span></td>
         </tr>
-        <tr class="item3" style="display: none">
-            <td class="base" >정기</td>
-            <td><input type="text" id="composition3" style=" background-color: #FFFFC9;"></td>
-            <td><input type="number" id="group_placement3" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment3" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson3" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson3" value=""></td>
-            <td><input type="number" id="supportPerson3" value=""></td>
-            <td style="width: 10%"><div id="subtotal_Sum3" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                </span><span class="deleteRoutine">삭제</span>
-            </td>
-        </tr>
-        <tr class="item4" style="display: none">
-            <td class="base" >정기</td>
-            <td><input type="text" id="composition4"  style=" background-color: #FFFFC9;"></td>
-            <td><input type="number" id="group_placement4" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment4" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson4" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson4" value=""></td>
-            <td><input type="number" id="supportPerson4" value=""></td>
-            <td style="width: 10%"><div id="subtotal_Sum4" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                </span><span class="deleteRoutine">삭제</span>
-            </td>
-        </tr>
-        <tr class="item5" style="display: none">
-            <td class="base" >정기</td>
-            <td><input type="text" id="composition5" style=" background-color: #FFFFC9;"></td>
-            <td><input type="number" id="group_placement5" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment5" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson5" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson5" value=""></td>
-            <td><input type="number" id="supportPerson5" value=""></td>
-            <td style="width: 10%"><div id="subtotal_Sum5" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                </span><span class="deleteRoutine">삭제</span>
-            </td>
-        </tr>
+    <% } %>
+    <% routineCount++ ;%>
+    <% for (var i = routineCount ;i <  6 ; i ++) { %>
+    <tr class="item<%= i%>" style="display: none;">
+        <td class="base">정기</td>
+        <td><input type="text" id="composition<%= i%>" value="" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson<%= i%>" value="" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson<%= i%>" value=""></td>
+        <td><input type="number" id="supportPerson<%= i%>" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum<%= i%>" style="background-color:#DAEEF3;">0</div></td>
+        <td></span><span class="deleteRoutine">삭제</span></td>
+    </tr>
+    <% } %>
 
-
-        <!-- Q O E -->
-        <tr class="item6">
-            <td class="base">QOE</td>
-            <td><input type="text" id="composition6" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement6" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment6" style=" background-color: #FFFFC9"></td>
+    <!-- k1 -->
+    <% if (briefing.k1[0]) { %>
+        <% for (var i = 0 ;i <  briefing.k1.length; i ++) { %>
+            <% k1Count++%>
+            <% if (i == 0) { %>
+            <tr class="item<%= i+6%>">
+                <td class="base" >K1</td>
+                <td><input type="text" id="composition<%= i+6%>" value="<%= briefing.k1[i].composition%>" style=" background-color: #FFFFC9;"></td>
+                <td><input type="number" id="group_placement<%= i+6%>" value="<%= briefing.k1[i].group_placement%>"style=" background-color: #FFFFC9"></td>
+                <td><input type="text" id="equipment<%= i+6%>" value="<%= briefing.k1[i].equipment%>" style=" background-color: #FFFFC9"></td>
+                <td><input type="number" id="AssignedPerson<%= i+6%>" value="<%= briefing.k1[i].allocation_of_people%>"style="background-color: #FDE9D9;"></td>
+                <td><input type="number" id="measurePerson<%= i+6%>" value="<%= briefing.k1[i].measurement_team%>"></td>
+                <td><input type="number" id="supportPerson<%= i+6%>" value="<%= briefing.k1[i].support_staff%>"></td>
+                <td style="width: 10%"><div id="subtotal_Sum<%= i+6%>" style="background-color:#DAEEF3;"><%= briefing.k1[i].measurement_team + briefing.k1[i].support_staff%></div></td>
+                <td><span id="addK16">추가</span></td>
+                <td style="display: none"><input type="number" id="K1_num" readonly="readonly" value="<%= briefing.k1.length+6%>"></td>
+            </tr>
+            <% } else { %>
+            <tr class="item<%= i+6%>">
+                <td class="base" >K1</td>
+                <td><input type="text" id="composition<%= i+6%>" value="<%= briefing.k1[i].composition%>" style=" background-color: #FFFFC9;"></td>
+                <td><input type="number" id="group_placement<%= i+6%>" value="<%= briefing.k1[i].group_placement%>"style=" background-color: #FFFFC9"></td>
+                <td><input type="text" id="equipment<%= i+6%>" value="<%= briefing.k1[i].equipment%>" style=" background-color: #FFFFC9"></td>
+                <td><input type="number" id="AssignedPerson<%= i+6%>" value="<%= briefing.k1[i].allocation_of_people%>"style="background-color: #FDE9D9;"></td>
+                <td><input type="number" id="measurePerson<%= i+6%>" value="<%= briefing.k1[i].measurement_team%>"></td>
+                <td><input type="number" id="supportPerson<%= i+6%>" value="<%= briefing.k1[i].support_staff%>"></td>
+                <td style="width: 10%"><div id="subtotal_Sum<%= i+6%>" style="background-color:#DAEEF3;"><%= briefing.k1[i].measurement_team + briefing.k1[i].support_staff%></div></td>
+                <td></span><span class="deleteK1">삭제</span></td>
+            </tr>
+            <% } %>
+        <% } %>
+    <% } else { %>
+        <% var k1Count = 6%>
+        <tr class="item<%= 6%>">
+            <td class="base" >K1</td>
+            <td><input type="text" id="composition6" value="" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement6" value=""style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment6" value="" style=" background-color: #FFFFC9"></td>
             <td><input type="number" id="AssignedPerson6" style="background-color: #FDE9D9;"></td>
             <td><input type="number" id="measurePerson6" ></td>
-            <td><input type="number" id="supportPerson6" ></td>
-            <td><div id="subtotal_Sum6" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span id="addQOE6">추가</span>
-            </td>
+            <td><input type="number" id="supportPerson6"></td>
+            <td style="width: 10%"><div id="subtotal_Sum6" style="background-color:#DAEEF3;">0</div></td>
+            <td><span id="addK16">추가</span></td>
         </tr>
-        <tr class="item7" style="display: none">
-            <td class="base">QOE</td>
-            <td><input type="text" id="composition7" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement7" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment7" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson7" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson7" ></td>
-            <td><input type="number" id="supportPerson7" ></td>
-            <td><div id="subtotal_Sum7" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteQOE">삭제</span>
-            </td>
+    <% } %>
+    <% for (var i = k1Count ;i <  11 ; i ++) { %>
+        <tr class="item<%= i%>" style="display: none;" >
+            <td class="base">K1</td>
+            <td><input type="text" id="composition<%= i%>" value="" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson<%= i%>" value="" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson<%= i%>" value=""></td>
+            <td><input type="number" id="supportPerson<%= i%>" value=""></td>
+            <td style="width: 10%"><div id="subtotal_Sum<%= i%>" style="background-color:#DAEEF3;">0</div></td>
+            <td></span><span class="deleteK1">삭제</span></td>
         </tr>
-        <tr class="item8" style="display: none">
-            <td class="base">QOE</td>
-            <td><input type="text" id="composition8" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement8" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment8" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson8" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson8" ></td>
-            <td><input type="number" id="supportPerson8" ></td>
-            <td><div id="subtotal_Sum8" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteQOE">삭제</span>
-            </td>
-        </tr>
-        <tr class="item9" style="display: none">
-            <td class="base">QOE</td>
-            <td><input type="text" id="composition9" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement9" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment9" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson9" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson9" ></td>
-            <td><input type="number" id="supportPerson9" ></td>
-            <td><div id="subtotal_Sum9" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteQOE">삭제</span>
-            </td>
-        </tr>
-        <tr class="item10" style="display: none">
-            <td class="base">QOE</td>
-            <td><input type="text" id="composition10" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement10" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment10" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson10" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson10" ></td>
-            <td><input type="number" id="supportPerson10" ></td>
-            <td><div id="subtotal_Sum10" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteQOE">삭제</span>
-            </td>
-        </tr>
+    <% } %>
 
-
-        <!-- 테 마 -->
+    <!-- 테 마 -->
+    <% if (briefing.theme[0]) { %>
+        <% for (var i = 0 ;i <  briefing.theme.length; i ++) { %>
+            <% themeCount++%>
+            <% if (i == 0) { %>
+                <tr class="item<%= i+11%>">
+                    <td class="base" >테마</td>
+                    <td><input type="text" id="composition<%= i+11%>" value="<%= briefing.theme[i].composition%>" style=" background-color: #FFFFC9;"></td>
+                    <td><input type="number" id="group_placement<%= i+11%>" value="<%= briefing.theme[i].group_placement%>"style=" background-color: #FFFFC9"></td>
+                    <td><input type="text" id="equipment<%= i+11%>" value="<%= briefing.theme[i].equipment%>" style=" background-color: #FFFFC9"></td>
+                    <td><input type="number" id="AssignedPerson<%= i+11%>" value="<%= briefing.theme[i].allocation_of_people%>"style="background-color: #FDE9D9;"></td>
+                    <td><input type="number" id="measurePerson<%= i+11%>" value="<%= briefing.theme[i].measurement_team%>"></td>
+                    <td><input type="number" id="supportPerson<%= i+11%>" value="<%= briefing.theme[i].support_staff%>"></td>
+                    <td style="width: 10%"><div id="subtotal_Sum<%= i+11%>" style="background-color:#DAEEF3;"><%= briefing.theme[i].measurement_team + briefing.theme[i].support_staff%></div></td>
+                    <td><span id="addTheme11">추가</span></td>
+                    <td style="display: none"><input type="number" id="theme_num" readonly="readonly" value="<%= briefing.theme.length+11%>"></td>
+                </tr>
+            <% } else { %>
+                <tr class="item<%= i+11%>">
+                    <td class="base" >테마</td>
+                    <td><input type="text" id="composition<%= i+11%>" value="<%= briefing.theme[i].composition%>" style=" background-color: #FFFFC9;"></td>
+                    <td><input type="number" id="group_placement<%= i+11%>" value="<%= briefing.theme[i].group_placement%>"style=" background-color: #FFFFC9"></td>
+                    <td><input type="text" id="equipment<%= i+11%>" value="<%= briefing.theme[i].equipment%>" style=" background-color: #FFFFC9"></td>
+                    <td><input type="number" id="AssignedPerson<%= i+11%>" value="<%= briefing.theme[i].allocation_of_people%>"style="background-color: #FDE9D9;"></td>
+                    <td><input type="number" id="measurePerson<%= i+11%>" value="<%= briefing.theme[i].measurement_team%>"></td>
+                    <td><input type="number" id="supportPerson<%= i+11%>" value="<%= briefing.theme[i].support_staff%>"></td>
+                    <td style="width: 10%"><div id="subtotal_Sum<%= i+11%>" style="background-color:#DAEEF3;"><%= briefing.theme[i].measurement_team + briefing.theme[i].support_staff%></div></td>
+                    <td></span><span class="deleteTheme">삭제</span></td>
+                </tr>
+            <% }%>
+        <% } %>
+    <% } else { %>
+        <% var themeCount = 11%>
         <tr class="item11">
-            <td class="base">테마</td>
-            <td><input type="text" id="composition11" style=" background-color: #FFFFC9"></td>
+            <td class="base" >테마</td>
+            <td><input type="text" id="composition11"style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement11" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment11" style="background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment11" style=" background-color: #FFFFC9"></td>
             <td><input type="number" id="AssignedPerson11" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson11"></td>
-            <td><input type="number" id="supportPerson11"></td>
-            <td><div id="subtotal_Sum11" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span id="addTheme11" >추가</span>
-            </td>
+            <td><input type="number" id="measurePerson11" ></td>
+            <td><input type="number" id="supportPerson11" ></td>
+            <td style="width: 10%"><div id="subtotal_Sum11" style="background-color:#DAEEF3;">0</div></td>
+            <td><span id="addTheme11">추가</span></td>
         </tr>
-        <tr class="item12" style="display: none">
-            <td class="base">테마</td>
-            <td><input type="text" id="composition12" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement12" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment12" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson12" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson12"></td>
-            <td><input type="number" id="supportPerson12"></td>
-            <td><div id="subtotal_Sum12" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteTheme">삭제</span>
-            </td>
-        </tr>
-        <tr class="item13" style="display: none">
-            <td class="base">테마</td>
-            <td><input type="text" id="composition13" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement13" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment13" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson13" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson13"></td>
-            <td><input type="number" id="supportPerson13"></td>
-            <td><div id="subtotal_Sum13" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteTheme">삭제</span>
-            </td>
-        </tr>
-        <tr class="item14" style="display: none">
-            <td class="base">테마</td>
-            <td><input type="text" id="composition14" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement14" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment14" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson14" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson14"></td>
-            <td><input type="number" id="supportPerson14"></td>
-            <td><div id="subtotal_Sum14" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteTheme">삭제</span>
-            </td>
-        </tr>
-        <tr class="item15" style="display: none">
-            <td class="base">테마</td>
-            <td><input type="text" id="composition15" style=" background-color: #FFFFC9"></td>
-            <td><input type="number" id="group_placement15" style=" background-color: #FFFFC9"></td>
-            <td><input type="text" id="equipment15" style="background-color: #FFFFC9"></td>
-            <td><input type="number" id="AssignedPerson15" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson15"></td>
-            <td><input type="number" id="supportPerson15"></td>
-            <td><div id="subtotal_Sum15" style="background-color:#DAEEF3;">0</div></td>
-            <td>
-                <span class="deleteTheme">삭제</span>
-            </td>
-        </tr>
+    <% } %>
 
-        <!-- 휴/공가 -->
-        <tr>
-            <td colspan="5" class="base">휴/공가</td>
-            <td><input type="number" id="AssignedPerson16" style="background-color: #FDE9D9;"></td>
-            <td><input type="number" id="measurePerson16"></td>
-            <td><input type="number" id="supportPerson16"></td>
-            <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;">0</div></td>
-            <td><input type="text" ></td>
+    <% for (var i = themeCount ;i <  16 ; i ++) { %>
+        <tr class="item<%= i%>" style="display: none;" >
+            <td class="base">테마</td>
+            <td><input type="text" id="composition<%= i%>" value="" style=" background-color: #FFFFC9;"></td>
+            <td><input type="number" id="group_placement<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+            <td><input type="text" id="equipment<%= i%>" value="" style=" background-color: #FFFFC9"></td>
+            <td><input type="number" id="AssignedPerson<%= i%>" value="" style="background-color: #FDE9D9;"></td>
+            <td><input type="number" id="measurePerson<%= i%>" value=""></td>
+            <td><input type="number" id="supportPerson<%= i%>" value=""></td>
+            <td style="width: 10%"><div id="subtotal_Sum<%= i%>" style="background-color:#DAEEF3;">0</div></td>
+            <td></span><span class="deleteTheme">삭제</span></td>
         </tr>
+    <% } %>
 
-        <tr>
-            <td colspan="5" class="Total">소계</td>
-            <td class="Total"><div id="AssignedPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
-            <td class="Total"><div id="measurePerson_total" style="width: 80%; height: 0px;">0</div>명</td>
-            <td class="Total"><div id="supportPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
-            <td class="Total"><div id="total_Sum" style="width: 80%; height: 0px;">0</div>명</td>
-            <td class="Total"><input type="text" style="width: 100%; background-color: #FFCC00; text-align: center"></td>
-        </tr>
-    </table>
+    <!-- 휴/공가 -->
+
+    <% if (briefing.holiyday) { %>
+    <tr>
+        <td colspan="5" class="base">휴/공가</td>
+        <td><input type="number" id="AssignedPerson16" placeholder="0" value="<%= briefing.holiyday.allocation_of_people%>" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson16" placeholder="0" value="<%= briefing.holiyday.measurement_team%>" ></td>
+        <td><input type="number" id="supportPerson16" placeholder="0" value="<%= briefing.holiyday.support_staff%>"></td>
+        <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;"><%= briefing.holiyday.measurement_team+ briefing.holiyday.support_staff %></div></td>
+        <td><input type="text" ></td>
+    </tr>
+    <% } else { %>
+    <tr>
+        <td colspan="5" class="base">휴/공가</td>
+        <td><input type="number" id="AssignedPerson16" placeholder="0" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson16" placeholder="0" ></td>
+        <td><input type="number" id="supportPerson16" placeholder="0" ></td>
+        <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;">0</div></td>
+        <td><input type="text" ></td>
+    </tr>
+    <% } %>
+
+    <tr>
+        <td colspan="5" class="Total">소계</td>
+        <td class="Total"><div id="AssignedPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="measurePerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="supportPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="total_Sum" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><input type="text" style="width: 100%; background-color: #FFCC00; text-align: center"></td>
+    </tr>
+
+</table>
+<% } else { %>
+<!-- 삽입모드 -->
+<table border='1' style="width: 100%" id="table1">
+    <caption><h3>1. 인력운영현황</h3></caption>
+    <tr>
+        <th colspan="3" rowspan="2">구성</th>
+        <th rowspan="2" style="width: 10%">조배정</th>
+        <th rowspan="2" style="width: 10%">장비</th>
+        <th rowspan="2" style="width: 10%">배정인원</th>
+        <th colspan="3">투입인원</th>
+        <th rowspan="2" style="width: 10%"></th>
+    </tr>
+    <tr>
+        <th>측정팀</th>
+        <th>지원인력</th>
+        <th>소계</th>
+    </tr>
+
+    <!-- 정 기 -->
+    <tr class="item1">
+        <td rowspan="3" class="base" id="measurePersonTeam">품질측정팀</td>
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition1" placeholder="QOE측정" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement1" placeholder="0" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson1" placeholder="0" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson1"  placeholder="0" value=""></td>
+        <td><input type="number" id="supportPerson1" placeholder="0" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum1" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span id="addRoutine1">추가</span>
+        </td>
+    </tr>
+    <tr class="item2" style="display: none;">
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition2" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement2" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment2" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson2" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson2" value=""></td>
+        <td><input type="number" id="supportPerson2" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum2" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            </span><span class="deleteRoutine">삭제</span>
+        </td>
+    </tr>
+    <tr class="item3" style="display: none">
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition3" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement3" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment3" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson3" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson3" value=""></td>
+        <td><input type="number" id="supportPerson3" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum3" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            </span><span class="deleteRoutine">삭제</span>
+        </td>
+    </tr>
+    <tr class="item4" style="display: none">
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition4"  style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement4" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment4" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson4" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson4" value=""></td>
+        <td><input type="number" id="supportPerson4" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum4" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            </span><span class="deleteRoutine">삭제</span>
+        </td>
+    </tr>
+    <tr class="item5" style="display: none">
+        <td class="base" >정기</td>
+        <td><input type="text" id="composition5" style=" background-color: #FFFFC9;"></td>
+        <td><input type="number" id="group_placement5" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment5" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson5" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson5" value=""></td>
+        <td><input type="number" id="supportPerson5" value=""></td>
+        <td style="width: 10%"><div id="subtotal_Sum5" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            </span><span class="deleteRoutine">삭제</span>
+        </td>
+    </tr>
+
+
+    <!-- k1 -->
+    <tr class="item6">
+        <td class="base">K1</td>
+        <td><input type="text" id="composition6" placeholder="자율측정" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement6" placeholder="0" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment6" placeholder="OPTis-Solo, N_PM10" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson6" placeholder="0" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson6" placeholder="0" ></td>
+        <td><input type="number" id="supportPerson6" placeholder="0" ></td>
+        <td><div id="subtotal_Sum6" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span id="addK16">추가</span>
+        </td>
+    </tr>
+    <tr class="item7" style="display: none">
+        <td class="base">K1</td>
+        <td><input type="text" id="composition7" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement7" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment7" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson7" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson7" ></td>
+        <td><input type="number" id="supportPerson7" ></td>
+        <td><div id="subtotal_Sum7" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteK1">삭제</span>
+        </td>
+    </tr>
+    <tr class="item8" style="display: none">
+        <td class="base">K1</td>
+        <td><input type="text" id="composition8" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement8" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment8" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson8" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson8" ></td>
+        <td><input type="number" id="supportPerson8" ></td>
+        <td><div id="subtotal_Sum8" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteK1">삭제</span>
+        </td>
+    </tr>
+    <tr class="item9" style="display: none">
+        <td class="base">K1</td>
+        <td><input type="text" id="composition9" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement9" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment9" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson9" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson9" ></td>
+        <td><input type="number" id="supportPerson9" ></td>
+        <td><div id="subtotal_Sum9" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteK1">삭제</span>
+        </td>
+    </tr>
+    <tr class="item10" style="display: none">
+        <td class="base">K1</td>
+        <td><input type="text" id="composition10" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement10" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment10" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson10" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson10" ></td>
+        <td><input type="number" id="supportPerson10" ></td>
+        <td><div id="subtotal_Sum10" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteK1">삭제</span>
+        </td>
+    </tr>
+
+
+    <!-- 테 마 -->
+    <tr class="item11">
+        <td class="base">테마</td>
+        <td><input type="text" id="composition11" placeholder="WiFi" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement11" placeholder="0" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment11" placeholder="OPTis-Solo, N_PM10" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson11" placeholder="0" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson11" placeholder="0"></td>
+        <td><input type="number" id="supportPerson11" placeholder="0"></td>
+        <td><div id="subtotal_Sum11" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span id="addTheme11" >추가</span>
+        </td>
+    </tr>
+    <tr class="item12" style="display: none">
+        <td class="base">테마</td>
+        <td><input type="text" id="composition12" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement12" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment12" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson12" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson12"></td>
+        <td><input type="number" id="supportPerson12"></td>
+        <td><div id="subtotal_Sum12" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteTheme">삭제</span>
+        </td>
+    </tr>
+    <tr class="item13" style="display: none">
+        <td class="base">테마</td>
+        <td><input type="text" id="composition13" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement13" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment13" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson13" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson13"></td>
+        <td><input type="number" id="supportPerson13"></td>
+        <td><div id="subtotal_Sum13" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteTheme">삭제</span>
+        </td>
+    </tr>
+    <tr class="item14" style="display: none">
+        <td class="base">테마</td>
+        <td><input type="text" id="composition14" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement14" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment14" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson14" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson14"></td>
+        <td><input type="number" id="supportPerson14"></td>
+        <td><div id="subtotal_Sum14" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteTheme">삭제</span>
+        </td>
+    </tr>
+    <tr class="item15" style="display: none">
+        <td class="base">테마</td>
+        <td><input type="text" id="composition15" style=" background-color: #FFFFC9"></td>
+        <td><input type="number" id="group_placement15" style=" background-color: #FFFFC9"></td>
+        <td><input type="text" id="equipment15" style="background-color: #FFFFC9"></td>
+        <td><input type="number" id="AssignedPerson15" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson15"></td>
+        <td><input type="number" id="supportPerson15"></td>
+        <td><div id="subtotal_Sum15" style="background-color:#DAEEF3;">0</div></td>
+        <td>
+            <span class="deleteTheme">삭제</span>
+        </td>
+    </tr>
+
+    <!-- 휴/공가 -->
+    <tr>
+        <td colspan="5" class="base">휴/공가</td>
+        <td><input type="number" id="AssignedPerson16" placeholder="0" style="background-color: #FDE9D9;"></td>
+        <td><input type="number" id="measurePerson16" placeholder="0"></td>
+        <td><input type="number" id="supportPerson16" placeholder="0"></td>
+        <td><div id="subtotal_Sum16" style="background-color:#DAEEF3;">0</div></td>
+        <td><input type="text" ></td>
+    </tr>
+
+    <tr>
+        <td colspan="5" class="Total">소계</td>
+        <td class="Total"><div id="AssignedPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="measurePerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="supportPerson_total" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><div id="total_Sum" style="width: 80%; height: 0px;">0</div>명</td>
+        <td class="Total"><input type="text" style="width: 100%; background-color: #FFCC00; text-align: center"></td>
+    </tr>
+</table>
+<% }%>
 
     <br>
     <table border="1" style="width: 100%" id = "BusinessStatus">
@@ -330,9 +588,9 @@
     var rowspan;
     $(function() {
         var query = getUrlParams() //Query String을 받아오기위하여 선언
-        var rootine_num = 2;
-        var qoe_num = 7;
-        var theme_num = 12;
+        var rootine_num = $("#rootine_num").val() || 2;
+        var K1_num = $("#K1_num").val() || 7;
+        var theme_num = $("#theme_num").val() || 12;
         $(".D_date").val(query.date);
         $("#CencleBtn").click(function () {
             return window.location.href = "http://localhost:3000/employees/partsmain";
@@ -340,12 +598,10 @@
         $("#SaveBtn").click(function() {
             var param = {};
             var routine = [];
-            var QOE = [];
+            var K1 = [];
             var theme = [];
             var User = [];
 
-//            alert($("#BusinessStatus").find("class").attr("class"));
-//            alert($("#BusinessStatus > tr > td").className);
             var j = 0;
             while($(".user_id"+j).text()) {
                 User.push({
@@ -367,9 +623,9 @@
                     supprotPerson : $("#supportPerson"+i).val()
                 });
             }
-            //QOE부분 정보 추가
+            //K1부분 정보 추가
             for(var i = 6 ; i < 11 ; i++) {
-                QOE.push({
+                K1.push({
                     composition : $("#composition"+i).val(),
                     group_placement : $("#group_placement"+i).val(),
                     equipment : $("#equipment"+i).val(),
@@ -390,9 +646,10 @@
                 });
             }
             param = {
+                daily_briefing_id : $("#daily_briefing_id").text(),
                 User : User,
                 routine : routine,
-                QOE : QOE,
+                K1 : K1,
                 theme : theme,
                 holiday : {
                     AssignedPerson : $("#AssignedPerson16").val() || 0,
@@ -416,7 +673,6 @@
                 }
             });
         });
-
         //품질측정팀>정기 추가/삭제(숨기기/보이기)
         $("#addRoutine1").click(function() {
             if(rootine_num < 6) {
@@ -444,11 +700,11 @@
             }
         });
 
-        //품질측정팀>QOE 추가/삭제(숨기기/보이기)
-        $("#addQOE6").click(function() {
-            if(qoe_num < 11) {
-                $(".item" + qoe_num).css("display", "table-row");
-                qoe_num++;
+        //품질측정팀>K1 추가/삭제(숨기기/보이기)
+        $("#addK16").click(function() {
+            if(K1_num < 11) {
+                $(".item" + K1_num).css("display", "table-row");
+                K1_num++;
 
                 if(rowspan) {
                     rowspan += 1;
@@ -458,8 +714,8 @@
                 $("#measurePersonTeam").attr("rowspan", rowspan);
             }
         });
-        $(".deleteQOE").click(function() {
-            if(qoe_num > 7) {
+        $(".deleteK1").click(function() {
+            if(K1_num > 7) {
                 var clickedRow = $(this).parent().parent();
                 var cls = clickedRow.attr("class");
 
@@ -467,7 +723,7 @@
 
                 rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))-1;
                 $("#measurePersonTeam").attr("rowspan", rowspan);
-                qoe_num--;
+                K1_num--;
             }
         });
 
@@ -497,6 +753,8 @@
                 theme_num--;
             }
         });
+
+        var numPattern = /([^0-9])/;
 
         // 소계를위한 함수
         for(var j = 1 ; j < 17 ; j++) {
@@ -552,5 +810,232 @@
     }
 
 
+
+    /*var rowspan;
+    $(function() {
+        var query = getUrlParams() //Query String을 받아오기위하여 선언
+        var rootine_num = 2;
+        var K1_num = 7;
+        var theme_num = 12;
+        $(".D_date").val(query.date);
+        $("#CencleBtn").click(function () {
+            return window.location.href = "http://localhost:3000/employees/partsmain";
+        });
+        $("#SaveBtn").click(function() {
+            var param = {};
+            var routine = [];
+            var K1 = [];
+            var theme = [];
+            var User = [];
+
+            var j = 0;
+            while($(".user_id"+j).text()) {
+                User.push({
+                    user_id : $(".user_id"+j).text(),
+                    report_id : $(".report_id"+j).text(),
+                    unusual_matters : $(".unusual_matters"+j).val()
+                });
+                j++
+            }
+
+            //정기부분 정보 추가
+            for(var i = 1 ; i < 6 ; i ++) {
+                routine.push({
+                    composition : $("#composition"+i).val(),
+                    group_placement : $("#group_placement"+i).val(),
+                    equipment : $("#equipment"+i).val(),
+                    AssignedPerson : $("#AssignedPerson"+i).val(),
+                    measurePerson : $("#measurePerson"+i).val(),
+                    supprotPerson : $("#supportPerson"+i).val()
+                });
+            }
+            //K1부분 정보 추가
+            for(var i = 6 ; i < 11 ; i++) {
+                K1.push({
+                    composition : $("#composition"+i).val(),
+                    group_placement : $("#group_placement"+i).val(),
+                    equipment : $("#equipment"+i).val(),
+                    AssignedPerson : $("#AssignedPerson"+i).val(),
+                    measurePerson : $("#measurePerson"+i).val(),
+                    supprotPerson : $("#supportPerson"+i).val()
+                });
+            }
+            //테마부분 정보추가
+            for(var i = 11 ; i < 16 ; i++) {
+                theme.push({
+                    composition : $("#composition"+i).val(),
+                    group_placement : $("#group_placement"+i).val(),
+                    equipment : $("#equipment"+i).val(),
+                    AssignedPerson : $("#AssignedPerson"+i).val(),
+                    measurePerson : $("#measurePerson"+i).val(),
+                    supprotPerson : $("#supportPerson"+i).val()
+                });
+            }
+            param = {
+                daily_briefing_id : $("#daily_briefing_id").text(),
+                User : User,
+                routine : routine,
+                K1 : K1,
+                theme : theme,
+                holiday : {
+                    AssignedPerson : $("#AssignedPerson16").val() || 0,
+                    measurePerson : $("#measurePerson16").val() || 0,
+                    supprotPerson : $("#supportPerson16").val() || 0
+                }
+            }
+            $.ajax({
+                url: "http://localhost:3000/employees/admin?date="+query.date,
+                type: "POST",
+                dataType: "json",
+                data: param,
+                success: function (data) {
+                    if (data.result === 'ok') {
+                        return window.location.href = "http://localhost:3000/employees/partsmain";
+                    }
+                    alert('등록실패');
+                },
+                error: function(data){
+                    alert("code:"+data.status+"\n");
+                }
+            });
+        });
+
+        //품질측정팀>정기 추가/삭제(숨기기/보이기)
+        $("#addRoutine1").click(function() {
+            if(rootine_num < 6) {
+                $(".item" + rootine_num).css("display", "table-row");
+                rootine_num++;
+
+                if(rowspan) {
+                    rowspan += 1;
+                } else {
+                    rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))+1;
+                }
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+            }
+        });
+        $(".deleteRoutine").click(function() {
+            if(rootine_num > 1) {
+                var clickedRow = $(this).parent().parent();
+                var cls = clickedRow.attr("class");
+
+                $("."+cls+":last").css("display", "none");
+
+                rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))-1;
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+                rootine_num--;
+            }
+        });
+
+        //품질측정팀>K1 추가/삭제(숨기기/보이기)
+        $("#addK16").click(function() {
+            if(K1_num < 11) {
+                $(".item" + K1_num).css("display", "table-row");
+                K1_num++;
+
+                if(rowspan) {
+                    rowspan += 1;
+                } else {
+                    rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))+1;
+                }
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+            }
+        });
+        $(".deleteK1").click(function() {
+            if(K1_num > 7) {
+                var clickedRow = $(this).parent().parent();
+                var cls = clickedRow.attr("class");
+
+                $("."+cls+":last").css("display", "none");
+
+                rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))-1;
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+                K1_num--;
+            }
+        });
+
+        //품질측정팀>테마 추가/삭제(숨기기/보이기)
+        $("#addTheme11").click(function() {
+            if(theme_num < 16) {
+                $(".item" + theme_num).css("display", "table-row");
+                theme_num++;
+
+                if(rowspan) {
+                    rowspan += 1;
+                } else {
+                    rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))+1;
+                }
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+            }
+        });
+        $(".deleteTheme").click(function() {
+            if(theme_num > 11) {
+                var clickedRow = $(this).parent().parent();
+                var cls = clickedRow.attr("class");
+
+                $("."+cls+":last").css("display", "none");
+
+                rowspan = parseInt($("#measurePersonTeam").attr("rowspan"))-1;
+                $("#measurePersonTeam").attr("rowspan", rowspan);
+                theme_num--;
+            }
+        });
+
+        var numPattern = /([^0-9])/;
+
+        // 소계를위한 함수
+        for(var j = 1 ; j < 17 ; j++) {
+            //배정인원소계
+            $('#AssignedPerson'+j).keyup(function() {
+                VerticalSum('#AssignedPerson','#AssignedPerson_total' );
+            });
+
+            //투입인원소계
+            $('#measurePerson'+j).keyup(function() {
+                horizontalSum()
+                VerticalSum('#measurePerson', '#measurePerson_total');
+
+            });
+            $('#supportPerson'+j).keyup(function() {
+                horizontalSum()
+                VerticalSum('#supportPerson', '#supportPerson_total');
+            });
+        }
+
+        /!*
+         가로로 소계
+         가로 * 세로 소계 위한 함수
+         *!/
+        function horizontalSum() {
+            var tmpSum = 0;
+            for(var i = 1 ; i < 17; i++) {
+                $('#subtotal_Sum'+i).text((parseInt($('#measurePerson'+i).val()) || 0) + (parseInt($('#supportPerson'+i).val()) || 0));
+                tmpSum += parseInt($('#subtotal_Sum'+i).text())
+                $('#total_Sum').text(tmpSum);
+            }
+        }
+
+        // 세로로 소계하기위한 함수
+        // id1 더할값 / id2 토탈값
+        function VerticalSum(id1, id2) {
+            var tmpSum = 0;
+            for(var i = 1 ; i < 17; i++) {
+                tmpSum += (parseInt($(id1+i).val()) || 0)
+            }
+            $(id2).text(tmpSum);
+        }
+    });
+
+    function Change_date(date_val) {
+        return window.location.href = "http://localhost:3000/employees/admin?date="+date_val ;
+    }
+    //Query String을 위한함수
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+        return params;
+    }
+
+*/
 </script>
 </html>
