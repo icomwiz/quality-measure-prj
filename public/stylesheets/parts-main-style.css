@@ -16,7 +16,7 @@ table {
   border-collapse: collapse;
   background-color: white;
   text-align: center;
-  font-size: 1em;
+  font-size: 1.1em;
   margin-top: 5px;
   margin-bottom: 5px;
 }
@@ -64,4 +64,34 @@ tr, td {
 
 #logoutBtn {
   float: right;
+}
+
+#postReportDialog {
+  *zoom:1;
+}
+
+#postReportDialog:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.deleteEditTbl {
+  border: hidden;
+}
+
+.deleteEditTbl a {
+  float: right;
+  margin: 3px;
+}
+
+#postWorkComfirmCancel {
+  float: right;
+}
+
+#majorWork {
+  -moz-box-sizing: border-box; /* Firefox  */
+  -webkit-box-sizing: border-box; /* Safari */
+  box-sizing: border-box; /* CSS3 Standard */
+  height: auto !important; /* !important is used to force override. */
 }

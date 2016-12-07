@@ -16,7 +16,6 @@ router.get('/', function(req, res, next) { //특정 날짜의 모든 리포트 �
     });
 });
 
-
 router.post('/', function(req, res, next) { //특정 날짜의 리포트 디테일 추가하기
     
 });
