@@ -798,46 +798,53 @@
                                     }
                                 });
                             } else if (code === 3) { //report와 두개 이상의 details 저장
-//                                alert('report와 두개 이상의 details 저장');
-//                                var workDetailsInfo = [];
-//                                var workDetailsNum = $('#workDetailsTbl > tbody tr').length;
-//                                for (var i = 0; i < workDetailsNum; i++) {
-//                                    var strTrInput = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') input[type=text]';
-//                                    var strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') textarea';
-//                                    var strTrSelect = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') select[name=workType]';
-//                                    var type = $(strTrSelect).val(),
-//                                    var arrInput = $(strTrInput); // 배열의 0 : 업무 시작시간, 1 : 종료시간
-//                                    var arrTextarea = $(strTrTextarea); //배열의 0 : 업무내용, 1 : 비고
-//
-//                                }
-//                                $.ajax({
-//                                    url: "http://localhost:3000/analystreports?action=1",
-//                                    type: "POST",
-//                                    dataType: 'JSON',
-//                                    data: {
-//                                        date: $('#postReportDate').val(),
-//                                        majorJob: $('#majorWork').val(),
-//                                        workStartTime: $('#workStartTime').val(),
-//                                        workEndTime: $('#workEndTime').val(),
-//                                        etcTime: $('#etcTime').val(),
-//                                        overTime: $('#overTime').val()
-//                                    },
-//                                    success: function(data) {
-//                                        switch(data.result) {
-//                                            case 0:
-//                                                alert('설정하신 날짜의 보고서가 이미 존재합니다.');
-//                                                break;
-//                                            case 1:
-//                                                alert('보고서가 저장되었습니다.');
-//                                                analystReport();
-//                                                return window.location.href = "#";
-//                                                break;
-//                                        }
-//                                    },
-//                                    error: function(data) {
-//                                        alert('error');
-//                                    }
-//                                });
+                                alert('report와 두개 이상의 details 저장');
+                                var workDetailsInfo = [];
+                                var workDetailsNum = $('#workDetailsTbl > tbody tr').length;
+                                for (var i = 0; i < workDetailsNum; i++) {
+                                    var strTrInput = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') input[type=text]';
+                                    var strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') textarea';
+                                    var strTrSelect = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') select[name=workType]';
+                                    var type = $(strTrSelect).val(); //업무 구분
+                                    var arrInput = $(strTrInput); // 배열의 0: 업무 시작시간, 1: 종료시간
+                                    var arrTextarea = $(strTrTextarea); //배열의 0: 업무내용, 1: 비고
+                                    workDetailsInfo.push({
+                                        startTime: $(arrInput[0]).val(),
+                                        endTime: $(arrInput[1]).val(),
+                                        type: type,
+                                        workDetails: $(arrTextarea[0]).val(),
+                                        note: $(arrTextarea[1]).val()
+                                    });
+                                }
+                                $.ajax({
+                                    url: "http://localhost:3000/analystreports?action=3",
+                                    type: "POST",
+                                    dataType: 'JSON',
+                                    data: {
+                                        date: $('#postReportDate').val(),
+                                        majorJob: $('#majorWork').val(),
+                                        workStartTime: $('#workStartTime').val(),
+                                        workEndTime: $('#workEndTime').val(),
+                                        etcTime: $('#etcTime').val(),
+                                        overTime: $('#overTime').val(),
+                                        workDetailsInfo: workDetailsInfo
+                                    },
+                                    success: function(data) {
+                                        switch(data.result) {
+                                            case 0:
+                                                alert('설정하신 날짜의 보고서가 이미 존재합니다.');
+                                                break;
+                                            case 1:
+                                                alert('보고서가 저장되었습니다.');
+                                                analystReport();
+                                                return window.location.href = "#";
+                                                break;
+                                        }
+                                    },
+                                    error: function(data) {
+                                        alert('error');
+                                    }
+                                });
                             }
                         });
                     } else if (code === 2) { //휴가

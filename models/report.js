@@ -659,8 +659,6 @@ function getReportsByteamId(teamId, callback) {
 
 //엑셀 파일을 통해 리포트 업데이트 하기
 function updatePlan(plan, callback) {
-    var aesPassword = process.env.AES_PASSWORD; //AES패스워드
-
     //부서 이름을 통해 부서가 존재하는지 찾음.
     var sql_find_department_by_name = 'SELECT id departmentId ' +
                                       'FROM department ' +
@@ -980,6 +978,7 @@ function updatePlan(plan, callback) {
         function insertEmployee(teamId, departmentId, callback) {
             var equipmentName = (plan.equipmentName === 'X') ? null : plan.equipmentName;
             var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
+            console.log(teamPosition);
             dbConn.query(sql_insert_employee, [plan.name, plan.email, plan.phoneNumber, teamId, teamPosition, departmentId, plan.departmentPosition, equipmentName], function(err, results) {
                 if (err) {
                     console.log('insertEmployee');
@@ -994,6 +993,7 @@ function updatePlan(plan, callback) {
         function updateEmployee(id, teamId, departmentId, callback) { //id(employeeId), teamId, departmentId
             var equipmentName = (plan.equipmentName === 'X') ? null : plan.equipmentName;
             var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
+            console.log(teamPosition);
             dbConn.query(sql_update_employee, [plan.name, plan.email, plan.phoneNumber, teamId, teamPosition, departmentId, plan.departmentPosition, equipmentName, id], function(err) {
                if (err) {
                    console.log('updateEmployee');

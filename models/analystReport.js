@@ -54,7 +54,7 @@ function postMyReport(reqData, callback) {
                         return callback(err);
                     }
                     var reportId = results.insertId;
-                    return callback(null, 1, reportId);
+                    callback(null, 1, reportId);
                 });
             }
         });

@@ -230,7 +230,7 @@ router.post('/planner', function(req, res, next) {
                     } else if(z.substring(0, 1) === 'G') { //조원
                         plan.teamMember = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'H') { //직위
-                        plan.teamPosition = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.teamPosition = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'I') { //이름
                         plan.name = worksheet1[z].v.replace(/\s/gi,'').split(',');
                     } else if(z.substring(0, 1) === 'J') { //휴대폰 번호
