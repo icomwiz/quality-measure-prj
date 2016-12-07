@@ -24,7 +24,6 @@ router.get('/admin', function(req, res, next) {
     //작성페이지 불러오기
     var reportDate = req.query.date;
     if (req.query.action==0) {
-
         Admin.daily_briefingView(reportDate, function(err, data_daily_briefing, daily_briefing_id, briefing) {
             if (err) {
                 return next(err);
@@ -45,26 +44,6 @@ router.get('/admin', function(req, res, next) {
                 });
             }
         });
-
-        // Admin.measureTaskReport(reportDate, function(err, result, daily_briefing_id) {
-        //     if (err) {
-        //         return next(err);
-        //     }
-        //
-        //     if(daily_briefing_id[0]) {
-        //         console.log("수정모드");
-        //         res.render('parts-admin-page', {
-        //             result: result,
-        //             daily_briefing_id : daily_briefing_id[0].id
-        //         });
-        //     } else {
-        //         console.log("삽입모드");
-        //         res.render('parts-admin-page', {
-        //             result: result,
-        //             daily_briefing_id : null
-        //         });
-        //     }
-        // });
     } else {
         Admin.daily_briefingView(reportDate, function(err, data_daily_briefing, daily_briefing_id, briefing) {
             if (err) {
