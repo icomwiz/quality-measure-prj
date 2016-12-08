@@ -312,7 +312,17 @@
     </div>
 </body>
 <script>
+
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+        return params;
+    }
+
     $(function() {
+        var query = getUrlParams();
+
+        //비밀번호변경
         $('#Change_pw').click(function() {
             var pw1 = $("#pw1").val();
             var pw2 = $("#pw2").val();
@@ -344,21 +354,29 @@
                 });
             }
         });
+        //취소
         $('#Cancle_pw').click(function() {
             window.location.href = "http://localhost:3000/reports?action=0";
         });
+        //로그인
         $('#logoutBtn').click(function() {
             alert('로그아웃 합니다.');
             return window.location.href = "http://localhost:3000/auth/logout"
         })
+        //리포트추가
         $("#addReport").click(function() {
             $('#date').val(date());
         });
+        $('#date').change(function() {
+            return window.location.href="http://localhost:3000/reports?action=0&"+ $('#date').val()+"#page2";
+        });
         $(".Cencel").click(function() {
-            window.location.href = "http://localhost:3000/reports?action=0";
+            return window.location.href = "http://localhost:3000/reports?action=0";
         });
         $("#saveBtn").click(function() {
-            if ($("#group_leader").val() == '') {
+            if ( $('#date').val() == '') {
+                alert('날짜를 입력해주세요.');
+            } else if ($("#group_leader").val() == '') {
                 alert('조장을 입력해주세요.');
             } else if ($("#group_member").val() == ''){
                 alert('조원을 입력해주세요.');

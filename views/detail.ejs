@@ -347,6 +347,7 @@
             $('.obstacle_end_time').val($('.obstacle_start_time').val());
         });
 
+
         $(".deleteinfo").click(function() {
             var detail = $(this).val();
             $.ajax({
@@ -450,7 +451,7 @@
             });
         });
 
-        //시간(업데이트) 디폴트설정
+        //시간 디폴트설정
         $('.start_time2').change(function() {
             $('.end_time2').val($('.start_time2').val());
         });
