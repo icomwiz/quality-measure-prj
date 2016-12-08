@@ -374,6 +374,7 @@ router.get('/statistics', function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log(result);
             res.render('parts-week-error', {
                 result: result
             });
@@ -419,6 +420,7 @@ router.get('/statistics', function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log(result);
             res.send({
                 result: result
             });

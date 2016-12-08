@@ -1380,22 +1380,19 @@ function getErrorStatisticsPerDay(callback) {
 
     //날짜에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_day =
-        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
-        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
+        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
         'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
         'FROM employee ' +
         'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
         'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
         'JOIN team t ON(t.id = r.team_id) ' +
         'WHERE r.type = 1 AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 ' +
@@ -1443,14 +1440,11 @@ function getErrorStatisticsPerDay(callback) {
                          date: date,
                          teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
                          teamLeader: results[i].teamLeader || '',
-                         gpsError: results[i].gpsError || 0,
-                         notebookError: results[i].notebookError || 0,
-                         terminalError: results[i].terminalError || 0,
                          equipmentError: results[i].equipmentError || 0,
-                         measurererError: results[i].measurererError || 0,
-                         cableError: results[i].cableError || 0,
                          programError: results[i].programError || 0,
-                         etcError: results[i].etcError || 0,
+                         terminalError: results[i].terminalError || 0,
+                         carError: results[i].carError || 0,
+                         toolsError: results[i].toolsError || 0,
                          sum: results[i].sum || 0
                      });
                  }
@@ -1479,7 +1473,7 @@ function getErrorStatisticsPerWeek(callback) {
 
     //week에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_day =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
+        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
         'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
@@ -1487,14 +1481,11 @@ function getErrorStatisticsPerWeek(callback) {
         'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
         'FROM employee ' +
         'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
         'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
         'JOIN team t ON(t.id = r.team_id) ' +
         'WHERE r.type = 1 AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 ' +
@@ -1561,14 +1552,11 @@ function getErrorStatisticsPerWeek(callback) {
                             teamId: results[i].teamId,
                             teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
                             teamLeader: results[i].teamLeader || '',
-                            gpsError: results[i].gpsError || 0,
-                            notebookError: results[i].notebookError || 0,
-                            terminalError: results[i].terminalError || 0,
                             equipmentError: results[i].equipmentError || 0,
-                            measurererError: results[i].measurererError || 0,
-                            cableError: results[i].cableError || 0,
                             programError: results[i].programError || 0,
-                            etcError: results[i].etcError || 0,
+                            terminalError: results[i].terminalError || 0,
+                            carError: results[i].carError || 0,
+                            toolsError: results[i].toolsError || 0,
                             sum: results[i].sum || 0
                         });
                     }
@@ -1596,28 +1584,24 @@ function getErrorStatisticsPerMonth(callback) {
 
     //날짜에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_month =
-        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
-        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
+        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
         'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
         'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
         'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
         'JOIN team t ON(t.id = r.team_id) ' +
-        'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1 ' +
+        'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1    ' +
         'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
         'ORDER BY a.teamId';
-
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -1663,14 +1647,11 @@ function getErrorStatisticsPerMonth(callback) {
                             month: month.month,
                             teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
                             teamLeader: results[i].teamLeader || '',
-                            gpsError: results[i].gpsError || 0,
-                            notebookError: results[i].notebookError || 0,
-                            terminalError: results[i].terminalError || 0,
                             equipmentError: results[i].equipmentError || 0,
-                            measurererError: results[i].measurererError || 0,
-                            cableError: results[i].cableError || 0,
                             programError: results[i].programError || 0,
-                            etcError: results[i].etcError || 0,
+                            terminalError: results[i].terminalError || 0,
+                            carError: results[i].carError || 0,
+                            toolsError: results[i].toolsError || 0,
                             sum: results[i].sum || 0
                         });
                     }
@@ -1698,22 +1679,19 @@ function getErrorStatisticsPerQuarter(callback) {
 
     //날짜에 따라 에러사항 가져옴
     var sql_select_error_statistics_per_month =
-        'SELECT a.teamId, b.date, a.teamName, a.teamNo, a.name teamLeader, b.gpsError, b.notebookError, b.terminalError, b.equipmentError, b.measurererError, b.cableError, b.programError, b.etcError, b.sum ' +
-        'FROM (SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
+        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
         'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
         'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'GPS\' THEN 1 ELSE 0 END) gpsError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'기타\' THEN 1 ELSE 0 END) etcError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'노트북\' THEN 1 ELSE 0 END) notebookError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정자\' THEN 1 ELSE 0 END) measurererError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'케이블\' THEN 1 ELSE 0 END) cableError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램\' THEN 1 ELSE 0 END) programError ' +
+        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
         'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
         'JOIN team t ON(t.id = r.team_id) ' +
         'WHERE r.type = 1 AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 ' +
@@ -1763,14 +1741,11 @@ function getErrorStatisticsPerQuarter(callback) {
                             quarter: quarter.quarter,
                             teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
                             teamLeader: results[i].teamLeader || '',
-                            gpsError: results[i].gpsError || 0,
-                            notebookError: results[i].notebookError || 0,
-                            terminalError: results[i].terminalError || 0,
                             equipmentError: results[i].equipmentError || 0,
-                            measurererError: results[i].measurererError || 0,
-                            cableError: results[i].cableError || 0,
                             programError: results[i].programError || 0,
-                            etcError: results[i].etcError || 0,
+                            terminalError: results[i].terminalError || 0,
+                            carError: results[i].carError || 0,
+                            toolsError: results[i].toolsError || 0,
                             sum: results[i].sum || 0
                         });
                     }
