@@ -652,7 +652,6 @@ function confirmUpdate(info, callback) {
     });
 }
 
-
 // INPUT: teamName, OUTPUT: teamName, date, location
 function getReportsByteamId(teamId, callback) {
     var sql_select_reports_order_by_date =
@@ -2266,7 +2265,6 @@ function getCallsPerDay(callback) {
 function getCallsPerMonth(callback) {
 
 }
-
 
 //객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
 function findWithAttr(array, attr, value) {

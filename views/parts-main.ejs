@@ -36,7 +36,9 @@
             <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
             <% if (result.teamPosition === 0) { %>
             <input type="radio" name="radio-choice-1" id="admin-page" value="6"/>
-            <label class="partsmain-radio-labels" for="admin-page">관리자 페이지</label>
+            <label class="partsmain-radio-labels" for="admin-page">품질측정팀 일일업무보고</label>
+            <input type="radio" name="radio-choice-1" id="indoor-employee-management" value="8"/>
+            <label class="partsmain-radio-labels" for="indoor-employee-management">내근자 관리</label>
             <% } %>
         </fieldset>
 
@@ -382,6 +384,15 @@
             return window.location.href = "http://localhost:3000/employees/admin?date="+date();
         }
 
+        //내근자 관리 탭을 선택했을 때 실행되는 function
+        function indoorEmployeeManagement() {
+            $('#calls-state-div').hide();
+            $('#error-state-div').hide();
+
+            //여기다가 내근자 관리
+            alert('hihi');
+        }
+
         //날짜 정규표현식 검사
         function dateRegExpCheck(strDate) {
             var strValue = strDate;
@@ -565,6 +576,9 @@
                 case '7':
                     analystReport();
                     break;
+                case '8':
+                    //
+                    break;
             }
 
             //홈 아이콘을 클릭했을 시
@@ -613,6 +627,11 @@
             $('#admin-page').click(function() {
                 adminPage();
             });
+
+            //
+            $('#indoor-employee-management').click(function() {
+                indoorEmployeeManagement();
+            })
 
             //파일 업로드 버튼이 클릭 되었을 시
             $(document).on('click', '#uploadbtn', function() {
