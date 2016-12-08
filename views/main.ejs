@@ -424,6 +424,21 @@
                 });
             }
         });
+
+        //시간 디폴트 적용
+        $('#move_start_time').change(function() {
+            $('#move_end_time').val($('#move_start_time').val());
+        });
+        $('#move_end_time').change(function() {
+            $('#step_start_time').val($('#move_end_time').val());
+        });
+        $('#step_start_time').change(function() {
+            $('#step_end_time').val($('#step_start_time').val());
+        });
+        $('#err_start_time').change(function() {
+            $('#err_end_time').val($('#err_start_time').val());
+        });
+
         $(".btninfo").click(function() {
             var Reportid = $(this).val();
             $.ajax({
@@ -535,6 +550,21 @@
                 }
             });
         });
+
+        //update 시간 디폴트설정
+        $('#move_start_time2').change(function() {
+            $('#move_end_time2').val($('#move_start_time2').val());
+        });
+        $('#move_end_time2').change(function() {
+            $('#setup_start_time2').val($('#move_end_time2').val());
+        });
+        $('#setup_start_time2').change(function() {
+            $('#setup_end_time2').val($('#setup_start_time2').val());
+        });
+        $('#err_start_time2').change(function() {
+            $('#err_end_time2').val($('#err_start_time2').val());
+        });
+
         $(".datailList").click(function() {
             var Reportid = $(this).val();
             return window.location.href = "http://localhost:3000/details?Report="+Reportid;

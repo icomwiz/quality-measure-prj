@@ -177,22 +177,18 @@
                 <tr>
                     <td>사용자</td>
                     <td colspan="3"><%= base.name%></td>
-                    <!--<td colspan="3"><input type="text" class="group_leader2" value="" /></td>-->
                 </tr>
                 <tr>
                     <td>조원</td>
                     <td colspan="3"><%= base.team_member%></td>
-                    <!--<td colspan="3"><input type="text" class="group_member2" value="" /></td>-->
                 </tr>
                 <tr>
                     <td>측정장소</td>
                     <td colspan="3"><%= base.location%></td>
-                    <!--<td colspan="3"><input type="text" class="measure_palce2" value="" /></td>-->
                 </tr>
                 <tr>
                     <td>측정장비</td>
                     <td colspan="3"><%= base.equipment_name%></td>
-                    <!--<td colspan="3"><input type="text" class="measure_machine2" value=""/></td>-->
                 </tr>
                 <tr>
                     <td>측정회차</td>
@@ -342,6 +338,15 @@
                 });
             }
         });
+
+        //시간 디폴트설정
+        $('.start_time').change(function() {
+            $('.end_time').val($('.start_time').val());
+        });
+        $('.obstacle_start_time').change(function() {
+            $('.obstacle_end_time').val($('.obstacle_start_time').val());
+        });
+
         $(".deleteinfo").click(function() {
             var detail = $(this).val();
             $.ajax({
@@ -444,6 +449,15 @@
                 }
             });
         });
+
+        //시간(업데이트) 디폴트설정
+        $('.start_time2').change(function() {
+            $('.end_time2').val($('.start_time2').val());
+        });
+        $('.obstacle_start_time2').change(function() {
+            $('.obstacle_end_time2').val($('.obstacle_start_time2').val());
+        });
+
         $("#ConfirmBtn").click(function() {
             return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report;
         });
