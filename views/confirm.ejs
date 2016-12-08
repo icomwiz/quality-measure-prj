@@ -71,6 +71,50 @@
             <td>장애발생 횟수</td>
             <td colspan="2"><%= ErrCount%></td>
         </tr>
+        <% if (report_id) { %>
+        <tr>
+            <td>측정후 KM</td>
+            <td><input type="number" name="car_mileage_after" id="car_mileage_after" value="<%= car_mileage_after %>" placeholder="331241 [숫자만입력]"></td>
+            <td>KM</td>
+        </tr>
+        <tr>
+            <td>금일 주유 금액</td>
+            <td><input type="number" name="refueling_price" id="refueling_price" value="<%= refueling_price%>" placeholder="20000 [숫자만입력]"></td>
+            <td>원</td>
+        </tr>
+    </table>
+    <div data-role="fieldcontain">
+        <label for="car_significant">금일 차량 특이사항</label>
+        <textarea name="car_significant" id="car_significant" value=""><%= car_significant%></textarea>
+        <br>
+        <label for="cause_of_incompletion">금일 실적 미완료 원인</label>
+        <textarea name="cause_of_incompletion" id="cause_of_incompletion" value=""><%= cause_of_incompletion%></textarea>
+        <br>
+        <label for="cause_of_incompletion">향후 실적 조치방안</label>
+        <textarea name="plan_of_incompletion" id="plan_of_incompletion" value=""><%= plan_of_incompletion%></textarea>
+    </div>
+    <table>
+        <tr>
+            <td>측정종료<br>복귀시간</td>
+            <td><input type="time" name="move_start_time" id="move_start_time" value="<%= Returntime.start%>"></td>
+            <td>~</td>
+            <td><input type="time" name="move_end_time" id="move_end_time" value="<%= Returntime.end%>"></td>
+        </tr>
+        <tr>
+            <td>FTP<br><font size="2">측정데이터</font><br>업로드</td>
+            <td><input type="time" name="stime" id="stime" value="<%= ftp.start%>"></td>
+            <td>~</td>
+            <td> <input type="time" name="etime" id="etime" value="<%= ftp.end%>"></td>
+        </tr>
+    </table>
+</div>
+<div data-role="footer">
+    <h1>
+        <a href="" data-role="button" id="editBtn" data-icon="edit">수정완료</a>
+        <button data-icon="delete" class="Cencel" >취소</button>
+    </h1>
+</div>
+        <% } else { %>
         <tr>
             <td>측정후 KM</td>
             <td><input type="number" name="car_mileage_after" id="car_mileage_after" value="" placeholder="331241 [숫자만입력]"></td>
@@ -113,12 +157,51 @@
         <button data-icon="delete" class="Cencel" >취소</button>
     </h1>
 </div>
+        <% } %>
 </body>
 
 <script>
     $(function() {
         var query = getUrlParams(); //쿼리스트링 받아오기
         $('#date').val(date());
+        $("#editBtn").click(function() {
+            if ($('#move_start_time').val() == '' || $('#move_end_time').val() == '') {
+                alert('측정종료 복귀시간을 입력해주세요.');
+            } else if ($('#stime').val() == '' || $('#etime').val() == '') {
+                alert('FTP측정데이터 업로드 시간을 입력해주세요.');
+            }  else {
+                var param = {
+                    // report
+                    refueling_price : $('#refueling_price').val(), //주유금액
+                    car_mileage_after : $('#car_mileage_after').val(), //측정이후 km
+                    car_significant : $('#car_significant').val(), //차량특이사항
+                    cause_of_incompletion : $('#cause_of_incompletion').val(), //금일실적미완료원인
+                    plan_of_incompletion : $('#plan_of_incompletion').val(), //향후실적조치방안
+
+                    // details
+                    move_start_time : $('#move_start_time').val(),
+                    move_end_time : $('#move_end_time').val(),  //측정종료후 복귀시간 - 102
+
+                    stime : $('#stime').val(),
+                    etime : $('#etime').val()   //FTP측정 데이터 업로드시간 - 103
+                };
+                $.ajax({
+                    url: "http://localhost:3000/reports/confirm?report="+ query.report, // API
+                    type: "PUT",
+                    dataType: "json",
+                    data: param,
+                    success: function (data) {
+                        if (data.result === 'ok') {
+                            return window.location.href = "http://localhost:3000/reports?action=0";
+                        }
+                        alert('작성실패');
+                    },
+                    error: function(data){
+                        alert("code:"+data.status+"\n");
+                    }
+                });
+            }
+        });
         $("#saveBtn").click(function() {
             if ($('#move_start_time').val() == '' || $('#move_end_time').val() == '') {
                 alert('측정종료 복귀시간을 입력해주세요.');
@@ -165,7 +248,6 @@
             window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
             return params;
         }
-
         function date() {
             var date = new Date();
 

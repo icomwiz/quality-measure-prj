@@ -54,6 +54,8 @@
             <button id="BackBtn" value="">뒤로가기</button>
             <%if(base.check == 0) { %>
                 <button id="ConfirmBtn" value="">일일업무 완료</button>
+            <% } else { %>
+                <button id="ConfirmBtn_Edit" value="">일일업무 수정</button>
             <% } %>
         </div>
     </div>
@@ -122,12 +124,11 @@
                     <td>지연구분</td>
                     <td colspan="3">
                         <select name="obstacle_classification1" id="obstacle_classification1" data-iconpos="left">
-                            <option value="측정자">측정자</option>
-                            <option value="장비">장비</option>
-                            <option value="노트북">노트북</option>
-                            <option value="프로그램">프로그램</option>
-                            <option value="단말기">단말기</option>
-                            <option value="기타">기타</option>
+                            <option value="장비오류">장비오류</option>
+                            <option value="프로그램오류">프로그램오류</option>
+                            <option value="단말기오류">단말기오류</option>
+                            <option value="측정차량">측정차량</option>
+                            <option value="부수기자재">부수기자재</option>
                         </select>
                     </td>
                 </tr>
@@ -236,12 +237,11 @@
                         <td>지연구분</td>
                         <td colspan="3">
                             <select name="obstacle_classification2" id="obstacle_classification2" data-iconpos="left">
-                                <option value="측정자">측정자</option>
-                                <option value="장비">장비</option>
-                                <option value="노트북">노트북</option>
-                                <option value="프로그램">프로그램</option>
-                                <option value="단말기">단말기</option>
-                                <option value="기타">기타</option>
+                                <option value="장비오류">장비오류</option>
+                                <option value="프로그램오류">프로그램오류</option>
+                                <option value="단말기오류">단말기오류</option>
+                                <option value="측정차량">측정차량</option>
+                                <option value="부수기자재">부수기자재</option>
                             </select>
                         </td>
                     </tr>
@@ -446,6 +446,9 @@
         });
         $("#ConfirmBtn").click(function() {
             return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report;
+        });
+        $("#ConfirmBtn_Edit").click(function() {
+            return window.location.href = "http://localhost:3000/reports/confirm?report="+query.Report+"&action=edit";
         });
         $("#BackBtn").click(function() {
             return window.location.href = "http://localhost:3000/reports?action=0";

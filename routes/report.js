@@ -133,36 +133,100 @@ router.get('/confirm', function(req, res, next) {
         }
         return year +'-'+month+'-'+day;
     }
+
     var user_id = req.user.id;
     var info = {};
     info.user_id = user_id;
     info.date = date();
     info.report_id = req.query.report;
 
-    Report.confirm(info, function(err, result) {
-        if (err) {
-            return next(err);
-        }
-        res.render('confirm', {
-            title : 'title',
-            ErrCount : result.ErrCount, //에러횟수
-            measure_inning : result.measure_inning, //측정진행상황
-            calls : result.calls, //콜 횟수
-            planCalls : result.planCalls, //계획된콜횟수
-            callsPercentage : result.callsPercentage+"% ("+result.calls+"/"+result.planCalls+")", //콜 백분위계산
-            team_leader : result.team_leader,
-            team_member : result.team_member,
-            location : result.location,
-            car_number : result.car_number,
-            car_type : result.car_type,
-            equipment_name : result.equipment_name,
-            car_mileage_before : result.car_mileage_before,
-            car_refuel_state : result.car_refuel_state
+
+    //수정
+    if (req.query.action == "edit") {
+        Report.confirmEdit(info, function(err, dbInfo) {
+            if (err) {
+                return next(err);
+            }
+            Report.confirm(info, function(err, result) {
+                if (err) {
+                    return next(err);
+                }
+                res.render('confirm', {
+                    report_id : info.report_id,
+                    title : 'title',
+                    ErrCount : result.ErrCount, //에러횟수
+                    measure_inning : result.measure_inning, //측정진행상황
+                    calls : result.calls, //콜 횟수
+                    planCalls : result.planCalls, //계획된콜횟수
+                    callsPercentage : result.callsPercentage+"% ("+result.calls+"/"+result.planCalls+")", //콜 백분위계산
+                    team_leader : result.team_leader,
+                    team_member : result.team_member,
+                    location : result.location,
+                    car_number : result.car_number,
+                    car_type : result.car_type,
+                    equipment_name : result.equipment_name,
+                    car_mileage_before : result.car_mileage_before,
+                    car_refuel_state : result.car_refuel_state,
+
+                    cause_of_incompletion : dbInfo.report.cause_of_incompletion, //금일실적 미완료원인
+                    plan_of_incompletion : dbInfo.report.plan_of_incompletion, //향후 실적 조치 방안
+                    refueling_price : dbInfo.report.refueling_price, //금일주유금액
+                    car_significant : dbInfo.report.car_significant, //금일차량특이사항
+                    car_mileage_after : dbInfo.report.car_mileage_after, // 종료후 KM
+
+                    ftp : {
+                        id : dbInfo.FTP.id,
+                        start : dbInfo.FTP.start_time,  //ftp 측정데이터업로드시작
+                        end : dbInfo.FTP.end_time //ftp 측정데이터업로드끝
+                    },
+                    Returntime : {
+                        id : dbInfo.Returntime.id,
+                        start : dbInfo.Returntime.start_time, //측정종료복귀시작
+                        end : dbInfo.Returntime.end_time, //측정종료복귀끝
+                    }
+                });
+            });
         });
-    });
+    } else { //생성
+        Report.confirm(info, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.render('confirm', {
+                title : 'title',
+                ErrCount : result.ErrCount, //에러횟수
+                measure_inning : result.measure_inning, //측정진행상황
+                calls : result.calls, //콜 횟수
+                planCalls : result.planCalls, //계획된콜횟수
+                callsPercentage : result.callsPercentage+"% ("+result.calls+"/"+result.planCalls+")", //콜 백분위계산
+                team_leader : result.team_leader,
+                team_member : result.team_member,
+                location : result.location,
+                car_number : result.car_number,
+                car_type : result.car_type,
+                equipment_name : result.equipment_name,
+                car_mileage_before : result.car_mileage_before,
+                car_refuel_state : result.car_refuel_state
+            });
+        });
+    }
+
+
 });
 
 router.post('/confirm', function(req, res, next) {
+    var info = req.body;
+    info.report_id = req.query.report;
+    info.refueling_price = parseInt(req.body.refueling_price) || 0;
+    Report.confirmInsert(info, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({result : 'ok'});
+    });
+});
+
+router.put('/confirm', function(req, res, next) {
     var info = req.body;
     info.report_id = req.query.report;
     info.refueling_price = parseInt(req.body.refueling_price) || 0;

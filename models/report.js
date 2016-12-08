@@ -2,19 +2,12 @@ var dbPool = require('./common').dbPool;
 var async = require('async');
 
 function reportList(user_id, callback) {
-    /*var sql_select_report = "SELECT DISTINCT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
-        "r.location location, rd.location location_detail, t.name teamName "+
-        "FROM report r LEFT JOIN report_details rd ON (r.id = rd.report_id) "+
-        "JOIN employee e ON (r.employee_id = e.id) "+
-        "LEFT JOIN team t ON (t.id = e.team_id) " +
-        "WHERE r.type = 1 AND r.employee_id = ? ORDER BY r.id DESC";
-        */
     var sql_select_report = "SELECT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
     "r.location location, t.name teamName, t.team_no "+
     "FROM report r " +
     "JOIN team t ON (t.id = r.team_id) " +
     "WHERE type = 1 AND employee_id = ? " +
-    "ORDER BY r.id DESC";
+    "ORDER BY date DESC";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -477,6 +470,54 @@ function newReport(info, callback) {
     });
 }
 
+function confirmEdit(info, callback) {
+    var dbInfo = {};
+    var sql_select_report = "SELECT id, cause_of_incompletion, plan_of_incompletion, refueling_price, "+
+                            "car_significant, car_mileage_after "+
+                            "FROM report r WHERE id = ?";
+    var sql_select_reportDetails = "SELECT id, report_id, work_details, start_time, end_time FROM report_details WHERE report_id = ? AND work_details > 101";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        async.series([reportCar, reportDetails], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err);
+            }
+            dbConn.release();
+            callback(null, dbInfo);
+        });
+
+        function reportCar(callback) {
+            dbConn.query(sql_select_report, [info.report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                dbInfo.report = result[0];
+                callback(null, null);
+            });
+        }
+
+        function reportDetails(callback) {
+            dbConn.query(sql_select_reportDetails, [info.report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                if(result[0].work_details == 102) {
+                    dbInfo.FTP = result[1];
+                    dbInfo.Returntime = result[0];
+                } else {
+                    dbInfo.FTP = result[0];
+                    dbInfo.Returntime = result[1];
+                }
+                callback(null, null);
+            });
+        }
+
+    });
+}
+
 function confirm(info, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -583,7 +624,7 @@ function confirm(info, callback) {
     });
 }
 
-function confirmUpdate(info, callback) {
+function confirmInsert(info, callback) {
     var insert_detail = "INSERT INTO report_details(report_id, work_details, start_time, end_time) VALUE(?, ?, ?, ?)";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -633,6 +674,58 @@ function confirmUpdate(info, callback) {
         });
     });
 }
+
+function confirmUpdate(info, callback) {
+    var insert_detail = "UPDATE report_details SET start_time=? , end_time=? WHERE report_id = ? AND work_details = ?";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.beginTransaction(function(err) {
+            if (err) {
+                return callback(err);
+            }
+            async.series([function (callback) {
+                dbConn.query(insert_detail, [info.move_start_time, info.move_end_time, info.report_id, 102], function(err, result) {
+                    if (err) {
+                        callback(err);
+                    }
+                    callback(null, null);
+                });
+
+            }, function(callback) {
+                dbConn.query(insert_detail, [info.stime, info.etime, info.report_id, 103], function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, null);
+                });
+            }, function(callback) {
+                var update_report = "UPDATE report " +
+                    "SET refueling_price=?, car_significant=?, cause_of_incompletion=?, plan_of_incompletion=?, car_mileage_after=?"+
+                    "WHERE id = ? ";
+                dbConn.query(update_report,[info.refueling_price, info.car_significant, info.cause_of_incompletion, info.plan_of_incompletion, info.car_mileage_after, info.report_id],function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null, null);
+                });
+            }], function(err, results) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null, null);
+                });
+            });
+        });
+    });
+}
+
 
 // INPUT: teamName, OUTPUT: teamName, date, location
 function getReportsByteamId(teamId, callback) {
@@ -2284,10 +2377,13 @@ function findWithAttr(array, attr, value) {
     return -1;
 }
 
+
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
 module.exports.newReport = newReport;
 module.exports.confirm = confirm;
+module.exports.confirmEdit = confirmEdit;
+module.exports.confirmInsert = confirmInsert;
 module.exports.confirmUpdate = confirmUpdate;
 module.exports.deleteReport = deleteReport;
 module.exports.updateReport = updateReport;
