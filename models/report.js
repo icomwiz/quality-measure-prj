@@ -2,6 +2,7 @@ var dbPool = require('./common').dbPool;
 var async = require('async');
 
 function reportList(user_id, callback) {
+    var sql_select_name = 'SELECT name FROM employee WHERE id = ?';
     var sql_select_report = "SELECT r.id, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, "+
     "r.location location, t.name teamName, t.team_no "+
     "FROM report r " +
@@ -13,14 +14,21 @@ function reportList(user_id, callback) {
             return callback(err);
         }
         dbConn.query(sql_select_report, [user_id], function(err, result) {
-            dbConn.release();
             if (err) {
+                dbConn.release();
                 return callback(err);
             }
             if(!result[0]) {
                 result.push({id : null});
             }
-            callback(null, result);
+            dbConn.query(sql_select_name, [user_id], function(err, name) {
+                if (err) {
+                    dbConn.release();
+                    return callback(err);
+                }
+                dbConn.release();
+                callback(null, result, name[0].name);
+            });
         });
     });
 }

@@ -68,7 +68,7 @@
         </tr>
         <tr><td></td></tr>
         <tr>
-            <td>장애발생 횟수</td>
+            <td>장애발생 횟수 <%= report_id%></td>
             <td colspan="2"><%= ErrCount%></td>
         </tr>
         <% if (report_id) { %>
@@ -239,6 +239,13 @@
                     }
                 });
             }
+        });
+        //시간 디폴트설정
+        $('#move_start_time').change(function() {
+            $('#move_end_time').val($('#move_start_time').val());
+        });
+        $('#stime').change(function() {
+            $('#etime').val($('#stime').val());
         });
         $(".Cencel").click(function() {
             window.location.href = "http://localhost:3000/details?Report="+ query.report;

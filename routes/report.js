@@ -16,7 +16,7 @@ router.get('/', isAuthenticated, function(req, res, next) {
 
     if (action === 0 && !Reportid) { //필주
         var user_id = req.user.id;
-        Report.reportList(user_id, function(err, result) {
+        Report.reportList(user_id, function(err, result, name) {
             if(err) {
                 return next(err);
             }
@@ -25,7 +25,8 @@ router.get('/', isAuthenticated, function(req, res, next) {
                     return next(err);
                 }
                 res.render('main', {
-                    title : 'Icomwiz',
+                    // title : 'Icomwiz',
+                    title : name +'님 반갑습니다.',
                     report : result,
                     leader : results[0].name,
                     member : results[1].team_member,
@@ -140,6 +141,7 @@ router.get('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
     info.user_id = user_id;
     info.date = date();
     info.report_id = req.query.report;
+    console.log(info.report_id);
 
 
     //수정
@@ -194,6 +196,7 @@ router.get('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
                 return next(err);
             }
             res.render('confirm', {
+                report_id : null,
                 title : 'title',
                 ErrCount : result.ErrCount, //에러횟수
                 measure_inning : result.measure_inning, //측정진행상황
