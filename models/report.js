@@ -677,6 +677,19 @@ function getReportsByteamId(teamId, callback) {
 
 //엑셀 파일을 통해 리포트 업데이트 하기
 function updatePlan(plan, callback) {
+    //원래의 팀 멤버 찾기
+    var sql_select_team_member =
+        'SELECT e.id, e.name ' +
+        'FROM employee e JOIN team t ON (e.team_id = t.id) ' +
+        'WHERE t.name = ? AND t.team_no = ?';
+
+    //원래의 팀멤버의 팀에서 없애기
+    var sql_update_existing_team_member =
+        'UPDATE employee ' +
+        'SET team_id = NULL AND team_position = NULL ' +
+        'WHERE id = ?';
+
+
     //부서 이름을 통해 부서가 존재하는지 찾음.
     var sql_find_department_by_name = 'SELECT id departmentId ' +
                                       'FROM department ' +
@@ -767,7 +780,7 @@ function updatePlan(plan, callback) {
                 dbConn.release();
                 return callback(err);
             }
-            async.parallel([setTeamAndDepartmentAndEmployeeAndReport, setPartAndTeam], function(err) {
+            async.parallel([findAndRemoveTeamMember, setTeamAndDepartmentAndEmployeeAndReport, setPartAndTeam], function(err) {
                 if (err) {
                     dbConn.rollback(function() {
                         dbConn.release();
@@ -1139,8 +1152,62 @@ function updatePlan(plan, callback) {
                 callback(null, reportId); // reportId를 리턴
             });
         }
-    });
 
+        //엑셀로 들어온 사람이 조장이라면 팀 멤버를 찾고 멤버들을 제거하는 함수
+        function findAndRemoveTeamMember(callback) {
+            if (plan.teamPosition === '조장') {
+                async.waterfall([findTeamMember, removeExistingteamMembers], function(err, results) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            } else {
+                callback(null);
+            }
+        }
+
+
+        //팀 멤버 찾는 함수
+        function findTeamMember(callback) {
+            dbConn.query(sql_select_team_member, [plan.teamName, plan.teamNo], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var employeeIds = [];
+                if (!results) { // 기존 팀에 아무도 존재하지 않다면
+                    callback(null, 0);
+                } else { //기존 팀에 누가 있을 때
+                    for (var i = 0; i < results.length; i++) {
+                        employeeIds.push(results[i].id);
+                    }
+                    callback(null, employeeIds);
+                }
+            });
+        }
+
+        //팀 멤버들을 제거하는 함수
+        function removeExistingteamMembers(employeeIds, callback) {
+            if (employeeIds === 0) {
+                return callback(null);
+            }
+            async.each(employeeIds, removeExistingteamMember, function (err) {
+                if (err) {
+                    callback(err);
+                }
+                callback(null);
+            })
+        }
+
+        function removeExistingteamMember(employeeId, callback) {
+            dbConn.query(sql_update_existing_team_member, [employeeId], function (err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                callback();
+            });
+        }
+    });
 }
 
 //일자별 리포트 디테일 가져오기
