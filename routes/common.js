@@ -19,6 +19,23 @@ function isAuthenticated(req, res, next) { //로그인확인
     next();
 }
 
+function isAuthenticatedForOfficer(req, res, next) { //사장님 전무님
+    if ((!req.user) || (req.user.teamPosition !== 0 )) {
+        return res.redirect('http://localhost:3000/auth');
+    }
+    next();
+}
+
+function isAuthenticatedForMeasurerManager(req, res, next) { //김경헌 과장님
+    if ((!req.user) || (req.user.teamPosition !== 10 )) {
+        return res.redirect('http://localhost:3000/auth');
+    }
+    next();
+}
+
+
 module.exports.isAuthenticatedForMeasurer = isAuthenticatedForMeasurer;
 module.exports.isAuthenticatedForAnalyst = isAuthenticatedForAnalyst;
+module.exports.isAuthenticatedForOfficer = isAuthenticatedForOfficer;
+module.exports.isAuthenticatedForMeasurerManager = isAuthenticatedForMeasurerManager;
 module.exports.isAuthenticated = isAuthenticated;
