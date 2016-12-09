@@ -2060,8 +2060,7 @@ function getCarState(callback) {
         'CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, ' +
         'CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31, date ' +
         'FROM report ' +
-        'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? ' +
-        'GROUP BY date) b ON (a.carNumber = b.carNumber) ' +
+        'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ?) b ON (a.carNumber = b.carNumber) ' +
         'ORDER BY a.carNumber';
 
     dbPool.getConnection(function(err, dbConn) {
