@@ -33,9 +33,17 @@ function isAuthenticatedForMeasurerManager(req, res, next) { //김경헌 과장�
     next();
 }
 
+function isAuthenticatedForMeasurerManager_Officer(req, res, next) { //김경헌 과장님, 사장님 전무님
+    if ((!req.user) || (req.user.teamPosition !== 10 ) || (req.user.teamPosition !== 0 )) {
+        return res.redirect('http://localhost:3000/auth');
+    }
+    next();
+}
+
 
 module.exports.isAuthenticatedForMeasurer = isAuthenticatedForMeasurer;
 module.exports.isAuthenticatedForAnalyst = isAuthenticatedForAnalyst;
 module.exports.isAuthenticatedForOfficer = isAuthenticatedForOfficer;
 module.exports.isAuthenticatedForMeasurerManager = isAuthenticatedForMeasurerManager;
+module.exports.isAuthenticatedForMeasurerManager_Officer = isAuthenticatedForMeasurerManager_Officer;
 module.exports.isAuthenticated = isAuthenticated;
