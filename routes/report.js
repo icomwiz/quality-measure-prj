@@ -86,7 +86,8 @@ router.get('/', isAuthenticated, function(req, res, next) {
                     measureObj: result.measureObj,
                     totalDelayTime: result.totalDelayTime,
                     totalErrorCount: result.totalErrorCount,
-                    avgWorkDetails: result.avgWorkDetails
+                    avgWorkDetails: result.avgWorkDetails,
+                    finishInfos: result.finishInfos
             });
         });
     } else {

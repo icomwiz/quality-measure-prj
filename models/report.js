@@ -1274,24 +1274,48 @@ function getReportDetailperDate(reqData, callback) {
         'GROUP BY rd.work_details ' +
         'ORDER BY startTime';
 
+    var sql_select_finish_info =
+        'SELECT e.name, r.car_significant carSignificant, r.cause_of_incompletion causeOfIncompletion, r.plan_of_incompletion planOfIncompletion ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+                    'JOIN employee e ON (e.id = r.employee_id) ' +
+        'WHERE r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 AND t.id = ?';
+
     var resData = {};
     resData.employees = [];
     resData.performances = [];
     resData.avgWorkDetails = [];
+    resData.finishInfos = [];
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             dbConn.release();
             return callback(err);
         }
-        async.parallel([getBasicInfoAndMeasureInfo, getMeasureObj, briefErrorInfo, measurePerPlan, getAvgWorkDetails], function(err, result) {
-           if (err) {
+        async.parallel([getFinishInfo, getBasicInfoAndMeasureInfo, getMeasureObj, briefErrorInfo, measurePerPlan, getAvgWorkDetails], function(err, result) {
+            if (err) {
                dbConn.release();
                return callback(err);
-           }
-           dbConn.release();
-           callback(null, resData);
+            }
+            dbConn.release();
+            callback(null, resData);
         });
+
+        function getFinishInfo(callback) {
+            dbConn.query(sql_select_finish_info, [reqData.date, reqData.teamId], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                for (var i = 0; i < results.length; i++) {
+                    resData.finishInfos.push({
+                        employeeName: results[i].name,
+                        carSignificant: results[i].carSignificant || '미작성',
+                        causeOfIncompletion: results[i].causeOfIncompletion || '미작성',
+                        planOfIncompletion: results[i].planOfIncompletion || '미작성'
+                    });
+                }
+                callback(null);
+            });
+        }
 
         function getAvgWorkDetails(callback) {
             dbConn.query(sql_select_avg_details, [reqData.teamId, reqData.date], function(err, results) {
@@ -2179,13 +2203,15 @@ function getCarState(callback) {
 //월별 차량 자세한 정보
 function getDetailCarState(reqData, callback) {
     var select_detail_car_state =
-        'SELECT a.teamName, b.teamLeader, a.teamMember, a.startTime, a.endTime, a.location1, a.location2, a.target1, a.target2, a.carType, a.carNumber, a.carMileageBefore, a.carMileageAfter, a.carRefuelState, a.refuelingPrice, a.carSignificant ' +
-        'FROM(SELECT DISTINCT r.team_name teamName, r.team_member teamMember, rd.start_time startTime, rd.end_time endTime, r.location location1, rd.location location2, rd.target1, rd.target2, car_type carType, car_number carNumber, car_manager carManager, car_mileage_before carMileageBefore, car_mileage_after carMileageAfter, car_refuel_state carRefuelState, car_significant carSignificant, refueling_price refuelingPrice ' +
+        'SELECT a.teamName, b.teamLeader, a.teamMember, a.work_details, a.startTime, a.endTime, a.location1, a.location2, a.target1, a.target2, a.carType, a.carNumber, a.carMileageBefore, a.carMileageAfter, a.carRefuelState, a.refuelingPrice, a.carSignificant ' +
+        'FROM(SELECT DISTINCT r.team_name teamName, r.team_member teamMember, rd.work_details, rd.start_time startTime, rd.end_time endTime, r.location location1, rd.location location2, rd.target1, rd.target2, car_type carType, car_number carNumber, car_manager carManager, car_mileage_before carMileageBefore, car_mileage_after carMileageAfter, car_refuel_state carRefuelState, car_significant carSignificant, refueling_price refuelingPrice ' +
         'FROM report r LEFT JOIN report_details rd ON (r.id = rd.report_id) ' +
-        'WHERE r.type = 1 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
+        'WHERE r.type = 1 AND r.team_position = \'조장\' AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
         'ORDER BY rd.start_time) a JOIN(SELECT e.name teamLeader, r.team_name teamName ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE type = 0 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON (a.teamName = b.teamName)';
+        'WHERE type = 0 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON (a.teamName = b.teamName) ' +
+        'WHERE work_details NOT IN (103) ' +
+        'ORDER BY a.startTime';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {

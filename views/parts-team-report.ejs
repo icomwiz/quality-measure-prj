@@ -80,8 +80,27 @@
                 측정 시작 전 Km: <b><%=carMileageBefore%></b><br/>
                 측정 종료 후 Km: <b><%=carMileageAfter%></b><br/>
                 현재 주유 상태: <b><%=carRefuelState%></b>
-            </div>
+            </div> <br/>
+            종합: <br/>
+            <table>
+                <tr>
+                    <td></td><td>금일 차량 특이사항</td><td>금일 실적 미완료 원인</td><td>향후 조치 방안</td>
+                </tr>
+                <%
+                    if (finishInfos.length !== 0) {
+                        for (var i = 0; i < finishInfos.length; i ++) {
+                %>
+                <tr>
+                    <td><%=finishInfos[i].employeeName%></td><td><%=finishInfos[i].carSignificant%></td><td><%=finishInfos[i].causeOfIncompletion%></td><td><%=finishInfos[i].planOfIncompletion%></td>
+                </tr>
+                <%
+                        }
+                    }
+                %>
+            </table>
         </div>
+
+
         <br>
         <div>
             <%
