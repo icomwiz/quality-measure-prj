@@ -19,7 +19,7 @@ router.get('/partsmain', function(req, res, next) {
     });
 });
 
-//관리자 페이지(품질측정팀_일일업무보고)작성 API
+//(품질측정팀_일일업무보고)작성 API
 router.get('/admin', function(req, res, next) {
     //작성페이지 불러오기
     var reportDate = req.query.date;
@@ -29,14 +29,14 @@ router.get('/admin', function(req, res, next) {
                 return next(err);
             }
             if(daily_briefing_id[0]) {
-                console.log("수정모드");
+                // console.log("수정모드");
                 res.render('parts-admin-page', {
                     result: data_daily_briefing,
                     daily_briefing_id : daily_briefing_id[0].id,
                     briefing : briefing
                 });
             } else {
-                console.log("삽입모드");
+                // console.log("삽입모드");
                 res.render('parts-admin-page', {
                     result: data_daily_briefing,
                     daily_briefing_id : null,
@@ -66,7 +66,7 @@ router.get('/admin', function(req, res, next) {
     }
 });
 
-//관리자 페이지(품질측정팀_일일업무보고)삽입 API
+//(품질측정팀_일일업무보고)삽입 API
 router.post('/admin', function(req, res, next) {
     var info = {};
     info = req.body;
@@ -76,6 +76,23 @@ router.post('/admin', function(req, res, next) {
         if (err) {
             return next(err);
         }
+        res.send({
+            result : 'ok'
+        });
+    });
+});
+
+router.get('/management', function(req, res, next) {
+    Admin.managementView(function(err, result) {
+        res.render('management-employee', {
+            managementList: result
+        });
+    });
+});
+
+router.post('/management', function(req, res, next) {
+    var info = req.body;
+    Admin.managementInsert(info, function(err, result) {
         res.send({
             result : 'ok'
         });

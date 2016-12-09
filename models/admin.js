@@ -339,6 +339,49 @@ function daily_briefing(info, callback) {
     });
 }
 
+function managementView(callback) {
+    var sql_select ="SELECT e.id id, e.name, "+
+                    "CAST(AES_DECRYPT(UNHEX(e.email), 'wiz') AS CHAR) email, "+
+                    "CAST(AES_DECRYPT(UNHEX(e.phone_number), 'wiz') AS CHAR) phone_number, " +
+                    "e.team_id, e.team_position, e.department_id, e.department_position "+
+                    "FROM employee e "+
+                    "JOIN team t ON (t.id = e.team_id) "+
+                    "WHERE t.team_no = 0 "+
+                    "ORDER BY id ASC ";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_select, function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result);
+        });
+    })
+}
+
+function managementInsert(info, callback) {
+    var sql_insert = "INSERT INTO " +
+    "employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) " +
+    "VALUES(?, HEX(AES_ENCRYPT(?, 'wiz')), "+
+    "HEX(AES_ENCRYPT(?, 'wiz')), "+
+    "HEX(AES_ENCRYPT(SHA2('1111', 512), 'wiz')), ?, ?, ?, ?, null)";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_insert, [info.name, info.email, info.phone, info.part, info.group, info.department, info.position],function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result);
+        });
+    });
+}
+
 module.exports.measureTaskReport = measureTaskReport;
 module.exports.daily_briefing = daily_briefing;
 module.exports.daily_briefingView = daily_briefingView;
+module.exports.managementView = managementView;
+module.exports.managementInsert = managementInsert;
