@@ -106,6 +106,22 @@ function baseDetail(report_id, user_id, callback) {
                 }
                 callback(null, null);
             });
+        }, function(callback) {
+            var sql_select_time = "SELECT end_time FROM report_details "+
+                                  "WHERE report_id = ? AND work_details < 100 "+
+                                  "ORDER BY work_details DESC LIMIT 1";
+            dbConn.query(sql_select_time, [report_id], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                if(result[0]) {
+                    baseInfo.time = result[0].end_time;
+                } else {
+                    baseInfo.time = null;
+                }
+                console.log(baseInfo.time);
+                callback(null, null);
+            });
         }], function(err, results) {
             if (err) {
                 dbConn.release();
