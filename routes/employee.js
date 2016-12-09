@@ -4,6 +4,7 @@ var Team = require('../models/team');
 var Employee = require('../models/employee');
 var Admin = require('../models/admin');
 var isAuthenticatedForAnalyst = require('./common').isAuthenticatedForAnalyst;
+var isAuthenticatedForMeasurerManager_Officer = require('./common').isAuthenticatedForMeasurerManager_Officer;
 
 /* GET home page. */
 router.get('/partsmain', isAuthenticatedForAnalyst, function(req, res, next) {
@@ -20,7 +21,7 @@ router.get('/partsmain', isAuthenticatedForAnalyst, function(req, res, next) {
 });
 
 //(품질측정팀_일일업무보고)작성 API
-router.get('/admin', function(req, res, next) {
+router.get('/admin', isAuthenticatedForMeasurerManager_Officer, function(req, res, next) {
     //작성페이지 불러오기
     var reportDate = req.query.date;
     if (req.query.action==0) {
@@ -67,7 +68,7 @@ router.get('/admin', function(req, res, next) {
 });
 
 //(품질측정팀_일일업무보고)삽입 API
-router.post('/admin', function(req, res, next) {
+router.post('/admin', isAuthenticatedForMeasurerManager_Officer, function(req, res, next) {
     var info = {};
     info = req.body;
     info.Date = req.query.date;
@@ -82,7 +83,7 @@ router.post('/admin', function(req, res, next) {
     });
 });
 
-router.get('/management', function(req, res, next) {
+router.get('/management', isAuthenticatedForMeasurerManager_Officer, function(req, res, next) {
     Admin.managementView(function(err, result) {
         res.render('management-employee', {
             managementList: result
@@ -90,7 +91,7 @@ router.get('/management', function(req, res, next) {
     });
 });
 
-router.post('/management', function(req, res, next) {
+router.post('/management', isAuthenticatedForMeasurerManager_Officer, function(req, res, next) {
     var info = req.body;
     Admin.managementInsert(info, function(err, result) {
         res.send({
