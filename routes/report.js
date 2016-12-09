@@ -7,8 +7,10 @@ var fs = require('fs');
 var xlsx = require('xlsx');
 var CronJob = require('cron').CronJob;
 var router = express.Router();
+var isAuthenticated = require('./common').isAuthenticated;
+var isAuthenticatedForMeasurer = require('./common').isAuthenticatedForMeasurer;
 
-router.get('/', function(req, res, next) {
+router.get('/', isAuthenticated, function(req, res, next) {
     var action = parseInt(req.query.action);
     var Reportid = parseInt(req.query.Reportid);
 
@@ -65,7 +67,6 @@ router.get('/', function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            //console.log(result.employees[0].work);
             res.render('parts-team-report',
                 {
                     teamName: result.teamName,
@@ -92,7 +93,7 @@ router.get('/', function(req, res, next) {
     }
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
     var reportid = req.params.id;
     Report.deleteReport(reportid, function(err, result) {
         if (err) {
@@ -104,7 +105,7 @@ router.delete('/:id', function(req, res, next) {
     });
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', isAuthenticatedForMeasurer, function(req, res, next) {
     var info = {};
     info.report = req.body;
     info.report.user_id = req.user.id;
@@ -117,7 +118,7 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.get('/confirm', function(req, res, next) {
+router.get('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
     function date(){
         var date = new Date();
 
@@ -214,7 +215,7 @@ router.get('/confirm', function(req, res, next) {
 
 });
 
-router.post('/confirm', function(req, res, next) {
+router.post('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
     var info = req.body;
     info.report_id = req.query.report;
     info.refueling_price = parseInt(req.body.refueling_price) || 0;
@@ -226,7 +227,7 @@ router.post('/confirm', function(req, res, next) {
     });
 });
 
-router.put('/confirm', function(req, res, next) {
+router.put('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
     var info = req.body;
     info.report_id = req.query.report;
     info.refueling_price = parseInt(req.body.refueling_price) || 0;
@@ -238,7 +239,7 @@ router.put('/confirm', function(req, res, next) {
     });
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
     var info = {};
     info.report = req.body;
     info.report.report_id = req.params.id;

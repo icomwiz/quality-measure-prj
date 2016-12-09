@@ -4,9 +4,10 @@
 var Detail = require('../models/detail');
 var express = require('express');
 var router = express.Router();
+var isAuthenticatedForMeasurer = require('./common').isAuthenticatedForMeasurer;
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', isAuthenticatedForMeasurer, function(req, res, next) {
     var report_id = req.query.Report;
     var user_id = req.user.id;
     Detail.detailsList(report_id, function(err, result) {
@@ -47,7 +48,7 @@ router.get('/', function(req, res, next) {
     }
 });
 
-router.post('/', function(req, res, next) {
+router.post('/', isAuthenticatedForMeasurer, function(req, res, next) {
     var addInfo = req.body;
     Detail.addDetail(addInfo, function(err, result) {
         if (err) {
@@ -59,7 +60,7 @@ router.post('/', function(req, res, next) {
     });
 });
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
     var detail_id = req.params.id;
     Detail.deleteDetail(detail_id, function(err, result) {
         if (err) {
@@ -71,7 +72,7 @@ router.delete('/:id', function(req, res, next) {
     });
 });
 
-router.get('/:id', function(req, res, next) {
+router.get('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
     var detail_id = req.params.id;
     Detail.updateDetailSelect(detail_id, function(err, result) {
         if (err) {
@@ -83,7 +84,7 @@ router.get('/:id', function(req, res, next) {
     });
 });
 
-router.put('/:id', function(req, res, next) {
+router.put('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
     var info = req.body;
     Detail.updateDetail(info, function(err, result) {
         if (err) {
