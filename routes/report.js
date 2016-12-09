@@ -254,7 +254,7 @@ router.put('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
 });
 
 //엑셀파일을 통해 계획 업로드 하기
-router.post('/planner', function(req, res, next) {
+router.post('/planner', isAuthenticated, function(req, res, next) {
     var form = new formidable.IncomingForm();
     form.uploadDir = path.join(__dirname, '../planners');
     form.keepExtensions = true;
@@ -359,7 +359,7 @@ router.post('/planner', function(req, res, next) {
 });
 
 //에러 통계 보기
-router.get('/statistics', function(req, res, next) {
+router.get('/statistics', isAuthenticated, function(req, res, next) {
     var action = parseInt(req.query.action);
     if (action === 0) { //일별
         Report.getErrorStatisticsPerDay(function(err, result) {
@@ -458,7 +458,7 @@ router.get('/statistics', function(req, res, next) {
 });
 
 //차량들 정보 보기
-router.get('/cars', function(req, res, next) {
+router.get('/cars', isAuthenticated, function(req, res, next) {
     Report.getCarState(function(err, result) {
         if (err) {
             return next(err);
@@ -470,7 +470,7 @@ router.get('/cars', function(req, res, next) {
 });
 
 //차량들 자세한 정보 가져오기
-router.get('/detailcarinfo', function(req, res, next) {
+router.get('/detailcarinfo', isAuthenticated, function(req, res, next) {
     var reqData = {};
     reqData.date = req.query.year + '-' + req.query.month + '-' + req.query.day;
     reqData.teamName = decodeURI(req.query.teamName);
@@ -485,7 +485,7 @@ router.get('/detailcarinfo', function(req, res, next) {
 });
 
 //콜수 현황 보기
-router.get('/calls', function(req, res, next) {
+router.get('/calls', isAuthenticated, function(req, res, next) {
     var action = parseInt(req.query.action);
     if (action === 0) { //일별 호량
         Report.getCallsPerDay(function (err, result) {
@@ -515,7 +515,7 @@ router.get('/calls', function(req, res, next) {
 });
 
 //<script>코드에서 morrisjs라이브러리 사용하여 그래프 표현을 위해 ajax로 콜수 현황 다시 불러오기
-router.get('/calls/ajax', function(req, res, next) {
+router.get('/calls/ajax', isAuthenticated, function(req, res, next) {
     var action = parseInt(req.query.action);
     if (action === 0) { //일별 호량
         Report.getCallsPerDay(function (err, result) {

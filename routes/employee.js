@@ -3,11 +3,11 @@ var router = express.Router();
 var Team = require('../models/team');
 var Employee = require('../models/employee');
 var Admin = require('../models/admin');
-var isAuthenticatedForAnalyst = require('./common').isAuthenticatedForAnalyst;
+var isAuthenticated = require('./common').isAuthenticated;
 var isAuthenticatedForMeasurerManager_Officer = require('./common').isAuthenticatedForMeasurerManager_Officer;
 
 /* GET home page. */
-router.get('/partsmain', isAuthenticatedForAnalyst, function(req, res, next) {
+router.get('/partsmain', isAuthenticated, function(req, res, next) {
     var employeesInfo = {
         name: req.user.name,
         departmentPosition: req.user.departmentPosition,
@@ -100,7 +100,7 @@ router.post('/management', isAuthenticatedForMeasurerManager_Officer, function(r
     });
 });
 
-router.put('/', function(req, res, next) {
+router.put('/',isAuthenticated, function(req, res, next) {
     var employee = {};
     employee.id = req.user.id;
     employee.password = req.body.password;

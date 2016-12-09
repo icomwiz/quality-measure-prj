@@ -3,12 +3,13 @@ var router = express.Router();
 var AnalystReport = require('../models/analystReport');
 var AnalystReportDetails = require('../models/analystReportDetails');
 var async = require('async');
+var isAuthenticated = require('./common').isAuthenticated;
 
 router.get('/', function(req, res, next) { //모든 내근자의 일일 업무 보고서 불러오기
     
 });
 
-router.get('/me', function(req, res, next) { //자신이 작성한 일일 업무 보고서 내역 모두 불러오기
+router.get('/me', isAuthenticated, function(req, res, next) { //자신이 작성한 일일 업무 보고서 내역 모두 불러오기
     var eid = req.user.id;
     AnalystReport.getMyReport(eid, function(err, result) {
         if (err) {
@@ -20,7 +21,7 @@ router.get('/me', function(req, res, next) { //자신이 작성한 일일 업무
     });
 });
 
-router.post('/', function(req, res, next) { //내근자의 일일 업무 작성
+router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일일 업무 작성
     var action = parseInt(req.query.action);
     var reqData = {};
     reqData.employeeId = req.user.id;

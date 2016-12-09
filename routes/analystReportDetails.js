@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var AnalystReportDetails = require('../models/analystReportDetails');
+var isAuthenticated = require('./common').isAuthenticated;
 
-router.get('/', function(req, res, next) { //특정 날짜의 모든 리포트 디테일 불러오기
+router.get('/', isAuthenticated, function(req, res, next) { //특정 날짜의 모든 리포트 디테일 불러오기
     var reqData = {};
     reqData.employeeId = req.user.id;
     reqData.date = req.query.date;
