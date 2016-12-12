@@ -21,6 +21,16 @@ router.get('/me', isAuthenticated, function(req, res, next) { //자신이 작성
     });
 });
 
+router.get('/:rid', isAuthenticated, function(req, res, next) {
+    var reportId = req.params.rid;
+    AnalystReport.getParticularReport(reportId, function(err, results) {
+        if (err) {
+            return next(err);
+        }
+
+    });
+});
+
 router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일일 업무 작성
     var action = parseInt(req.query.action);
     var reqData = {};
@@ -101,8 +111,17 @@ router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일�
     }
 });
 
-router.delete('/:rid', function(req, res, next) { //특정 업무 보고서 삭제하기
-    
+router.delete('/:rid', isAuthenticated, function(req, res, next) { //특정 업무 보고서 삭제하기
+    var reportId = req.params.rid;
+    AnalystReport.deleteMyReport(reportId, function(err) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: '삭제 완료'
+        });
+    });
+
 });
 
 module.exports = router;

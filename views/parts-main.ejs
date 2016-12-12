@@ -63,7 +63,7 @@
         <!-- 업무일지 작성 팝업 -->
         <div data-role="popup" id="postReportDialog">
             <div data-role="header">
-                <h1>업무일지 작성</h1>
+                <h1 id="postReportDialogTitle">업무일지 작성</h1>
             </div>
             <div data-role="main" class="ui-content">
                 <!--<input type="date" data-inline="true" placeholder="2016-00-00"/>-->
@@ -155,6 +155,21 @@
                 <a href="#" id="postWorkReportComfirm" data-role="button" data-inline="true">저장</a>
             </div>
         </div>
+
+        <!--업무 보고서 삭제-->
+        <div data-role="popup" id="deleteReportDialog" data-dismissible="false" style="max-width:400px;">
+            <div data-role="header" >
+                <h1>보고서 삭제</h1>
+            </div>
+            <div role="main" class="ui-content">
+                <h3 class="ui-title">보고서를 삭제 하시겠습니까?</h3>
+                <p>보고서를 삭제하면 복원되지 않습니다.</p>
+                <a href="#" data-role="button" data-rel="back">취소</a>
+                <a href="#" data-role="button" class="deleteReport" data-rel="back" data-transition="flow">삭제</a>
+                <input type="hidden" id="deleteReportDialogReportId" value=""/>
+            </div>
+        </div>
+
         <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
     </div>
     <div data-role="footer" data-position="fixed">
@@ -212,8 +227,9 @@
                                             "<table class=\"deleteEditTbl\">" +
                                                 "<tr>" +
                                                     "<td>" +
-                                                        "<a href=\"#\" class=\"ui-btn ui-corner-all ui-icon-delete ui-btn-icon-notext\">Delete Icon</a>" +
-                                                        "<a href=\"#\" class=\"ui-btn ui-corner-all ui-icon-edit ui-btn-icon-notext\">Edit Icon</a>" +
+                                                        "<a href=\"#deleteReportDialog\" data-rel=\"popup\" data-position-to=\"window\" data-transition=\"pop\" class=\"deleteReportTriger\">삭제</a>" +
+                                                        "<a href=\"#postReportDialog\" data-rel=\"popup\" data-position-to=\"window\" data-transition=\"pop\" class=\"editReport\">수정</a>" +
+                                                        "<input type=\"hidden\" class=\"hiddenReportId\" value=\"" + this.id + "\">" +
                                                     "</td>" +
                                                 "</tr>" +
                                             "</table>" +
@@ -870,6 +886,34 @@
                         alert('휴가');
                     }
                 });
+            });
+
+            //내근자 일일 업무 상세보기에서 삭제 버튼 눌렀을 경우
+            $(document).on('click', '.deleteReportTriger', function() {
+                var reportId = $(this).next().next().val();
+                $('#deleteReportDialogReportId').val(reportId);
+            });
+
+            //내근자 일일 업무 상세보기의 삭제버튼을 통해 생긴 팝업의 삭제 버튼 눌렀을 경우
+            $(document).on('click', '.deleteReport', function() {
+                var reportId = $(this).next().val();
+                $.ajax({ //일일 업무 삭제
+                    url: "http://localhost:3000/analystReports/" + reportId,
+                    type: "delete",
+                    dataType: 'json',
+                    success: function(data) {
+                        analystReport();
+                    },
+                    error: function(data) {
+                        alert(data.result);
+                    }
+                });
+            });
+
+            //내근자 일일 업무 상세보기에서 수정 버튼 눌렀을 경우
+            $(document).on('click', '.editReport', function() {
+                var reportId = $(this).next().next().val();
+                $('#postReportDialogTitle').text('업무 일지 수정');
             });
         });
     </script>
