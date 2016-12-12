@@ -301,17 +301,17 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     } else if(z.substring(0, 1) === 'H') { //직위
                         plan.teamPosition = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'I') { //이름
-                        plan.name = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.name = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'J') { //휴대폰 번호
-                        plan.phoneNumber = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.phoneNumber = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'K') { //이메일
-                        plan.email = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.email = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'L') { //측정장비
-                        plan.equipmentName = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.equipmentName = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'M') { //차량번호
-                        plan.carNumber = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.carNumber = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'N') { //차량종류
-                        plan.carType = worksheet1[z].v.replace(/\s/gi,'').split(',');
+                        plan.carType = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'O') { //업무후 차량 관리자
                         plan.carManager = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'P') { //측정지역
@@ -342,17 +342,17 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     var month = (parseInt(date[1]) - 1).toString(); //01월이라 되어있는 형식을 앞의 0을 제거하여 표현
                     var day = parseInt(date[2]).toString(); //01일이라 되어있는 형식을 앞의 0을 제거하여 표현
                     var cronTime = '0 0 0' + ' ' + day + ' ' + month + ' ' + '*';
-                    console.log(cronTime);
-                    var job = new CronJob(cronTime ,function() {
-                        console.log('스케줄링 시작');
-                        Report.updatePlan(plans[i], function(err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-                        });
-                        job.stop();
-                    }, function() {
-                    }, true, 'Asia/Seoul');
+                    (function(index) {
+                        var job = new CronJob(cronTime ,function() {
+                            Report.updatePlan(plans[index], function(err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+                            });
+                            job.stop();
+                        }, function() {
+                        }, true, 'Asia/Seoul');
+                    })(i);
                 }
             }
             res.send({
