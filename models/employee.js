@@ -21,7 +21,7 @@ function findEmployeeByEmail(employeeEmail, callback) {
                                                        'LEFT JOIN team t ON(e.team_id = t.id) ' +
                                                        'LEFT JOIN teams_parts tp ON(t.id = tp.team_id) ' +
                                                        'LEFT JOIN part p ON(p.id = tp.part_id) ' +
-                                       'WHERE CAST(AES_DECRYPT(UNHEX(e.email), \'wiz\') AS CHAR) = ?';
+                                       'WHERE CAST(AES_DECRYPT(UNHEX(e.email), \'wiz\') AS CHAR) = ? AND type = 1';
     dbPool.getConnection(function(err, dbConn) {
        if (err) {
            return callback(err);
@@ -78,7 +78,7 @@ function findEmployeeById(employeeId, callback) {
                                                     'LEFT JOIN team t ON(e.team_id = t.id) ' +
                                                     'LEFT JOIN teams_parts tp ON(t.id = tp.team_id) ' +
                                                     'LEFT JOIN part p ON(p.id = tp.part_id) ' +
-                                    'WHERE e.id = ?';
+                                    'WHERE e.id = ? AND type = 1';
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);

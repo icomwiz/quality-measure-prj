@@ -100,6 +100,15 @@ router.post('/management', isAuthenticated, function(req, res, next) {
     });
 });
 
+router.delete('/management', isAuthenticated, function(req, res, next) {
+    var info = req.body;
+    Admin.managementDelete(info, function(err, result) {
+        res.send({
+            result : 'ok'
+        });
+    });
+});
+
 router.put('/',isAuthenticated, function(req, res, next) {
     var employee = {};
     employee.id = req.user.id;

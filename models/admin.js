@@ -271,7 +271,6 @@ function daily_briefing(info, callback) {
                 }
                 function insertK1(callback) {
                     daily_briefing_id = daily_briefing_id || info.daily_briefing_id;
-                    console.log(daily_briefing_id);
                     async.each(info.K1, function(item, done) {
                         if(item.composition !== '' && item.group_placement !== '' && item.equipment !== '' && item.AssignedPerson !== '' && item.measurePerson !== '' && item.supprotPerson !== '') {
                             dbConn.query(sql_insert, [daily_briefing_id, item.composition, item.group_placement, item.equipment, item.AssignedPerson, item.measurePerson, item.supprotPerson, 2], function(err, result) {
@@ -346,7 +345,7 @@ function managementView(callback) {
                     "e.team_id, e.team_position, e.department_id, e.department_position "+
                     "FROM employee e "+
                     "JOIN team t ON (t.id = e.team_id) "+
-                    "WHERE t.team_no = 0 "+
+                    "WHERE t.team_no = 0 AND e.type = 1 "+
                     "ORDER BY id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -379,9 +378,26 @@ function managementInsert(info, callback) {
         });
     });
 }
+function managementDelete(info, callback) {
+    var sql = "UPDATE employee SET "+
+    "password = '1111', phone_number='' ,email = '', department_position = '', type=0 "+
+    "WHERE id = ?";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql, [info.id], function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, "ok");
+        });
+    });
+}
 
 module.exports.measureTaskReport = measureTaskReport;
 module.exports.daily_briefing = daily_briefing;
 module.exports.daily_briefingView = daily_briefingView;
 module.exports.managementView = managementView;
 module.exports.managementInsert = managementInsert;
+module.exports.managementDelete = managementDelete;
