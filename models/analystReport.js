@@ -63,6 +63,95 @@ function postMyReport(reqData, callback) {
     });
 }
 
+//휴가 등록하기
+function postVacation(reqData, callback) {
+    //휴가의 날짜 검색
+    var sql_select_dates =
+        'select * from ' +
+        '(select adddate(?, t4.i*10000 + t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) selected_date from ' +
+        '(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t0, ' +
+        '(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1, ' +
+        '(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2, ' +
+        '(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3, ' +
+        '(select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t4) v ' +
+        'where selected_date between ? and ?';
+
+    //그날 리포트가 있나 없나 검사
+    var sql_select_my_report =
+        'SELECT id ' +
+        'FROM analyst_report ' +
+        'WHERE employee_id = ? AND date = str_to_date(?, \'%Y-%m-%d\')';
+
+    //리포트 없다면 휴가로 insert하기
+    var sql_insert_vacation_report =
+        'INSERT INTO analyst_report(employee_id, part_id, date, major_job, vacation) ' +
+        'VALUES(?, (SELECT p.id ' +
+                   'FROM part p JOIN teams_parts tp ON (p.id = tp.part_id) ' +
+                               'JOIN team t ON (t.id = tp.team_id) ' +
+                               'JOIN employee e ON(e.team_id = t.id) ' +
+                   'WHERE e.id = ?), str_to_date(?, \'%Y-%m-%d\'), ?, 1)';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        async.waterfall([getVacationDates, chkAndInserts], function(err, result) {
+            if (err) {
+                return callback(err);
+            }
+            callback(null);
+        });
+
+        function getVacationDates(callback) {
+            dbConn.query(sql_select_dates, [reqData.vacationStart, reqData.vacationStart, reqData.vacationEnd], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var dates = [];
+                for (var i = 0; i < results.length; i++) {
+                    dates.push(results[i].selected_date);
+                }
+                callback(null, dates);
+            });
+        }
+
+        function chkAndInserts(dates, callback) {
+            async.each(dates, chkAndInsert, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+
+        function chkAndInsert(date, callback) {
+            async.waterfall([function(callback) {
+                dbConn.query(sql_select_my_report, [reqData.employeeId, date], function(err, results) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    if (results.length !== 0) { //그날의 리포트가 이미 있다면
+                        return callback(new Error(date + '의 리포트가 이미 있습니다.'));
+                    }
+                    callback(null, date); //그날의 리포트가 없다면
+                });
+            }, function(date, callback) {
+                dbConn.query(sql_insert_vacation_report, [reqData.employeeId, reqData.employeeId, date, reqData.majorWork], function(err, results) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null);
+            });
+        }
+    });
+}
+
 //내 리포트 지우기
 function deleteMyReport(reportId, callback) {
     var sql_delete_report_details =
@@ -123,7 +212,7 @@ function deleteMyReport(reportId, callback) {
 //내 특정 리포트 가져오기
 function getParticularReport(reportId, callback) {
     var sql_select_report =
-        'SELECT date, major_job majorJob, work_start_time workStartTime, work_end_time workEndTime, etc_time etcTime, over_time overTime, vacation ' +
+        'SELECT DATE_FORMAT(date,\'%Y-%m-%d\') date, major_job majorJob, work_start_time workStartTime, work_end_time workEndTime, etc_time etcTime, over_time overTime, vacation ' +
         'FROM analyst_report ' +
         'WHERE id = ?';
 
@@ -139,11 +228,13 @@ function getParticularReport(reportId, callback) {
         if (err) {
             return callback(err);
         }
+
         async.series([getReportInfo, getReportDetailsInfo], function(err, result) {
-            dbConn.release();
             if (err) {
+                dbConn.release();
                 return callback(err);
             }
+            dbConn.release();
             callback(null, resData);
         });
 
@@ -159,6 +250,7 @@ function getParticularReport(reportId, callback) {
                 resData.etcTime = results[0].etcTime;
                 resData.overTime = results[0].overTime;
                 resData.vacation = results[0].vacation;
+                callback(null);
             });
         }
 
@@ -167,15 +259,18 @@ function getParticularReport(reportId, callback) {
                 if (err) {
                     return callback(err);
                 }
-                for (var i = 0; results.lenbits; i++) {
-                    resData.details.push({
+                console.log(results);
+                for (var i = 0; i < results.length; i++) {
+                    var data = {
                         startTime: results[i].startTime,
                         endTime: results[i].endTime,
                         workDetails: results[i].workDetails,
                         note: results[i].note,
                         type: results[i].type
-                    });
+                    };
+                    resData.details.push(data);
                 }
+                callback(null);
             });
         }
     });
@@ -185,3 +280,4 @@ module.exports.getMyReport = getMyReport;
 module.exports.postMyReport = postMyReport;
 module.exports.deleteMyReport = deleteMyReport;
 module.exports.getParticularReport = getParticularReport;
+module.exports.postVacation = postVacation;

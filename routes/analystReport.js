@@ -23,11 +23,14 @@ router.get('/me', isAuthenticated, function(req, res, next) { //자신이 작성
 
 router.get('/:rid', isAuthenticated, function(req, res, next) {
     var reportId = req.params.rid;
-    AnalystReport.getParticularReport(reportId, function(err, results) {
+    AnalystReport.getParticularReport(reportId, function(err, result) {
         if (err) {
             return next(err);
         }
-
+        console.log(result);
+        res.send({
+            result: result
+        });
     });
 });
 
@@ -107,6 +110,20 @@ router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일�
                     res.send({ result: 1 });
                 });
             }
+        });
+    } else if (action == 4) { //휴가
+        var vacationData = {};
+        vacationData.employeeId = req.user.id;
+        vacationData.vacationStart = req.body.vacationStart;
+        vacationData.vacationEnd = req.body.vacationEnd;
+        vacationData.majorWork = req.body.majorWork;
+        AnalystReport.postVacation(vacationData, function(err, result) {
+            if (err) {
+                return res.send(err);
+            }
+            res.send({
+                result: 1
+            });
         });
     }
 });

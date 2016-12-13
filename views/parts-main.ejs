@@ -483,6 +483,20 @@
             return true;
         }
 
+        //앞 날짜가 뒷 날짜보다 빠른 날짜인지 검사
+        function chkDateSequence(startDate, endDate) {
+            var startDateArr = startDate.split('-');
+            var endDateArr = endDate.split('-');
+            if (parseInt(startDateArr[0]) > parseInt(endDateArr[0])) { //앞 날짜의 년도가 뒷 날짜의 년도보다 크다면
+                return false;
+            } else if (parseInt(startDateArr[1]) > parseInt(endDateArr[1])) { //앞 날짜의 달이 뒷 날짜의 달보다 크다면
+                return false;
+            } else if (parseInt(startDateArr[2]) > parseInt(endDateArr[2])) { //앞 날짜의 일이 뒷 날짜의 일보다 크다면
+                return false;
+            }
+            return true;
+        }
+
         //업무 일지 내역을 올바르게 작성했는지 검사
         function analystReportChk(callback) {
             var date = $('#postReportDate').val();
@@ -492,6 +506,7 @@
             var overTime =  $('#overTime').val();
             var vacationStart = $('#vacationStart').val();
             var vacationEnd = $('#vacationEnd').val();
+            var majorWork = $('#majorWork').val();
             if (date === '') { //날짜가 입력되어 있는지 없는지 검사
                 return callback(0, '날짜를 입력해 주세요');
             }
@@ -504,6 +519,15 @@
                 }
                 if (workStartTime || workEndTime || etcTime || overTime) {
                     return callback(0, '휴가중 출근 퇴근 야근 기타는 적지 않습니다.');
+                }
+                if (date !== vacationStart) {
+                    return callback(0, '보고서 날짜와 휴가 시작 날짜가 같지 않습니다.');
+                }
+                if (!chkDateSequence(vacationStart, vacationEnd)) {
+                    return callback(0, '휴가 날짜 순서가 잘못되었습니다.');
+                }
+                if (!majorWork) {
+                    return callback(0, '휴가의 사유를 적어주세요');
                 }
                 return callback(2);
             } else { //휴가가 아니라면
@@ -883,7 +907,29 @@
                             }
                         });
                     } else if (code === 2) { //휴가
-                        alert('휴가');
+                        var vacationStart = $('#vacationStart').val();
+                        var vacationEnd = $('#vacationEnd').val();
+                        var majorWork = $('#majorWork').val();
+                        $.ajax({
+                            url: "http://localhost:3000/analystreports?action=4",
+                            type: "POST",
+                            dataType: 'JSON',
+                            data: {
+                                vacationStart: vacationStart,
+                                vacationEnd: vacationEnd,
+                                majorWork: majorWork
+                            },
+                            success: function(data) {
+                                if (data.result === 1) {
+                                    alert('보고서가 저장되었습니다.');
+                                    analystReport();
+                                    return window.location.href = "#";
+                                }
+                            },
+                            error: function(data) {
+                                alert(data);
+                            }
+                        });
                     }
                 });
             });
@@ -897,6 +943,7 @@
             //내근자 일일 업무 상세보기의 삭제버튼을 통해 생긴 팝업의 삭제 버튼 눌렀을 경우
             $(document).on('click', '.deleteReport', function() {
                 var reportId = $(this).next().val();
+                console.log(reportId);
                 $.ajax({ //일일 업무 삭제
                     url: "http://localhost:3000/analystReports/" + reportId,
                     type: "delete",
@@ -912,8 +959,26 @@
 
             //내근자 일일 업무 상세보기에서 수정 버튼 눌렀을 경우
             $(document).on('click', '.editReport', function() {
-                var reportId = $(this).next().next().val();
-                $('#postReportDialogTitle').text('업무 일지 수정');
+                var reportId = $(this).next().val();
+                $.ajax({ //일일 업무 삭제
+                    url: "http://localhost:3000/analystReports/" + reportId,
+                    type: "GET",
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#postReportDialogTitle').text('업무 일지 수정');
+                        $('#postReportDate').val(data.result.date); //날짜
+                        $('#workStartTime').val(data.result.workStartTime); //출근
+                        //퇴근
+                        //기타
+                        //야근
+                        //
+
+                    },
+                    error: function(data) {
+                        alert(data.result);
+                    }
+                });
+
             });
         });
     </script>
