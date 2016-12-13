@@ -344,8 +344,8 @@ function managementView(callback) {
                     "CAST(AES_DECRYPT(UNHEX(e.phone_number), 'wiz') AS CHAR) phone_number, " +
                     "e.team_id, e.team_position, e.department_id, e.department_position "+
                     "FROM employee e "+
-                    "JOIN team t ON (t.id = e.team_id) "+
-                    "WHERE t.team_no = 0 AND e.type = 1 "+
+                    "LEFT JOIN team t ON (t.id = e.team_id) "+
+                    "WHERE (t.team_no = 0 OR e.team_position = 0) AND e.type = 1 "+
                     "ORDER BY id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -395,9 +395,30 @@ function managementDelete(info, callback) {
     });
 }
 
+function managementUpdate(info, callback) {
+    var update_query = "UPDATE employee SET " +
+    "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
+    "team_id = ?, team_position = ?, department_id = ?, department_position = ? " +
+    "WHERE id =  ?";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(update_query, [info.updateName, info.updateEmail, info.updatePhone, info.updatePart,
+            info.updateGroup, info.updateDepartment, info.updatePosition, info.UserId], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, null);
+        });
+    })
+}
+
 module.exports.measureTaskReport = measureTaskReport;
 module.exports.daily_briefing = daily_briefing;
 module.exports.daily_briefingView = daily_briefingView;
 module.exports.managementView = managementView;
 module.exports.managementInsert = managementInsert;
 module.exports.managementDelete = managementDelete;
+module.exports.managementUpdate = managementUpdate;
