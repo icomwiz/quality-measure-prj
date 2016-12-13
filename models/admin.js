@@ -345,7 +345,7 @@ function managementView(callback) {
                     "e.team_id, e.team_position, e.department_id, e.department_position "+
                     "FROM employee e "+
                     "LEFT JOIN team t ON (t.id = e.team_id) "+
-                    "WHERE (t.team_no = 0 OR e.team_position = 0) AND e.type = 1 "+
+                    "WHERE (t.team_no = 0 OR e.team_position = 0) AND e.e_type = 1 "+
                     "ORDER BY id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -380,7 +380,7 @@ function managementInsert(info, callback) {
 }
 function managementDelete(info, callback) {
     var sql = "UPDATE employee SET "+
-    "password = '1111', phone_number='' ,email = '', department_position = '', type=0 "+
+    "password = '1111', phone_number='' ,email = '', department_position = '', e_type=0 "+
     "WHERE id = ?";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
