@@ -394,7 +394,7 @@ function managementDelete(info, callback) {
 }
 
 function managementPassword(id, callback) {
-    var update_query = "UPDATE employee SET password = HEX(AES_ENCRYPT(SHA2('1111', 512), 'wiz')) WHERE id =  ? ";
+    var update_query = "UPDATE employee SET password = HEX(AES_ENCRYPT(SHA2('6688', 512), 'wiz')) WHERE id =  ? ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);

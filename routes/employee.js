@@ -129,6 +129,13 @@ router.put('/management', isAuthenticated, function(req, res, next) {
     }
 });
 
+//내근자 업무일지 관리페이지
+router.get('/management-journal', isAuthenticated, function(req, res, next) {
+    res.render('managementJournal', {
+        result: "hi"
+    });
+});
+
 router.put('/',isAuthenticated, function(req, res, next) {
     var employee = {};
     employee.id = req.user.id;
