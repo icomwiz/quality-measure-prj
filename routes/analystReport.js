@@ -27,7 +27,6 @@ router.get('/:rid', isAuthenticated, function(req, res, next) {
         if (err) {
             return next(err);
         }
-        console.log(result);
         res.send({
             result: result
         });
@@ -86,17 +85,13 @@ router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일�
                 return next(err);
             }
             if (result === 0) { //입력한 날짜의 보고서가 이미 있을 때
-                return res.send({
-                    result: result
-                });
+                return next(err);
             } else {
                 var workDetailsInfo = req.body.workDetailsInfo;
                 for(var i = 0; i < workDetailsInfo.length; i++) {
                     workDetailsInfo[i].reportId = reportId;
                 }
                 async.each(workDetailsInfo, function(item, callback) {
-                    console.log(workDetailsInfo);
-                    console.log(item);
                     AnalystReportDetails.postMyReportDetails(item, function(err, results) {
                         if (err) {
                             callback(err);
@@ -119,7 +114,10 @@ router.post('/', isAuthenticated, function(req, res, next) { //내근자의 일�
         vacationData.majorWork = req.body.majorWork;
         AnalystReport.postVacation(vacationData, function(err, result) {
             if (err) {
-                return res.send(err);
+                return res.send({
+                    result: 0,
+                    msg: err.message
+                });
             }
             res.send({
                 result: 1

@@ -1076,8 +1076,9 @@ function updatePlan(plan, callback) {
                     console.log('findteamByNameAndNo');
                     return callback(err);
                 }
-                if (!results[0].teamId) {
-                    callback(null, false);
+                console.log(results);
+                if (results.length === 0) {
+                    return callback(null, false);
                 } else {
                     callback(null, results[0].teamId); //teamId를 리턴
                 }
@@ -1086,7 +1087,7 @@ function updatePlan(plan, callback) {
 
         //team이 존재하지 않으면 insert하기
         function insertTeam(callback) {
-            dbConn.query(sql_insert_team, [plan.teamName], function(err, results) {
+            dbConn.query(sql_insert_team, [plan.teamName, plan.teamNo], function(err, results) {
                 if (err) {
                     console.log('insertTeam');
                     return callback(err);
@@ -1103,6 +1104,7 @@ function updatePlan(plan, callback) {
                     console.log('findTeamsPart');
                     return callback(err);
                 }
+                console.log(results);
                 if (!results) {
                     return callback(null, false);
                 }

@@ -39,6 +39,8 @@
             <label class="partsmain-radio-labels" for="admin-page">품질측정팀 일일업무보고</label>
             <input type="radio" name="radio-choice-1" id="indoor-employee-management" value="8"/>
             <label class="partsmain-radio-labels" for="indoor-employee-management">내근자 관리</label>
+            <input type="radio" name="radio-choice-1" id="indoor-employee-report" value="9"/>
+            <label class="partsmain-radio-labels" for="indoor-employee-report">내근자 업무 일지 관리</label>
             <% } %>
         </fieldset>
 
@@ -83,6 +85,7 @@
                             <td rowspan=5>
                                 <textarea id="majorWork" rows="15" placeholder="주 업무 내용 작성"></textarea>
                             </td>
+                        </tr>
                         <tr>
                             <td width="200">퇴근</td>
                             <td width="200">
@@ -99,12 +102,21 @@
                                 <input id="overTime" type="text" placeholder="23:00"/>
                             </td>
                         </tr>
-                        <td width="200">휴가</td>
-                        <td width="200">
-                            <input id="vacationStart" type="text" placeholder="2016-11-06"/> ~
-                            <input id="vacationEnd" type="text" placeholder="2016-11-16"/>
-                        </td>
-                        <tr>
+                        <tr id="vacationPeriod">
+                            <td width="200">휴가</td>
+                            <td width="200">
+                                <input id="vacationStart" type="text" placeholder="2016-11-06"/> ~
+                                <input id="vacationEnd" type="text" placeholder="2016-11-16"/>
+                            </td>
+                        </tr>
+                        <tr id="vacationCheck">
+                            <td width="200">휴가</td>
+                            <td width="200">
+                                <label>
+                                    <input id="vacationCheckbox" type="checkbox">휴가 중
+                                </label>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <br>
@@ -153,6 +165,8 @@
             <div id="postWorkComfirmCancel">
                 <a href="#" data-role="button" data-rel="back" data-inline="true">취소</a>
                 <a href="#" id="postWorkReportComfirm" data-role="button" data-inline="true">저장</a>
+                <a href="#" id="postWorkReportModification" data-role="button" data-inline="true">수정</a>
+                <input type="hidden" id="postReportDialogReportId" value=""/>
             </div>
         </div>
 
@@ -181,7 +195,7 @@
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
             $('#listArea').empty();
-            $('#listArea').append('<a href="#postReportDialog" data-rel="popup" data-position-to="window" data-transition="fade" class=\"ui-btn ui-icon-plus ui-btn-icon-left\">업무 일지 작성</a>');
+            $('#listArea').append('<a href="#postReportDialog" id="postReportDialogBtn" data-rel="popup" data-position-to="window" data-transition="fade" class=\"ui-btn ui-icon-plus ui-btn-icon-left\">업무 일지 작성</a>');
             $.get('http://localhost:3000/analystReports/me', function(data) {
                 $.each(data.result, function() {
                     $('#listArea').append("<li data-role=\"collapsible\" data-iconpos=\"right\" data-shadow=\"false\" data-corners=\"false\" data-collapsed=\"true\">" +
@@ -409,6 +423,16 @@
             return window.location.href = "http://localhost:3000/employees/management";
         }
 
+        //내근자 업무 일지 관리 탭을 선택했을 때 실행되는 function
+        function indoorEmployeeReport() {
+            $('#calls-state-div').hide();
+            $('#error-state-div').hide();
+
+            alert('hi');
+            //여기다가 내근자 업무 보고일지 관리
+            //return window.location.href = "http://localhost:3000/";
+        }
+
         //날짜 정규표현식 검사
         function dateRegExpCheck(strDate) {
             var strValue = strDate;
@@ -487,11 +511,10 @@
         function chkDateSequence(startDate, endDate) {
             var startDateArr = startDate.split('-');
             var endDateArr = endDate.split('-');
-            if (parseInt(startDateArr[0]) > parseInt(endDateArr[0])) { //앞 날짜의 년도가 뒷 날짜의 년도보다 크다면
-                return false;
-            } else if (parseInt(startDateArr[1]) > parseInt(endDateArr[1])) { //앞 날짜의 달이 뒷 날짜의 달보다 크다면
-                return false;
-            } else if (parseInt(startDateArr[2]) > parseInt(endDateArr[2])) { //앞 날짜의 일이 뒷 날짜의 일보다 크다면
+            var sDate = new Date(startDateArr[0], startDateArr[1] - 1, startDateArr[2]);
+            var eDate = new Date(endDateArr[0], endDateArr[1] - 1, endDateArr[2]);
+            var sub = eDate.getTime() - sDate.getTime();
+            if (sub < 0) {
                 return false;
             }
             return true;
@@ -553,6 +576,10 @@
                 strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(1) textarea';
                 arrInput = $(strTrInput); // 배열의 0 : 업무 시작시간, 1 : 종료시간
                 arrTextarea = $(strTrTextarea); //배열의 0 : 업무내용, 1 : 비고
+                console.log($(arrInput[0]).val());
+                console.log($(arrInput[1]).val());
+                console.log($(arrTextarea[0]).val());
+                console.log($(arrTextarea[1]).val());
                 if (($(arrInput[0]).val() == '') && ($(arrInput[1]).val() == '') && ($(arrTextarea[0]).val() =='') && ($(arrTextarea[0]).val() =='')) { //아무것도 입력하지 않았을 경우
                     return callback(1); //analystReport만 생성
                 } else {
@@ -619,6 +646,9 @@
                 case '8':
                     //
                     break;
+                case '9':
+                    //
+                    break;
             }
 
             //홈 아이콘을 클릭했을 시
@@ -672,6 +702,10 @@
             $('#indoor-employee-management').click(function() {
                 indoorEmployeeManagement();
             })
+
+            $('indoor-employee-report').click(function() {
+                indoorEmployeeReport();
+            });
 
             //파일 업로드 버튼이 클릭 되었을 시
             $(document).on('click', '#uploadbtn', function() {
@@ -739,11 +773,7 @@
 
             //리포트 작성 다이얼로그 크기 조정
             $('#postReportDialog').css('width', $(window).width() - 500 );
-//            $('#postReportDialog').css('height', $(window).height() - 500 );
-//            $(window).resize(function() {
-//                $('#postReportDialog').css('width', $(window).width() - 500 );
-//                $('#postReportDialog').css('height', $(window).height() - 500 );
-//            });
+
             //내근자용 업무 작성 상세내용에서 추가 버튼 눌렀을 경우
             $('.workDetailsAddBtn').click(function() {
                 $('#workDetailsTbl > tbody:last').append(
@@ -765,7 +795,7 @@
                                 '<textarea class="workDetails"></textarea>' +
                             '</td>' +
                             '<td>' +
-                                '<textarea class="workDetailsEtc"></textarea>' +
+                                '<textarea class="note"></textarea>' +
                             '</td>' +
                         '</tr>');
                 $('#workDetailsTbl > tbody:last').trigger("create");
@@ -792,7 +822,6 @@
                                     alert(msg);
                                 }
                             } else if (code === 1) { //report만 저장
-                                alert('report만 저장');
                                 $.ajax({
                                     url: "http://localhost:3000/analystreports?action=1",
                                     type: "POST",
@@ -822,7 +851,6 @@
                                     }
                                 });
                             } else if (code === 2) { //report와 하나의 details 저장
-                                alert('report와 하나의 details 저장');
                                 $.ajax({
                                     url: "http://localhost:3000/analystreports?action=2",
                                     type: "POST",
@@ -857,7 +885,6 @@
                                     }
                                 });
                             } else if (code === 3) { //report와 두개 이상의 details 저장
-                                alert('report와 두개 이상의 details 저장');
                                 var workDetailsInfo = [];
                                 var workDetailsNum = $('#workDetailsTbl > tbody tr').length;
                                 for (var i = 0; i < workDetailsNum; i++) {
@@ -920,10 +947,13 @@
                                 majorWork: majorWork
                             },
                             success: function(data) {
+                                console.log(data);
                                 if (data.result === 1) {
                                     alert('보고서가 저장되었습니다.');
                                     analystReport();
                                     return window.location.href = "#";
+                                } else {
+                                    alert(data.msg);
                                 }
                             },
                             error: function(data) {
@@ -932,6 +962,167 @@
                         });
                     }
                 });
+            });
+
+            //내근자 일일 업무 리포트 수정
+            $('#postWorkReportModification').click(function() {
+                var reportId = $(this).next().val();
+                $.ajax({ //일일 업무 삭제
+                    url: "http://localhost:3000/analystReports/" + reportId,
+                    type: "delete",
+                    dataType: 'json',
+                    success: function(data) {
+                        analystReportChk(function(code, msg) {
+                            if (code === 0) {
+                                if (msg) {
+                                    alert(msg);
+                                }
+                            } else if (code === 1) {
+                                analystReportDetailsChk(function(code, msg) {
+                                    if (code === 0) {
+                                        if (msg) {
+                                            alert(msg);
+                                        }
+                                    } else if (code === 1) { //report만 저장
+                                        $.ajax({
+                                            url: "http://localhost:3000/analystreports?action=1",
+                                            type: "POST",
+                                            dataType: 'JSON',
+                                            data: {
+                                                date: $('#postReportDate').val(),
+                                                majorJob: $('#majorWork').val(),
+                                                workStartTime: $('#workStartTime').val(),
+                                                workEndTime: $('#workEndTime').val(),
+                                                etcTime: $('#etcTime').val(),
+                                                overTime: $('#overTime').val()
+                                            },
+                                            success: function(data) {
+                                                switch(data.result) {
+                                                    case 0:
+                                                        alert('설정하신 날짜의 보고서가 이미 존재합니다.');
+                                                        break;
+                                                    case 1:
+                                                        alert('보고서가 저장되었습니다.');
+                                                        analystReport();
+                                                        return window.location.href = "#";
+                                                        break;
+                                                }
+                                            },
+                                            error: function(data) {
+                                                alert('error');
+                                            }
+                                        });
+                                    } else if (code === 2) { //report와 하나의 details 저장
+                                        $.ajax({
+                                            url: "http://localhost:3000/analystreports?action=2",
+                                            type: "POST",
+                                            dataType: 'JSON',
+                                            data: {
+                                                date: $('#postReportDate').val(),
+                                                majorJob: $('#majorWork').val(),
+                                                workStartTime: $('#workStartTime').val(),
+                                                workEndTime: $('#workEndTime').val(),
+                                                etcTime: $('#etcTime').val(),
+                                                overTime: $('#overTime').val(),
+                                                startTime: $('.workDetailsStartTime').val(),
+                                                endTime: $('.workDetailsEndTime').val(),
+                                                type: $('select[name=workType]').val(),
+                                                workDetails: $('.workDetails').val(),
+                                                note: $('.note').val()
+                                            },
+                                            success: function(data) {
+                                                switch(data.result) {
+                                                    case 0:
+                                                        alert('설정하신 날짜의 보고서가 이미 존재합니다.');
+                                                        break;
+                                                    case 1:
+                                                        alert('보고서가 저장되었습니다.');
+                                                        analystReport();
+                                                        return window.location.href = "#";
+                                                        break;
+                                                }
+                                            },
+                                            error: function(data) {
+                                                alert('error');
+                                            }
+                                        });
+                                    } else if (code === 3) { //report와 두개 이상의 details 저장
+                                        var workDetailsInfo = [];
+                                        var workDetailsNum = $('#workDetailsTbl > tbody tr').length;
+                                        for (var i = 0; i < workDetailsNum; i++) {
+                                            var strTrInput = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') input[type=text]';
+                                            var strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') textarea';
+                                            var strTrSelect = '#workDetailsTbl > tbody tr:nth-child(' + (i + 1) + ') select[name=workType]';
+                                            var type = $(strTrSelect).val(); //업무 구분
+                                            var arrInput = $(strTrInput); // 배열의 0: 업무 시작시간, 1: 종료시간
+                                            var arrTextarea = $(strTrTextarea); //배열의 0: 업무내용, 1: 비고
+                                            workDetailsInfo.push({
+                                                startTime: $(arrInput[0]).val(),
+                                                endTime: $(arrInput[1]).val(),
+                                                type: type,
+                                                workDetails: $(arrTextarea[0]).val(),
+                                                note: $(arrTextarea[1]).val()
+                                            });
+                                        }
+                                        $.ajax({
+                                            url: "http://localhost:3000/analystreports?action=3",
+                                            type: "POST",
+                                            dataType: 'JSON',
+                                            data: {
+                                                date: $('#postReportDate').val(),
+                                                majorJob: $('#majorWork').val(),
+                                                workStartTime: $('#workStartTime').val(),
+                                                workEndTime: $('#workEndTime').val(),
+                                                etcTime: $('#etcTime').val(),
+                                                overTime: $('#overTime').val(),
+                                                workDetailsInfo: workDetailsInfo
+                                            },
+                                            success: function(data) {
+                                                switch(data.result) {
+                                                    case 0:
+                                                        alert('설정하신 날짜의 보고서가 이미 존재합니다.');
+                                                        break;
+                                                    case 1:
+                                                        alert('보고서가 저장되었습니다.');
+                                                        analystReport();
+                                                        return window.location.href = "#";
+                                                        break;
+                                                }
+                                            },
+                                            error: function(data) {
+                                                alert('error');
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    },
+                    error: function(data) {
+                        alert(data.result);
+                    }
+                });
+            });
+
+            //업무일지 작성 버튼을 눌렀을 경우
+            $(document).on('click', '#postReportDialogBtn', function() {
+                $('#postWorkReportComfirm').show(); //저장 버튼이 보이도록
+                $('#postWorkReportModification').hide(); //수정 버튼이 안보이도록
+                $('#vacationCheck').hide();
+                $('#vacationPeriod').show();
+
+                $('#postReportDate').val(''); //날짜를 공백으로
+                $('#postReportDate').attr("readonly", false); //날짜를 입력할수 있도록
+                $('#workStartTime').val(''); //출근 시간을 공백으로
+                $('#workEndTime').val('');//퇴근 시간을 공백으로
+                $('#etcTime').val(''); //기타 시간을 공백으로
+                $('#majorWork').val(''); //majorWork를 공백으로
+                $("#workDetailsTbl > tbody tr:not(:first)").remove();
+                $(".workDetailsStartTime").val('');
+                $(".workDetailsEndTime").val('');
+                $(".workDetails").val('');
+                $(".note").val('');
+                $('select[name=workType]').val("1");
             });
 
             //내근자 일일 업무 상세보기에서 삭제 버튼 눌렀을 경우
@@ -943,7 +1134,6 @@
             //내근자 일일 업무 상세보기의 삭제버튼을 통해 생긴 팝업의 삭제 버튼 눌렀을 경우
             $(document).on('click', '.deleteReport', function() {
                 var reportId = $(this).next().val();
-                console.log(reportId);
                 $.ajax({ //일일 업무 삭제
                     url: "http://localhost:3000/analystReports/" + reportId,
                     type: "delete",
@@ -959,20 +1149,81 @@
 
             //내근자 일일 업무 상세보기에서 수정 버튼 눌렀을 경우
             $(document).on('click', '.editReport', function() {
+                $('#postWorkReportComfirm').hide();
+                $('#postWorkReportModification').show();
+                $('#vacationCheck').show();
+                $('#vacationPeriod').hide();
                 var reportId = $(this).next().val();
-                $.ajax({ //일일 업무 삭제
+                $('#postReportDialogReportId').val(reportId);
+                $('#vacationCheckbox').attr('disabled', true);
+                $.ajax({ //일일 업무 불러오기
                     url: "http://localhost:3000/analystReports/" + reportId,
                     type: "GET",
                     dataType: 'json',
                     success: function(data) {
                         $('#postReportDialogTitle').text('업무 일지 수정');
                         $('#postReportDate').val(data.result.date); //날짜
+                        $('#postReportDate').attr("readonly", true);
                         $('#workStartTime').val(data.result.workStartTime); //출근
-                        //퇴근
-                        //기타
-                        //야근
-                        //
-
+                        $('#workEndTime').val(data.result.workEndTime);//퇴근
+                        $('#etcTime').val(data.result.etcTime); //기타
+                        $('#overTime').val(data.result.overTime); //야근
+                        $('#majorWork').val(data.result.majorJob); //주 업무
+                        if (data.result.vacation === 1) {
+                            $("#vacationCheckbox").prop("checked", true);
+                        } else {
+                            $("#vacationCheckbox").prop("checked", false);
+                        }
+                        console.log(data.result.vacation);
+                        $('#workDetailsTbl > tbody tr').remove();
+                        $.each(data.result.details, function() {
+                            var workClassTypeTd = '';
+                            if (this.type === 1) {
+                                workClassTypeTd =
+                                    '<td>' +
+                                    '<select name="workType" class="workType">' +
+                                    '<option value="1" selected="selected" >분석 업무</option>' +
+                                    '<option value="2">SKT manager care</option>' +
+                                    '<option value="3">외근자 care</option>' +
+                                    '</select>' +
+                                    '</td>';
+                            } else if (this.type ===2 ) {
+                                workClassTypeTd =
+                                    '<td>' +
+                                    '<select name="workType" class="workType">' +
+                                    '<option value="1">분석 업무</option>' +
+                                    '<option value="2" selected="selected">SKT manager care</option>' +
+                                    '<option value="3">외근자 care</option>' +
+                                    '</select>' +
+                                    '</td>';
+                            } else {
+                                workClassTypeTd =
+                                    '<td>' +
+                                    '<select name="workType" class="workType">' +
+                                    '<option value="1">분석 업무</option>' +
+                                    '<option value="2">SKT manager care</option>' +
+                                    '<option value="3" selected="selected" >외근자 care</option>' +
+                                    '</select>' +
+                                    '</td>';
+                            }
+                            $('#workDetailsTbl > tbody:last').append(
+                                '<tr>' +
+                                    '<td>' +
+                                        '<input class="workDetailsStartTime" type="text" placeholder="09:00" value="' + this.startTime + '"/>' +
+                                    '</td>' +
+                                    '<td>' +
+                                        '<input class="workDetailsEndTime" type="text" placeholder="10:00" value="' + (this.endTime || '') + '"/>' +
+                                    '</td>' +
+                                         workClassTypeTd +
+                                    '<td>' +
+                                        '<textarea class="workDetails">' + (this.workDetails || '') + '</textarea>' +
+                                    '</td>' +
+                                    '<td>' +
+                                        '<textarea class="note">' + (this.note || '') + '</textarea>' +
+                                    '</td>' +
+                                '</tr>');
+                            $('#workDetailsTbl > tbody:last').trigger("create");
+                        });
                     },
                     error: function(data) {
                         alert(data.result);

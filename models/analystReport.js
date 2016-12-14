@@ -95,11 +95,22 @@ function postVacation(reqData, callback) {
         if (err) {
             return callback(err);
         }
-        async.waterfall([getVacationDates, chkAndInserts], function(err, result) {
+        dbConn.beginTransaction(function(err) {
             if (err) {
                 return callback(err);
             }
-            callback(null);
+            async.waterfall([getVacationDates, chkAndInserts], function(err, result) {
+                if (err) {
+                    return dbConn.rollback(function() {
+                        dbConn.release();
+                        callback(err);
+                    });
+                }
+                dbConn.commit(function() {
+                    dbConn.release();
+                    callback(null);
+                });
+            });
         });
 
         function getVacationDates(callback) {
@@ -131,7 +142,7 @@ function postVacation(reqData, callback) {
                         return callback(err);
                     }
                     if (results.length !== 0) { //그날의 리포트가 이미 있다면
-                        return callback(new Error(date + '의 리포트가 이미 있습니다.'));
+                        return callback(new Error(date + ' 날짜의 리포트가 이미 있습니다.'));
                     }
                     callback(null, date); //그날의 리포트가 없다면
                 });
@@ -212,14 +223,15 @@ function deleteMyReport(reportId, callback) {
 //내 특정 리포트 가져오기
 function getParticularReport(reportId, callback) {
     var sql_select_report =
-        'SELECT DATE_FORMAT(date,\'%Y-%m-%d\') date, major_job majorJob, work_start_time workStartTime, work_end_time workEndTime, etc_time etcTime, over_time overTime, vacation ' +
+        'SELECT DATE_FORMAT(date,\'%Y-%m-%d\') date, major_job majorJob, DATE_FORMAT(work_start_time, \'%H:%i\') workStartTime, DATE_FORMAT(work_end_time, \'%H:%i\') workEndTime, etc_time etcTime, over_time overTime, vacation ' +
         'FROM analyst_report ' +
         'WHERE id = ?';
 
     var sql_select_report_details =
-        'SELECT start_time startTime, end_time endTime, work_details workDetails, note, type ' +
+        'SELECT DATE_FORMAT(start_time, \'%H:%i\') startTime, DATE_FORMAT(end_time, \'%H:%i\') endTime, work_details workDetails, note, type ' +
         'FROM analyst_report_details ' +
-        'WHERE analyst_report_id = ?';
+        'WHERE analyst_report_id = ? ' +
+        'ORDER BY startTime';
 
     var resData = {};
     resData.details = [];
@@ -259,7 +271,6 @@ function getParticularReport(reportId, callback) {
                 if (err) {
                     return callback(err);
                 }
-                console.log(results);
                 for (var i = 0; i < results.length; i++) {
                     var data = {
                         startTime: results[i].startTime,
@@ -275,6 +286,7 @@ function getParticularReport(reportId, callback) {
         }
     });
 }
+
 
 module.exports.getMyReport = getMyReport;
 module.exports.postMyReport = postMyReport;
