@@ -189,7 +189,6 @@ function daily_briefing(info, callback) {
                 return callback(null);
             }
             if(info.daily_briefing_id !== '') {
-                //TODO : 있을경우 만들어야함.
                 console.log("info.daily_briefing_id 번호는 : "+info.daily_briefing_id);
 
                 async.series([delete_daily_briefing, insert_daily_briefing, updateReport], function(err, results) {
@@ -206,7 +205,6 @@ function daily_briefing(info, callback) {
                 });
 
             } else {
-                //TODO : 없을경우실행
                 async.series([daily_briefing, insert_daily_briefing, updateReport], function(err, results) {
                     if (err) {
                         return dbConn.rollback(function () {
@@ -395,6 +393,22 @@ function managementDelete(info, callback) {
     });
 }
 
+function managementPassword(id, callback) {
+    var update_query = "UPDATE employee SET password = HEX(AES_ENCRYPT(SHA2('1111', 512), 'wiz')) WHERE id =  ? ";
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(update_query, [id], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, null);
+        });
+    })
+}
+
 function managementUpdate(info, callback) {
     var update_query = "UPDATE employee SET " +
     "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
@@ -421,4 +435,5 @@ module.exports.daily_briefingView = daily_briefingView;
 module.exports.managementView = managementView;
 module.exports.managementInsert = managementInsert;
 module.exports.managementDelete = managementDelete;
+module.exports.managementPassword = managementPassword;
 module.exports.managementUpdate = managementUpdate;

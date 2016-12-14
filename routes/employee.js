@@ -112,12 +112,15 @@ router.delete('/management', isAuthenticated, function(req, res, next) {
 router.put('/management', isAuthenticated, function(req, res, next) {
     if (req.query.action === 'password') {  //비밀번호초기화
         var id = req.body.id;
-        res.send({
-            result : "ok"
+        Admin.managementPassword(id, function(err, result) {
+            res.send({
+                result : 'ok'
+            });
         });
     } else if(req.query.action === 'info') {    //회원정보수정
         var info = req.body;
-        console.log(req.body);
+        console.log(info);
+        info.updatePart = null;
         Admin.managementUpdate(info, function(err, result) {
             res.send({
                 result : 'ok'
