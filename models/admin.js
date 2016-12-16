@@ -470,7 +470,7 @@ function employeeJournal(date, callback) {
                 "DATE_FORMAT(ard.end_time, '%H:%i') endTime, ard.work_details workDetails, ard.note, ard.type, "+
                 "part, name "+
                 "FROM analyst_report ar "+
-                "JOIN analyst_report_details ard ON (ar.id = ard.analyst_report_id) "+
+                "LEFT JOIN analyst_report_details ard ON (ar.id = ard.analyst_report_id) "+
                 "JOIN (SELECT e.id, CASE WHEN e.team_id = 2 THEN '정기음성파트' "+
                 "WHEN e.team_id = 3 THEN '정기데이터파트' "+
                 "WHEN e.team_id = 4 THEN 'QOE파트' "+

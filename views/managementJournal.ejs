@@ -29,17 +29,18 @@
         <table border="1" width="100%">
             <thead>
             <tr>
-                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%></th>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%>(<%= info[i].result[0].part%>)</th>
             </tr>
             <tr>
-                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th><th style="text-align: center; background: #C0C0C0;">세부사항</th>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th>
+                <th style="text-align: center; background: #C0C0C0;">세부사항</th>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><%= info[i].result[0].majorJob%></td>
+                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -90,7 +91,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><%= info[i].result[j].workDetails%></td>
+                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
