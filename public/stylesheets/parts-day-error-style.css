@@ -37,7 +37,6 @@ tr, td {
 .error {
     color: red;
     background-color: lightgrey;
-    cursor: pointer;
 }
 
 .error-sum {

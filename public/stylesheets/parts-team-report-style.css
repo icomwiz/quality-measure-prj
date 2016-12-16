@@ -72,3 +72,27 @@ th, td {
   font-size: 0.8em;
   float: right;
 }
+
+.humanErrorTh {
+  background-color: #DAEEF3;
+}
+
+.humanErrorTd {
+  background-color: #DAEEF3;
+}
+
+.IQAErrorTh {
+  background-color: #FDE9D9;
+}
+
+.IQAErrorTd {
+  background-color: #FDE9D9;
+}
+
+.etcErrorTh {
+  background-color: aliceblue;
+}
+
+.etcErrorTd {
+  background-color: aliceblue;
+}

@@ -112,9 +112,7 @@
                         <tr id="vacationCheck">
                             <td width="200">휴가</td>
                             <td width="200">
-                                <label>
-                                    <input id="vacationCheckbox" type="checkbox">휴가 중
-                                </label>
+                                <span id="vacation">휴가 중</span>
                             </td>
                         </tr>
                     </tbody>
@@ -1171,7 +1169,6 @@
                 $('#vacationPeriod').hide();
                 var reportId = $(this).next().val();
                 $('#postReportDialogReportId').val(reportId);
-                $('#vacationCheckbox').attr('disabled', true);
                 $.ajax({ //일일 업무 불러오기
                     url: "http://localhost:3000/analystReports/" + reportId,
                     type: "GET",
@@ -1185,12 +1182,11 @@
                         $('#etcTime').val(data.result.etcTime); //기타
                         $('#overTime').val(data.result.overTime); //야근
                         $('#majorWork').val(data.result.majorJob); //주 업무
-                        if (data.result.vacation === 1) {
-                            $("#vacationCheckbox").prop("checked", true);
+                        if (parseInt(data.result.vacation) === 1) {
+                            $("#vacation").show();
                         } else {
-                            $("#vacationCheckbox").prop("checked", false);
+                            $("#vacation").hide();
                         }
-                        console.log(data.result.vacation);
                         $('#workDetailsTbl > tbody tr').remove();
                         $.each(data.result.details, function() {
                             var workClassTypeTd = '';

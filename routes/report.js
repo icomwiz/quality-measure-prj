@@ -70,6 +70,7 @@ router.get('/', isAuthenticated, function(req, res, next) {
             }
             res.render('parts-team-report',
                 {
+                    teamId: req.query.teamId,
                     teamName: result.teamName,
                     date: resData.date,
                     teamMember: result.teamMember,
@@ -291,7 +292,7 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     } else if(z.substring(0, 1) === 'C') { //직책
                         plan.departmentPosition = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'D') { //파트
-                        plan.partName = (worksheet1[z].v).replace(/\s/gi,'').split(',');
+                        plan.partName = (worksheet1[z].v).replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'E') { //팀
                         plan.teamName = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'F') { //조
@@ -307,7 +308,7 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     } else if(z.substring(0, 1) === 'K') { //이메일
                         plan.email = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'L') { //측정장비
-                        plan.equipmentName = worksheet1[z].v.replace(/\s/gi,'');
+                        plan.equipmentName = worksheet1[z].v;
                     } else if(z.substring(0, 1) === 'M') { //차량번호
                         plan.carNumber = worksheet1[z].v.replace(/\s/gi,'');
                     } else if(z.substring(0, 1) === 'N') { //차량종류
@@ -370,6 +371,7 @@ router.get('/statistics', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log(result[0][0].uploadError);
             res.render('parts-day-error', {
                 result: result
             });

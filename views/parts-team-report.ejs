@@ -19,6 +19,8 @@
     </div>
     <div data-role="content">
         <div id="partsteamreport-basic-info">
+            <input type="hidden" value="<%=teamId%>" id="teamId">
+            <input type="hidden" value="<%=date%>" id="date">
             조원: <b><%=teamMember%></b> <br/>
             조장: <b><%=teamLeader%></b> <br/>
             측정장비: <br/>
@@ -97,10 +99,66 @@
                         }
                     }
                 %>
+            </table><br/>
+            에러사항 체크하기:
+            <a href="#" style="float:right;" id="errorSave">저장</a>
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="4" class="humanErrorTh">Human<br>(측정자 오류)</th><th colspan="3" class="IQAErrorTh">IQA<br>(기능 오류)</th><th colspan="2" class="etcErrorTh">기타<br>(원인불명)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="humanErrorTd">
+                            <label>
+                                <input type="checkbox" id="uploadError">업로드 오류
+                            </label>
+                        </td>
+                        <td class="humanErrorTd">
+                            <label>
+                                <input type="checkbox" id="compressionNameError">압축 파일명 오류
+                            </label>
+                        </td>
+                        <td class="humanErrorTd">
+                            <label>
+                                <input type="checkbox" id="settingError">Setting오류
+                            </label>
+                        </td>
+                        <td class="humanErrorTd">
+                            <label>
+                                <input type="checkbox" id="etcError">기타오류
+                            </label>
+                        </td>
+                        <td class="IQAErrorTd">
+                            <label>
+                                <input type="checkbox" id="conversionError">Conversion Error
+                            </label>
+                        </td>
+                        <td class="IQAErrorTd">
+                            <label>
+                                <input type="checkbox" id="serverError">Server오류
+                            </label>
+                        </td>
+                        <td class="IQAErrorTd">
+                            <label>
+                                <input type="checkbox" id="segmentOmissionError">Segment누락
+                            </label>
+                        </td>
+                        <td class="etcErrorTd">
+                            <label>
+                                <input type="checkbox" id="compressionLiftError">압축해제에러
+                            </label>
+                        </td>
+                        <td class="etcErrorTd">
+                            <label>
+                                <input type="checkbox" id="etc">기타
+                            </label>
+                        </td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-
-
         <br>
         <div>
             <%
@@ -255,5 +313,93 @@
     <div data-role="footer" data-position="fixed">
         <h1>icomwiz</h1>
     </div>
+    <script>
+        $(function() {
+            var teamId = $('#teamId').val();
+            var date = $('#date').val();
+            $.ajax({
+                url: 'http://localhost:3000/teams/analystEvaluationError',
+                type: 'GET',
+                dataType: 'JSON',
+                data: {
+                    teamId: teamId,
+                    date: date
+                },
+                success: function(data) {
+                    if (data.result !== 0) {
+                        for (var i = 0; i < data.result.length; i++) {
+                            var errorName = data.result[i].errorName;
+                            errorName = '#' + errorName;
+                            $(errorName).prop("checked", true).checkboxradio("refresh");
+                            console.log($(errorName).is(":checked"));
+                        }
+                    }
+                },
+                error: function(data) {
+                    alert(data);
+                }
+            });
+            $('#errorSave').click(function() {
+                var errors = [];
+
+                var uploadError = {};
+                uploadError.name = 'uploadError';
+                uploadError.value = ($('#uploadError').is(":checked") === true) ? 1 : 0;
+
+                var compressionNameError = {};
+                compressionNameError.name = 'compressionNameError';
+                compressionNameError.value = ($('#compressionNameError').is(":checked") === true) ? 1 : 0;
+
+                var settingError = {};
+                settingError.name = 'settingError';
+                settingError.value = ($('#settingError').is(":checked") === true) ? 1 : 0;
+
+                var etcError = {};
+                etcError.name = 'etcError';
+                etcError.value = ($('#etcError').is(":checked") === true) ? 1 : 0;
+
+                var conversionError = {};
+                conversionError.name = 'conversionError';
+                conversionError.value = ($('#conversionError').is(":checked") === true) ? 1 : 0;
+
+                var serverError = {};
+                serverError.name = 'serverError';
+                serverError.value = ($('#serverError').is(":checked") === true) ? 1 : 0;
+
+                var segmentOmissionError = {};
+                segmentOmissionError.name = 'segmentOmissionError';
+                segmentOmissionError.value = ($('#segmentOmissionError').is(":checked") === true) ? 1 : 0;
+
+                var compressionLiftError = {};
+                compressionLiftError.name = 'compressionLiftError';
+                compressionLiftError.value = ($('#compressionLiftError').is(":checked") === true) ? 1 : 0;
+
+                var etc = {};
+                etc.name = 'etc';
+                etc.value = ($('#etc').is(":checked") === true) ? 1 : 0;
+
+                errors.push(uploadError, compressionNameError, settingError, etcError, conversionError, serverError, segmentOmissionError, compressionLiftError, etc);
+
+                $.ajax({
+                    url: 'http://localhost:3000/teams/analystEvaluationError',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        teamId: teamId,
+                        date: date,
+                        errors: errors
+                    },
+                    success: function(data) {
+                        if (data.result === 1) {
+                            alert('에러사항 저장 완료');
+                        }
+                    },
+                    error: function(data) {
+                        alert('에러 발생');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
