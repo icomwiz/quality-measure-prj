@@ -16,7 +16,110 @@
     <!-- 부가적인 테마 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 </head>
-<body>
-<%= result%>
+
+<body style="padding: 2%;">
+
+    <h1 style="text-align: center; margin-bottom: 15px;">내근자 업무 일지 관리</h1>
+    <div style="text-align: right; margin-bottom: 10px">
+        <input type="date" class="D_date" placeholder="yyyy-mm-dd" onchange="Change_date(value)">
+    </div>
+
+    <% for(var i = 0 ;i < count; i ++ ) { %>
+    <div style="text-align: center">
+        <table border="1" width="100%">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%></th>
+            </tr>
+            <tr>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th><th style="text-align: center; background: #C0C0C0;">세부사항</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: center; width:10%; ">출근</td>
+                <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
+                <td rowspan='5' style="text-align: left"><%= info[i].result[0].majorJob%></td>
+            <tr>
+                <td style="text-align: center;">퇴근</td>
+                <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
+            </tr>
+            <td style="text-align: center;">기타</td>
+            <td style="text-align: center;"><%= info[i].result[0].etcTime%></td>
+            <tr>
+                <td style="text-align: center;">야근</td>
+                <td style="text-align: center;"><%= info[i].result[0].overTime%></td>
+            </tr>
+            <td style="text-align: center;">휴가</td>
+            <td style="text-align: center;">
+                <% if (info[i].result[0].vacation == 0) { %>
+                X
+                <% } else { %>
+                휴가중
+                <% } %>
+            </td>
+            <tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <table border="1" width="100%" >
+            <thead>
+            <tr>
+                <th colspan='5'  style="text-align: center; background: #C0C0C0;">업무 상세 내역</th>
+            </tr>
+            <tr>
+                <th style="text-align: center; width: 10%">업무 시작 시각</th>
+                <th style="text-align: center; width: 10%">업무 종료 시각</th>
+                <th style="text-align: center; width: 10%">업무 구분</th>
+                <th style="text-align: center;">업무 내용</th>
+                <th style="text-align: center; width: 10%">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (j = 0 ; j < info[i].result.length ; j ++ ) { %>
+            <tr>
+                <td style="text-align: center;"><%= info[i].result[j].startTime%></td>
+                <td style="text-align: center;"><%= info[i].result[j].endTime%></td>
+                <td style="text-align: center;">
+                    <% if (info[i].result[j].type == 1) { %>
+                    분석업무
+                    <% } else if (info[i].result[j].type == 2) { %>
+                    SKT매니저
+                    <% } else if (info[i].result[j].type == 3) { %>
+                    외근자care
+                    <% } %>
+                </td>
+                <td><%= info[i].result[j].workDetails%></td>
+                <td><%= info[i].result[j].note%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <% } %>
+    <div style="text-align: right"><button id="backBtn">뒤로가기</button></div>
+
 </body>
+
+<script>
+    $(function() {
+        var query = getUrlParams() //Query String을 받아오기위하여 선언
+        $(".D_date").val(query.date);
+        $("#backBtn").click(function() {
+            return window.location.href = "http://localhost:3000/employees/partsmain";
+        });
+    });
+
+    function Change_date(date_val) {
+        return window.location.href = "http://localhost:3000/employees/management-journal?date="+date_val ;
+    }
+    //Query String을 위한함수
+    function getUrlParams() {
+        const params = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+        return params;
+    }
+</script>
 </html>

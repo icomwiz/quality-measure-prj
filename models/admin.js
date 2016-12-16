@@ -189,8 +189,6 @@ function daily_briefing(info, callback) {
                 return callback(null);
             }
             if(info.daily_briefing_id !== '') {
-                console.log("info.daily_briefing_id 번호는 : "+info.daily_briefing_id);
-
                 async.series([delete_daily_briefing, insert_daily_briefing, updateReport], function(err, results) {
                     if (err) {
                         return dbConn.rollback(function () {
@@ -429,6 +427,186 @@ function managementUpdate(info, callback) {
     })
 }
 
+function employeeJournal(date, callback) {
+    var nameList;
+    var info = [];
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        async.series([countFun, JournalFun], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err)
+            }
+            dbConn.release();
+            callback(null, nameList.length, info);
+        });
+
+        function countFun(callback) {
+            var select_count = "SELECT name "+
+                "FROM analyst_report " +
+                "JOIN employee ON (employee.id = analyst_report.employee_id) " +
+                "WHERE date = ? "+
+                "GROUP BY name " +
+                "ORDER BY name ";
+            dbConn.query(select_count, [date], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                nameList = result;
+                callback(null, null);
+            });
+        }
+
+        function JournalFun(callback) {
+            var select = "SELECT ar.id, date_format(date, '%Y-%m-%d') date, major_job majorJob, "+
+                "TIME_FORMAT(ar.work_start_time, '%H시 %i분') workStartTime, "+
+                "TIME_FORMAT(ar.work_end_time, '%H시 %i분') workEndTime, "+
+                "TIME_FORMAT(ar.over_time, '%H시 %i분') overTime, "+
+                "TIME_FORMAT(ar.etc_time, '%H시 %i분') etcTime, vacation, "+
+                "DATE_FORMAT(ard.start_time, '%H:%i') startTime, " +
+                "DATE_FORMAT(ard.end_time, '%H:%i') endTime, ard.work_details workDetails, ard.note, ard.type, "+
+                "part, name "+
+                "FROM analyst_report ar "+
+                "JOIN analyst_report_details ard ON (ar.id = ard.analyst_report_id) "+
+                "JOIN (SELECT e.id, CASE WHEN e.team_id = 2 THEN '정기음성파트' "+
+                "WHEN e.team_id = 3 THEN '정기데이터파트' "+
+                "WHEN e.team_id = 4 THEN 'QOE파트' "+
+                "WHEN e.team_id = 22 THEN '외근care파트' "+
+                "WHEN e.team_id = 23 THEN '총괄파트' END 'part', "+ "e.name "+
+                "FROM employee e "+
+                "JOIN team t ON (t.id = e.team_id) "+
+                "WHERE t.team_no = 0 AND e.e_type = 1 ) tmp ON (ar.employee_id = tmp.id) "+
+                "WHERE ar.date = ? AND name = ? " +
+                "ORDER BY startTime";
+            async.each(nameList, function(item, done) {
+                dbConn.query(select, [date, item.name], function(err, result) {
+                    if (err) {
+                        return done(err);
+                    } else {
+                        info.push({
+                            result : result
+                        });
+                        done();
+                    }
+                });
+            }, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, null);
+            });
+        }
+
+        /*function JournalFun(callback) {
+            var select = "SELECT ar.id, date_format(date, '%Y-%m-%d') date, major_job majorJob, "+
+                "TIME_FORMAT(ar.work_start_time, '%H시 %i분') workStartTime, "+
+                "TIME_FORMAT(ar.work_end_time, '%H시 %i분') workEndTime, "+
+                "TIME_FORMAT(ar.over_time, '%H시 %i분') overTime, "+
+                "TIME_FORMAT(ar.etc_time, '%H시 %i분') etcTime, vacation, "+
+                "DATE_FORMAT(ard.start_time, '%H:%i') startTime, " +
+                "DATE_FORMAT(ard.end_time, '%H:%i') endTime, ard.work_details workDetails, ard.note, ard.type, "+
+                "part, name "+
+                "FROM analyst_report ar "+
+                "JOIN analyst_report_details ard ON (ar.id = ard.analyst_report_id) "+
+                "JOIN (SELECT e.id, CASE WHEN e.team_id = 2 THEN '정기음성파트' "+
+                "WHEN e.team_id = 3 THEN '정기데이터파트' "+
+                "WHEN e.team_id = 4 THEN 'QOE파트' "+
+                "WHEN e.team_id = 22 THEN '외근care파트' "+
+                "WHEN e.team_id = 23 THEN '총괄파트' END 'part', "+ "e.name "+
+                "FROM employee e "+
+                "JOIN team t ON (t.id = e.team_id) "+
+                "WHERE t.team_no = 0 AND e.e_type = 1 ) tmp ON (ar.employee_id = tmp.id) "+
+                "WHERE ar.date = ?";
+            dbConn.query(select, [date], function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                info = result;
+                callback(null, null);
+            });
+        }*/
+    });
+
+    /*var part = {};
+    part.QOE = [];
+    part.care = [];
+    part.data = [];
+    part.voice = [];
+    part.total = [];
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+
+        async.series([partFun, JournalFun], function(err, results) {
+            if (err) {
+                dbConn.release();
+                return callback(err)
+            }
+            callback(null, part);
+            dbConn.release();
+        });
+        function partFun(callback) {
+            var select1 = "SELECT CASE WHEN e.team_id = 2 THEN '정기음성파트' "+
+                "WHEN e.team_id = 3 THEN '정기데이터파트' "+
+                "WHEN e.team_id = 4 THEN 'QOE파트' "+
+                "WHEN e.team_id = 22 THEN '외근care파트' "+
+                "WHEN e.team_id = 23 THEN '총괄파트' END 'part', "+
+                "e.name "+
+                "FROM employee e "+
+                "JOIN team t ON (t.id = e.team_id) "+
+                "WHERE t.team_no = 0 AND e.e_type = 1 "+
+                "ORDER BY part ASC ";
+            dbConn.query(select1, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                async.each(result, function(item, callback) {
+                    if (item.part === 'QOE파트') {
+                        part.QOE.push({
+                            name :item.name
+                        });
+                    } else if (item.part === '외근care파트') {
+                        part.care.push({
+                            name :item.name
+                        });
+                    } else if (item.part === '정기데이터파트') {
+                        part.data.push({
+                            name :item.name
+                        });
+                    } else if (item.part === '정기음성파트') {
+                        part.voice.push({
+                            name :item.name
+                        });
+                    } else if (item.part === '총괄파트') {
+                        part.total.push({
+                            name :item.name
+                        });
+                    }
+                });
+                callback(null, null);
+            });
+        }
+        function JournalFun(callback) {
+            var Journal = "SELECT e.name, HOUR(ard.start_time) sh, HOUR(ard.end_time) eh, ard.work_details, ard.type " +
+                "FROM analyst_report ar " +
+                "JOIN analyst_report_details ard ON(ar.id = ard.analyst_report_id) " +
+                "JOIN employee e ON(ar.employee_id = e.id) " +
+                "WHERE ar.date = '2016-12-15'";
+            dbConn.query(Journal, function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, null);
+            })
+        }
+    })*/
+}
+
 module.exports.measureTaskReport = measureTaskReport;
 module.exports.daily_briefing = daily_briefing;
 module.exports.daily_briefingView = daily_briefingView;
@@ -437,3 +615,4 @@ module.exports.managementInsert = managementInsert;
 module.exports.managementDelete = managementDelete;
 module.exports.managementPassword = managementPassword;
 module.exports.managementUpdate = managementUpdate;
+module.exports.employeeJournal = employeeJournal;
