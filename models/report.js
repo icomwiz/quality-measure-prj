@@ -1216,292 +1216,267 @@ function getReportsByteamId(teamId, callback) {
 
 //엑셀 파일을 통해 리포트 업데이트 하기
 function updatePlan(plan, callback) {
-    //원래의 팀 멤버 찾기
-    var sql_select_team_member =
-        'SELECT e.id, e.name ' +
-        'FROM employee e JOIN team t ON (e.team_id = t.id) ' +
-        'WHERE t.name = ? AND t.team_no = ?';
-
-    //원래의 팀멤버의 팀에서 없애기
-    var sql_update_existing_team_member =
-        'UPDATE employee ' +
-        'SET team_id = NULL AND team_position = NULL ' +
-        'WHERE id = ?';
-
-    //파트이름을 통해 파트가 존재하는지 찾기
-    var sql_find_part_by_name = 'SELECT id partId ' +
-        'FROM part ' +
-        'WHERE name = ?';
-
-    //파트가 없다면 insert하기
-    var sql_insert_part = 'INSERT INTO part(name) ' +
-        'VALUES(?)';
-
-    //팀이름과 조이름을 통해 팀이 존재하는지 찾기. OUTPUT: teamId
-    var sql_find_team_by_team_name_and_team_no = 'SELECT id teamId ' +
-        'FROM team ' +
-        'WHERE name = ? AND team_no = ?';
-
-    //팀이 없다면 insert하기
-    var sql_insert_team = 'INSERT INTO team(name, team_no) ' +
-        'VALUES(?, ?)';
-
-    //팀과 파트가 엮여 있는지 확인
-    var sql_select_teams_part = 'SELECT * FROM teams_parts ' +
-        'WHERE team_id = ? AND part_id = ?';
-
-    //팀과 파트 엮기
-    var sql_insert_teams_part = 'INSERT INTO teams_parts(team_id, part_id) ' +
-        'VALUES(?, ?)';
-
-
-
-    //employee 가 없다면 insert하기
-    var sql_insert_employee =
-        'INSERT INTO employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) ' +
-        'VALUES(?, ' +  //이름
-        'HEX(AES_ENCRYPT(?, \'wiz\')), ' + //이메일
-        'HEX(AES_ENCRYPT(?, \'wiz\')), ' + //휴대폰번호
-        'HEX(AES_ENCRYPT(SHA2(\'1111\', 512), \'wiz\')), ' + //패스워드
-        '?, ' + //팀아이디
-        '?, ' + //팀 포지션
-        '?, ' + //부서아이디
-        '?, ' + //직책
-        '?)'; //장비
-
-    //employee가 있다면 update하기
-    var sql_update_employee = 'UPDATE employee ' +
-        'SET name = ?, ' + //이름
-        'email = HEX(AES_ENCRYPT(?, \'wiz\')), ' + //이메일
-        'phone_number = HEX(AES_ENCRYPT(?, \'wiz\')), ' + //휴대폰번호
-        'team_id = ?, ' + //팀아이디
-        'team_position = ?, ' + //팀 포지션
-        'department_id = ?, ' + //부서아이디
-        'department_position = ?, ' + //직책
-        'equipment_name = ? ' + //장비이름
-        'WHERE id = ?';
-
-    //report가 있는지 확인하기
-    var sql_select_report = 'SELECT id reportId ' +
-        'FROM report ' +
-        'WHERE employee_id = ? AND team_id = ? AND date = STR_TO_DATE(?, \'%Y-%m-%d\') AND type = 0';
-
-    //report가 있다면 update하기
-    var sql_update_report =
-        'UPDATE report ' +
-        'SET team_name = ?, team_position = ?, team_member = ?, equipment_name = ?, location = ?, calls = ?, car_number = ?, car_type = ?, car_manager = ? ' +
-        'WHERE id = ?';
-
-    //report 가 없다면 insert하기
-    var sql_insert_report =
-        'INSERT INTO report(employee_id, team_id, team_name, team_position, team_member, equipment_name, date, location, calls, car_number, car_type, car_manager, type) ' +
-        'VALUES(?, ?, ?, ?, ?, ?, STR_TO_DATE(?, \'%Y-%m-%d\'), ?, ?, ?, ?, ?, 0)';
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
+        var info = {};
 
-        //부서가 존재하는지 찾기
-        function findDepartmentByName(callback) {
-            //부서 이름을 통해 부서가 존재하는지 찾음.
-            var sql_find_department_by_name = 'SELECT id departmentId ' +
-                'FROM department ' +
-                'WHERE name = ?';
+        async.series([setDepartmentAndPartAndTeam, setTeamsPart, findAndRemoveTeamMember, setEmployee, setReport], function(err) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null);
+        });
 
-            dbConn.query(sql_find_department_by_name, [plan.department], function(err, results) {
+
+        //------------------
+        // 부서, 파트, 팀 설정
+        //------------------
+        function setDepartmentAndPartAndTeam(callback) {
+            async.parallel([setDepartment, setPart, setTeam], function(err, results) {
                 if (err) {
-                    console.log('findDepartmentByName');
-                    return callback(err);
-                }
-                callback(null, results[0].departmentId); //리턴 departmentId
-            });
-        }
-
-        //부서가 존재하지 않다면 부서 insert하기
-        function insertDepartment(callback) {
-            //부서가 없다면 insert 하기
-            var sql_insert_department = 'INSERT INTO department(name) ' +
-                'VALUES(?)';
-
-            dbConn.query(sql_insert_department, [plan.department], function(err, results) {
-                if (err) {
-                    console.log('insertDepartment');
-                    return callback(err);
-                }
-                var departmentId = results.insertId;
-                callback(null, departmentId); //departmentId 리턴
-            })
-        }
-
-        //employee가 존재하는지 찾기.
-        function findEmployeeByEmail(callback) {
-            //email을 통해 employee가 존재하는지 찾음. OUTPUT: ID
-            var sql_find_employee_by_email = 'SELECT id ' +
-                'FROM employee ' +
-                'WHERE CAST(AES_DECRYPT(UNHEX(email), \'wiz\') AS CHAR) = ?';
-
-            dbConn.query(sql_find_employee_by_email, [plan.email], function(err, results) {
-                if (err) {
-                    console.log('findEmployeeByEmail');
-                    return callback(err);
-                }
-                if (!results[0]) {
-                    callback(null, false);
-                } else {
-                    callback(null, results[0].id); //리턴 id(employeeId)
-                }
-            });
-        }
-
-        //employee가 존재하지 않다면 insert하기
-        function insertEmployee(teamId, departmentId, callback) {
-            var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
-            dbConn.query(sql_insert_employee, [plan.name, plan.email, plan.phoneNumber, teamId, teamPosition, departmentId, plan.departmentPosition, equipmentName], function(err, results) {
-                if (err) {
-                    console.log('insertEmployee');
-                    return callback(err);
-                }
-                var id = results.insertId;
-                callback(null, id);
-            });
-        }
-
-        //employee가 존재 한다면 update하기
-        function updateEmployee(id, teamId, departmentId, callback) { //id(employeeId), teamId, departmentId
-            var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
-            console.log(teamPosition);
-            dbConn.query(sql_update_employee, [plan.name, plan.email, plan.phoneNumber, teamId, teamPosition, departmentId, plan.departmentPosition, equipmentName, id], function(err) {
-                if (err) {
-                    console.log('updateEmployee');
-                    return callback(err);
-                }
-                callback(null, id);
-            });
-        }
-
-        //part가 존재하는지 찾기.
-        function findPartByName(partName, callback) {
-            dbConn.query(sql_find_part_by_name, [partName], function(err, results) {
-                if (err) {
-                    console.log('findPartByName');
-                    return callback(err);
-                }
-                if (!results[0]) {
-                    callback(null, false);
-                } else {
-                    callback(null, results[0].partId); //partId를 리턴
-                }
-            });
-        }
-
-        //part insert하기
-        function insertPart(partName, callback) {
-            dbConn.query(sql_insert_part, [partName], function(err, results) {
-                if (err) {
-                    console.log('insertPart');
-                    return callback(err);
-                }
-                var partId = results.insertId;
-                callback(null, partId); //partId를 리턴
-            });
-        }
-
-        //team이 존재하는지 찾기.
-        function findteamByNameAndNo(callback) {
-            dbConn.query(sql_find_team_by_team_name_and_team_no, [plan.teamName, plan.teamNo], function(err, results) {
-                if (err) {
-                    console.log('findteamByNameAndNo');
-                    return callback(err);
-                }
-                console.log(results);
-                if (results.length === 0) {
-                    return callback(null, false);
-                } else {
-                    callback(null, results[0].teamId); //teamId를 리턴
-                }
-            });
-        }
-
-        //team이 존재하지 않으면 insert하기
-        function insertTeam(callback) {
-            dbConn.query(sql_insert_team, [plan.teamName, plan.teamNo], function(err, results) {
-                if (err) {
-                    console.log('insertTeam');
-                    return callback(err);
-                }
-                var teamId = results.insertId;
-                callback(null, teamId); //teamId를 리턴
-            });
-        }
-
-        //team과 part가 엮여있는지 확인
-        function findTeamsPart(teamId, partId, callback) {
-            dbConn.query(sql_select_teams_part, [teamId, partId], function(err, results) {
-                if (err) {
-                    console.log('findTeamsPart');
-                    return callback(err);
-                }
-                console.log(results);
-                if (!results) {
-                    return callback(null, false);
-                }
-                callback(null, true);
-            });
-        }
-
-        //team과 part가 엮여있지 않다면 엮기
-        function insertTeamsPart(teamId, partId, callback) {
-            dbConn.query(sql_insert_teams_part, [teamId, partId], function(err) {
-                if (err) {
-                    console.log('insertTeamsPart');
                     return callback(err);
                 }
                 callback(null);
             });
         }
 
-        //리포트가 존재하는지 확인하기
-        function findReport(id, teamId, callback) { //id(employeeId)와 teamId, callback함수를 매개변수로
-            dbConn.query(sql_select_report, [id, teamId, plan.date], function(err, results) {
+        //---------
+        // 부서 설정
+        //---------
+        function setDepartment(callback) { //부서 설정하기
+            findDepartmentByName(function(err, departmentId) { //부서를 찾음
                 if (err) {
-                    console.log('findReport');
                     return callback(err);
                 }
-                if (!results[0]) {
-                    callback(null, false);
-                } else {
-                    callback(null, results[0].reportId); //reportId를 리턴
+                if (departmentId === 0) { //부서가 존재하지 않는다면
+                    insertDepartment(function(err, departmentId) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        info.departmentId = departmentId;
+                        callback(null);
+                    });
+                } else { //부서가 존재 한다면
+                    info.departmentId = departmentId;
+                    callback(null);
                 }
             });
+
+            //부서가 존재하는지 찾기
+            function findDepartmentByName(callback) {
+                //부서 이름을 통해 부서가 존재하는지 찾음.
+                var sql_find_department_by_name = 'SELECT id departmentId ' +
+                    'FROM department ' +
+                    'WHERE name = ?';
+
+                dbConn.query(sql_find_department_by_name, [plan.department], function(err, results) {
+                    if (err) {
+                        console.log('findDepartmentByName');
+                        return callback(err);
+                    }
+                    if (results.length === 0) {
+
+                    } else {
+                        callback(null, results[0].departmentId); //리턴 departmentId
+                    }
+                });
+            }
+
+            //부서가 존재하지 않다면 부서 insert하기
+            function insertDepartment(callback) {
+                //부서가 없다면 insert 하기
+                var sql_insert_department = 'INSERT INTO department(name) ' +
+                    'VALUES(?)';
+
+                dbConn.query(sql_insert_department, [plan.department], function(err, results) {
+                    if (err) {
+                        console.log('insertDepartment');
+                        return callback(err);
+                    }
+                    var departmentId = results.insertId;
+                    callback(null, departmentId); //departmentId 리턴
+                })
+            }
         }
 
-        //리포트가 존재한다면 업데이트하기
-        function updateReport(reportId, callback) { //id(employeeId)와 teamId, callback함수를 매개변수로
-            var calls = plan.calls === 'X' ? null : plan.calls;
-            dbConn.query(sql_update_report, [plan.teamName + ' ' + plan.teamNo + '조', plan.teamPosition, plan.teamMember, plan.equipmentName, plan.location, calls, plan.carNumber, plan.carType, plan.carManager, reportId], function(err) {
+        //---------
+        // 파트 설정
+        //---------
+        function setPart(callback) {
+            findPartByName(function(err, partId) {
                 if (err) {
-                    console.log('updateReport');
                     return callback(err);
                 }
-                callback(null, reportId); //reportId를 리턴
+                if (partId === 0) { //파트가 존재하지 않는다면
+                    insertPart(function(err, partId) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        info.partId = partId;
+                        callback(null);
+                    });
+                } else { //파트가 존재 한다면
+                    info.partId = partId;
+                    callback(null);
+                }
             });
+
+            //part가 존재하는지 찾기.
+            function findPartByName(callback) {
+                //파트이름을 통해 파트가 존재하는지 찾기
+                var sql_find_part_by_name = 'SELECT id partId ' +
+                                            'FROM part ' +
+                                            'WHERE name = ?';
+
+                dbConn.query(sql_find_part_by_name, [plan.partName], function(err, results) {
+                    if (err) {
+                        console.log('findPartByName');
+                        return callback(err);
+                    }
+                    if (results.length === 0) { //part가 존재 하지 않다면
+                        callback(null, 0);
+                    } else {
+                        callback(null, results[0].partId); //partId를 리턴
+                    }
+                });
+            }
+
+            //part insert하기
+            function insertPart(callback) {
+                //파트가 없다면 insert하기
+                var sql_insert_part = 'INSERT INTO part(name) ' +
+                                      'VALUES(?)';
+
+                dbConn.query(sql_insert_part, [plan.partName], function(err, results) {
+                    if (err) {
+                        console.log('insertPart');
+                        return callback(err);
+                    }
+                    var partId = results.insertId;
+                    callback(null, partId); //partId를 리턴
+                });
+            }
         }
 
-        //리포트가 존재하지 않다면 insert하기
-        function insertReport(id, teamId, callback) { //id(employeeId), teamId, callback함수를 매개변수로 받는다
-            var calls = plan.calls === 'X' ? null : plan.calls;
-            dbConn.query(sql_insert_report, [id, teamId, plan.teamName + ' ' + plan.teamNo + '조', plan.teamPosition, plan.teamMember, plan.equipmentName, plan.date, plan.location, calls, plan.carNumber, plan.carType, plan.carManager], function(err, results) {
+        //--------
+        // 팀 설정
+        //--------
+        function setTeam(callback) {
+            findteamByNameAndNo(function(err, teamId) {
                 if (err) {
-                    console.log('insertReport');
                     return callback(err);
                 }
-                var reportId = results.insertId;
-                callback(null, reportId); // reportId를 리턴
+                if (teamId === 0) { //팀이 존재하지 않는다면
+                    insertTeam(function(err, teamId) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        info.teamId = teamId;
+                        callback(null);
+                    });
+                } else { //팀이 존재한다면
+                    info.teamId = teamId;
+                    callback(null);
+                }
             });
+
+            //team이 존재하는지 찾기.
+            function findteamByNameAndNo(callback) {
+                //팀이름과 조이름을 통해 팀이 존재하는지 찾기. OUTPUT: teamId
+                var sql_find_team_by_team_name_and_team_no = 'SELECT id teamId ' +
+                                                             'FROM team ' +
+                                                             'WHERE name = ? AND team_no = ?';
+
+                dbConn.query(sql_find_team_by_team_name_and_team_no, [plan.teamName, plan.teamNo], function(err, results) {
+                    if (err) {
+                        console.log('findteamByNameAndNo');
+                        return callback(err);
+                    }
+                    if (results.length === 0) { //팀이 존재하지 않다면
+                        return callback(null, 0);
+                    } else {
+                        callback(null, results[0].teamId); //teamId를 리턴
+                    }
+                });
+            }
+
+            //team이 존재하지 않으면 insert하기
+            function insertTeam(callback) {
+                //팀이 없다면 insert하기
+                var sql_insert_team = 'INSERT INTO team(name, team_no) ' +
+                                      'VALUES(?, ?)';
+
+                dbConn.query(sql_insert_team, [plan.teamName, plan.teamNo], function(err, results) {
+                    if (err) {
+                        console.log('insertTeam');
+                        return callback(err);
+                    }
+                    var teamId = results.insertId;
+                    callback(null, teamId); //teamId를 리턴
+                });
+            }
         }
 
-        //엑셀로 들어온 사람이 조장이라면 팀 멤버를 찾고 멤버들을 제거하는 함수
+        //-------------
+        // 팀, 파트 설정
+        //-------------
+        function setTeamsPart(callback) {
+            findTeamsPart(function(err, result) {
+                if (err) {
+                    return callback(err);
+                }
+                if (result === 0) { //팀과 파트가 엮여있지 않다면
+                    insertTeamsPart(function(err) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null);
+                    });
+                } else { //팀과 파트가 엮여 있다면
+                    callback(null);
+                }
+            });
+
+            //team과 part가 엮여있는지 확인
+            function findTeamsPart(callback) {
+                //팀과 파트가 엮여 있는지 확인
+                var sql_select_teams_part = 'SELECT * FROM teams_parts ' +
+                                            'WHERE team_id = ? AND part_id = ?';
+
+                dbConn.query(sql_select_teams_part, [info.teamId, info.partId], function(err, results) {
+                    if (err) {
+                        console.log('findTeamsPart');
+                        return callback(err);
+                    }
+                    if (results.length === 0) {
+                        return callback(null, 0);
+                    }
+                    callback(null, 1);
+                });
+            }
+
+            //team과 part가 엮여있지 않다면 엮기
+            function insertTeamsPart(callback) {
+                //팀과 파트 엮기
+                var sql_insert_teams_part = 'INSERT INTO teams_parts(team_id, part_id) ' +
+                                            'VALUES(?, ?)';
+
+                dbConn.query(sql_insert_teams_part, [info.teamId, info.partId], function(err) {
+                    if (err) {
+                        console.log('insertTeamsPart');
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
+        }
+
+        //----------------
+        // 기존 팀 멤버 제거
+        //----------------
         function findAndRemoveTeamMember(callback) {
             if (plan.teamPosition === '조장') {
                 async.waterfall([findTeamMember, removeExistingteamMembers], function(err, results) {
@@ -1513,47 +1488,233 @@ function updatePlan(plan, callback) {
             } else {
                 callback(null);
             }
-        }
 
+            //팀 멤버 찾는 함수
+            function findTeamMember(callback) {
+                //원래의 팀 멤버 찾기
+                var sql_select_team_member = 'SELECT e.id, e.name ' +
+                                             'FROM employee e JOIN team t ON (e.team_id = t.id) ' +
+                                             'WHERE t.id = ?';
 
-        //팀 멤버 찾는 함수
-        function findTeamMember(callback) {
-            dbConn.query(sql_select_team_member, [plan.teamName, plan.teamNo], function(err, results) {
-                if (err) {
-                    return callback(err);
-                }
-                var employeeIds = [];
-                if (!results) { // 기존 팀에 아무도 존재하지 않다면
-                    callback(null, 0);
-                } else { //기존 팀에 누가 있을 때
-                    for (var i = 0; i < results.length; i++) {
-                        employeeIds.push(results[i].id);
+                dbConn.query(sql_select_team_member, [info.teamId], function(err, results) {
+                    if (err) {
+                        return callback(err);
                     }
-                    callback(null, employeeIds);
-                }
-            });
-        }
-
-        //팀 멤버들을 제거하는 함수
-        function removeExistingteamMembers(employeeIds, callback) {
-            if (employeeIds === 0) {
-                return callback(null);
+                    var employeeIds = [];
+                    if (results.length === 0) { // 기존 팀에 아무도 존재하지 않다면
+                        callback(null, 0);
+                    } else { //기존 팀에 누가 있을 때
+                        for (var i = 0; i < results.length; i++) {
+                            employeeIds.push(results[i].id);
+                        }
+                        callback(null, employeeIds);
+                    }
+                });
             }
-            async.each(employeeIds, removeExistingteamMember, function (err) {
-                if (err) {
-                    callback(err);
+
+            //팀 멤버들을 제거하는 함수
+            function removeExistingteamMembers(employeeIds, callback) {
+                if (employeeIds === 0) {
+                    return callback(null);
                 }
-                callback(null);
-            })
+                async.each(employeeIds, removeExistingteamMember, function (err) {
+                    if (err) {
+                        callback(err);
+                    }
+                    callback(null);
+                });
+
+                function removeExistingteamMember(employeeId, callback) {
+                    //원래의 팀멤버의 팀에서 없애기
+                    var sql_update_existing_team_member = 'UPDATE employee ' +
+                                                          'SET team_id = NULL AND team_position = NULL ' +
+                                                          'WHERE id = ?';
+
+                    dbConn.query(sql_update_existing_team_member, [employeeId], function (err, results) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback();
+                    });
+                }
+            }
         }
 
-        function removeExistingteamMember(employeeId, callback) {
-            dbConn.query(sql_update_existing_team_member, [employeeId], function (err, results) {
+        //---------
+        // 사원 설정
+        //---------
+        function setEmployee(callback) {
+            findEmployeeByEmail(function(err, employeeId) {
                 if (err) {
                     return callback(err);
                 }
-                callback();
+                if (employeeId === 0) { //employee가 존재하지 않다면
+                    insertEmployee(function(err, employeeId) { //employee 넣기
+                        if (err) {
+                            return callback(err);
+                        }
+                        info.employeeId = employeeId;
+                        callback(null);
+                    });
+                } else { //employee가 존재 한다면
+                    updateEmployee(employeeId, function(err) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        info.employeeId = employeeId;
+                        callback(null);
+                    });
+                }
             });
+
+            //employee가 존재하는지 찾기.
+            function findEmployeeByEmail(callback) {
+                var sql_find_employee_by_email = 'SELECT id ' +
+                                                 'FROM employee ' +
+                                                 'WHERE CAST(AES_DECRYPT(UNHEX(email), \'wiz\') AS CHAR) = ?';
+
+                dbConn.query(sql_find_employee_by_email, [plan.email], function(err, results) {
+                    if (err) {
+                        console.log('findEmployeeByEmail');
+                        return callback(err);
+                    }
+                    if (results.length === 0) {
+                        callback(null, 0);
+                    } else {
+                        var employeeId = results[0].id;
+                        callback(null, employeeId);
+                    }
+                });
+            }
+
+            //employee가 존재하지 않다면 insert하기
+            function insertEmployee(callback) {
+                //employee 가 없다면 insert하기
+                var sql_insert_employee =
+                    'INSERT INTO employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) ' +
+                    'VALUES(?, ' +  //이름
+                    'HEX(AES_ENCRYPT(?, \'wiz\')), ' + //이메일
+                    'HEX(AES_ENCRYPT(?, \'wiz\')), ' + //휴대폰번호
+                    'HEX(AES_ENCRYPT(SHA2(\'1111\', 512), \'wiz\')), ' + //패스워드
+                    '?, ' + //팀아이디
+                    '?, ' + //팀 포지션
+                    '?, ' + //부서아이디
+                    '?, ' + //직책
+                    '?)'; //장비
+                var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
+                dbConn.query(sql_insert_employee, [plan.name, plan.email, plan.phoneNumber, info.teamId, teamPosition, info.departmentId, plan.departmentPosition, plan.equipmentName], function(err, results) {
+                    if (err) {
+                        console.log('insertEmployee');
+                        return callback(err);
+                    }
+                    var employeeId = results.insertId;
+                    callback(null, employeeId);
+                });
+            }
+
+            //employee가 존재 한다면 update하기
+            function updateEmployee(employeeId, callback) {
+                //employee가 있다면 update하기
+                var sql_update_employee = 'UPDATE employee ' +
+                    'SET name = ?, ' + //이름
+                    'email = HEX(AES_ENCRYPT(?, \'wiz\')), ' + //이메일
+                    'phone_number = HEX(AES_ENCRYPT(?, \'wiz\')), ' + //휴대폰번호
+                    'team_id = ?, ' + //팀아이디
+                    'team_position = ?, ' + //팀 포지션
+                    'department_id = ?, ' + //부서아이디
+                    'department_position = ?, ' + //직책
+                    'equipment_name = ? ' + //장비이름
+                    'WHERE id = ?';
+                var teamPosition = (plan.teamPosition === '조장') ? 3 : 4;
+                dbConn.query(sql_update_employee, [plan.name, plan.email, plan.phoneNumber, info.teamId, teamPosition, info.departmentId, plan.departmentPosition, plan.equipmentName, employeeId], function(err) {
+                    if (err) {
+                        console.log('updateEmployee');
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
+        }
+
+        //-----------
+        // 계획서 설정
+        //-----------
+        function setReport(callback) {
+            findReport(function(err, reportId) {
+                if (err) {
+                    return callback(err);
+                }
+                if (reportId === 0) { //report가 존재하지 않다면
+                    insertReport(function(err) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null);
+                    });
+                } else { //report가 존재한다면
+                    updateReport(reportId, function(err) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null);
+                    });
+                }
+            });
+
+            //리포트가 존재하는지 확인하기
+            function findReport(callback) {
+                //report가 있는지 확인하기
+                var sql_select_report =
+                    'SELECT id reportId ' +
+                    'FROM report ' +
+                    'WHERE employee_id = ? AND team_id = ? AND date = STR_TO_DATE(?, \'%Y-%m-%d\') AND type = 0';
+
+                dbConn.query(sql_select_report, [info.employeeId, info.teamId, plan.date], function(err, results) {
+                    if (err) {
+                        console.log('findReport');
+                        return callback(err);
+                    }
+                    if (results.length === 0) {
+                        callback(null, 0);
+                    } else {
+                        var reportId = results[0].reportId;
+                        callback(null, reportId);
+                    }
+                });
+            }
+
+            //리포트가 존재하지 않다면 insert하기
+            function insertReport(callback) { //id(employeeId), teamId, callback함수를 매개변수로 받는다
+                //report 가 없다면 insert하기
+                var sql_insert_report =
+                    'INSERT INTO report(employee_id, team_id, team_name, team_position, team_member, equipment_name, date, location, calls, car_number, car_type, car_manager, type) ' +
+                    'VALUES(?, ?, ?, ?, ?, ?, STR_TO_DATE(?, \'%Y-%m-%d\'), ?, ?, ?, ?, ?, 0)';
+
+                dbConn.query(sql_insert_report, [info.employeeId, info.teamId, plan.teamName + ' ' + plan.teamNo + '조', plan.teamPosition, plan.teamMember, plan.equipmentName, plan.date, plan.location, calls, plan.carNumber, plan.carType, plan.carManager], function(err, results) {
+                    if (err) {
+                        console.log('insertReport');
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
+
+            //리포트가 존재한다면 업데이트하기
+            function updateReport(reportId, callback) { //id(employeeId)와 teamId, callback함수를 매개변수로
+                //report가 있다면 update하기
+                var sql_update_report =
+                    'UPDATE report ' +
+                    'SET team_name = ?, team_position = ?, team_member = ?, equipment_name = ?, location = ?, calls = ?, car_number = ?, car_type = ?, car_manager = ? ' +
+                    'WHERE id = ?';
+
+                dbConn.query(sql_update_report, [plan.teamName + ' ' + plan.teamNo + '조', plan.teamPosition, plan.teamMember, plan.equipmentName, plan.location, calls, plan.carNumber, plan.carType, plan.carManager, reportId], function(err) {
+                    if (err) {
+                        console.log('updateReport');
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
         }
     });
 }
