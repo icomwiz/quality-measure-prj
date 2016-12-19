@@ -32,8 +32,8 @@ function measureTaskReport(reportDate, callback) {
             data_daily_briefing = result1;
 
             dbConn.query(sql_select_date, [reportDate], function(err, result2) {
+                dbConn.release();
                 if (err) {
-                    dbConn.release();
                     return callback(err);
                 }
                 callback(null, data_daily_briefing, result2);
@@ -82,7 +82,6 @@ function daily_briefingView(reportDate, callback) {
                 callback(null);
             });
         }
-
         function measureTaskReportSub(callback) {
             dbConn.query(sql_start_TaskStatus, [reportDate, reportDate], function(err, result) {
                 if (err) {
@@ -92,8 +91,6 @@ function daily_briefingView(reportDate, callback) {
                 callback(null, null);
             });
         }
-
-
         function briefingView(callback) {
             var routine = [];
             var k1 = [];
@@ -226,7 +223,6 @@ function daily_briefing(info, callback) {
                     callback(null, null);
                 });
             }
-
             function daily_briefing(callback) {
                 var sql_insert_daily_briefing = "INSERT INTO daily_briefing(date) VALUES (?)";
                 dbConn.query(sql_insert_daily_briefing, [info.Date], function(err, result) {
@@ -238,7 +234,6 @@ function daily_briefing(info, callback) {
                     callback(null);
                 });
             }
-
             function insert_daily_briefing(callback) {
                 async.series([insertRoutine, insertK1, insertTheme, insertholiday], function(err, result) {
                     if (err) {
@@ -312,8 +307,6 @@ function daily_briefing(info, callback) {
                 }
 
             }
-
-
             function updateReport(callback) {
                 async.each(info.User, function(item, done) {
                     dbConn.query(sql_update, [item.unusual_matters, item.user_id, item.report_id], function(err, result) {
@@ -348,6 +341,7 @@ function managementView(callback) {
             return callback(err);
         }
         dbConn.query(sql_select, function(err, result) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -355,7 +349,6 @@ function managementView(callback) {
         });
     })
 }
-
 function managementInsert(info, callback) {
     var sql_insert = "INSERT INTO " +
     "employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) " +
@@ -367,6 +360,7 @@ function managementInsert(info, callback) {
             return callback(err);
         }
         dbConn.query(sql_insert, [info.name, info.email, info.phone, info.part, info.group, info.department, info.position],function(err, result) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -383,6 +377,7 @@ function managementDelete(info, callback) {
             return callback(err);
         }
         dbConn.query(sql, [info.id], function(err, result) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -390,7 +385,6 @@ function managementDelete(info, callback) {
         });
     });
 }
-
 function managementPassword(id, callback) {
     var update_query = "UPDATE employee SET password = HEX(AES_ENCRYPT(SHA2('6688', 512), 'wiz')) WHERE id =  ? ";
     dbPool.getConnection(function(err, dbConn) {
@@ -406,7 +400,6 @@ function managementPassword(id, callback) {
         });
     })
 }
-
 function managementUpdate(info, callback) {
     var update_query = "UPDATE employee SET " +
     "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
@@ -426,7 +419,6 @@ function managementUpdate(info, callback) {
         });
     })
 }
-
 function employeeJournal(date, callback) {
     var nameList;
     var info = [];

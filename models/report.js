@@ -32,7 +32,6 @@ function reportList(user_id, callback) {
         });
     });
 }
-
 function updateReportSelect(info, callback) {
     var squ_select_Report = "SELECT r.id, r.team_name, r.car_manager, r.team_member, r.equipment_name, " +
                             "date_format(convert_tz(r.date, '+00:00', '+09:00'), '%Y-%m-%d') `date`, r.location, "+
@@ -87,7 +86,6 @@ function updateReportSelect(info, callback) {
        })
     });
 }
-
 function addReport(user_id, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -212,7 +210,6 @@ function deleteReport(reportId, callback) {
         });
     });
 }
-
 function updateReport(info, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if(err) {
@@ -313,7 +310,6 @@ function updateReport(info, callback) {
 
     });
 }
-
 function newReport(info, callback) {
     var me = {};
     var sql_select_me = "SELECT e.team_id, e.team_position, t.name, t.team_no FROM employee e "+
@@ -339,10 +335,11 @@ function newReport(info, callback) {
         }
 
         async.series([selectMe, insertReport, insertDetails], function(err, results) {
-            dbConn.release();
             if (err) {
+                dbConn.release();
                 return callback(err);
             }
+            dbConn.release();
             callback(null, "Success");
         });
 
@@ -403,7 +400,6 @@ function newReport(info, callback) {
         }
     });
 }
-
 function confirmEdit(info, callback) {
     var dbInfo = {};
     var sql_select_report = "SELECT id, cause_of_incompletion, plan_of_incompletion, refueling_price, "+
@@ -557,7 +553,6 @@ function confirm(info, callback) {
         });
     });
 }
-
 function confirmInsert(info, callback) {
     var insert_detail = "INSERT INTO report_details(report_id, work_details, start_time, end_time) VALUE(?, ?, ?, ?)";
     dbPool.getConnection(function(err, dbConn) {
@@ -608,7 +603,6 @@ function confirmInsert(info, callback) {
         });
     });
 }
-
 function confirmUpdate(info, callback) {
     var insert_detail = "UPDATE report_details SET start_time=? , end_time=? WHERE report_id = ? AND work_details = ?";
     dbPool.getConnection(function(err, dbConn) {

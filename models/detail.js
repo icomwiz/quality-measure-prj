@@ -197,7 +197,6 @@ function addDetail(info, callback) {
         }
     });
 }
-
 function deleteDetail(detail_id, callback) {
     var delete_detail = "DELETE FROM report_details WHERE id = ?;";
     dbPool.getConnection(function(err, dbConn) {
@@ -213,7 +212,6 @@ function deleteDetail(detail_id, callback) {
         })
     });
 }
-
 function updateDetailSelect(detail_id, callback) {
     var sql_Select_Deport = "SELECT rd.id, rd.report_id, work_details, target1, target2, r.location location1, rd.location location2, start_time, end_time, rd.calls, rd.type, "+
                             "obstacle_classification, obstacle_details, obstacle_start_time, obstacle_end_time, obstacle_phenomenon, obstacle_result, "+
@@ -235,7 +233,6 @@ function updateDetailSelect(detail_id, callback) {
         });
     });
 }
-
 function updateDetail(info, callback) {
     if(info.type == 1) {
         var update_detail = "UPDATE report_details "+
