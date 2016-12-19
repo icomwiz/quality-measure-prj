@@ -79,7 +79,7 @@
                     <tbody>
                         <tr>
                             <td width="200">출근</td>
-                            <td width="200">
+                            <td>
                                 <input id="workStartTime" type="text" placeholder="09:00"/>
                             </td>
                             <td rowspan=5>
@@ -207,7 +207,7 @@
                                                     "</thead>" +
                                                     "<tbody>" +
                                                         "<tr>" +
-                                                            "<td width=\"20%\">" + '출근' + "</td>" + "<td width=\"20%\">" + (this.workStartTime || '') + "</td>" + "<td rowspan='5' width=\"60%\">" + this.majorJob + "</td>" +
+                                                            "<td width=\"20%\">" + '출근' + "</td>" + "<td width=\"20%\">" + (this.workStartTime || '') + "</td>" + "<td rowspan='5' width=\"60%\">" +"<pre style=\"margin-bottom: 0px; margin-top: 0px; background: white; border: 0px; text-align: left\">"+ this.majorJob +"</pre>"+ "</td>" +
                                                         "<tr>" +
                                                             "<td>" + '퇴근' + "</td>" + "<td>" + (this.workEndTime || '') + "</td>" +
                                                         "</tr>" +
@@ -257,7 +257,7 @@
                             for (var i = 0; i < data.result.length; i++) {
                                 $(dateSelector + '> tbody:last').append(
                                         '<tr><td width=\"15%\">' + (data.result[i].startTime || '') + '</td><td width=\"15%\">' + (data.result[i].endTime || '') +
-                                        '</td><td width=\"15%\">' + findWorkType(data.result[i].type) + '</td><td>' + (data.result[i].workDetails ||'') +
+                                        '</td><td width=\"15%\">' + findWorkType(data.result[i].type) + '</td><td>' +'<pre style=\"margin-bottom: 0px; background: white; border: 0px; margin-top: 0px; text-align: left;\">'+ (data.result[i].workDetails ||'') + '</pre>'+
                                         '</td><td width=\"15%\">' + (data.result[i].note || '') + '</td></tr>');
                             }
                         },
