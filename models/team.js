@@ -2,17 +2,18 @@ var dbPool = require('./common').dbPool;
 var async = require('async');
 
 //OUTPUT: teamName
-function getTeamList(callback) {
-    var sql_select_owns_teams = 'SELECT name teamName ' +
-                                'FROM team ' +
-                                'WHERE team_no > 0 ' +
-                                'GROUP BY name';
+function getTeamList(date, callback) {
+    var sql_select_owns_teams =
+        'SELECT t.name teamName ' +
+        'FROM team t JOIN report r ON(t.id = r.team_id) ' +
+        'WHERE t.team_no > 0 AND r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
+        'GROUP BY t.name';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_select_owns_teams, function(err, results) {
+        dbConn.query(sql_select_owns_teams, [date], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);

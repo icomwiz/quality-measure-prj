@@ -14,7 +14,8 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/simple', function(req, res, next) {
-    Team.getTeamList(function(err, results) {
+    var date = req.query.date;
+    Team.getTeamList(date, function(err, results) {
         if (err) {
             return next(err);
         }

@@ -44,6 +44,11 @@
             <% } %>
         </fieldset>
 
+        <!--날짜-->
+        <div id="teamManagementDateDiv">
+            <input id="teamManagementDate" type="date" placeholder="YYYY-MM-DD" onchange="teamManagement(value)">
+        </div>
+
         <!-- 내근자 업무보고 탭, 팀 관리 탭, 계획서 업로드 탭 -->
         <ul id="listArea" data-role="listview" data-inset="true">
         </ul>
@@ -190,6 +195,7 @@
     <script>
         //내근자 업무보고 탭을 눌렀을 때 실행되는 function
         function analystReport() {
+            $('#teamManagementDateDiv').hide();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
             $('#listArea').empty();
@@ -316,9 +322,12 @@
 
         //팀관리 탭을 선택했을 때 실행되는 function
         function teamManagement() {
+            $('#teamManagementDateDiv').show();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
-            $.get("http://localhost:3000/teams/simple", function(data) {
+            var date = $('#teamManagementDate').val();
+
+            $.get("http://localhost:3000/teams/simple?date=" + date, function(data) {
                 $('#listArea').empty();
                 $.each(data.result, function() {
                     $('#listArea').append("<li data-role=\"collapsible\" data-iconpos=\"right\" data-shadow=\"false\" data-corners=\"false\">" +
@@ -357,6 +366,7 @@
 
         //파일업로드 탭을 선택했을 때 실행되는 function
         function fileUpload() {
+            $('#teamManagementDateDiv').hide();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
             $('#listArea').empty();
@@ -376,6 +386,7 @@
             $('#listArea').empty();
             $('#calls-state-div').css('display','none');
             $('#error-state-div').show();
+            $('#teamManagementDateDiv').hide();
             $('#listArea').listview('refresh');
         }
 
@@ -384,6 +395,7 @@
             $('#listArea').empty();
             $('#error-state-div').css('display','none');
             $('#calls-state-div').show();
+            $('#teamManagementDateDiv').hide();
             $('#listArea').listview('refresh');
         }
 
@@ -391,6 +403,7 @@
         function adminPage() {
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
+            $('#teamManagementDateDiv').hide();
 
             //오늘날짜계산함수
             function date(){
@@ -416,6 +429,7 @@
         function indoorEmployeeManagement() {
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
+            $('#teamManagementDateDiv').hide();
 
             //여기다가 내근자 관리
             return window.location.href = "http://localhost:3000/employees/management";
@@ -425,6 +439,7 @@
         function indoorEmployeeReport() {
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
+            $('#teamManagementDateDiv').hide();
 
             //오늘날짜계산함수
             function date(){
@@ -634,33 +649,52 @@
 
         //html파싱이 완료 된 후 실행되는 function
         $(function() {
+            //Query String을 위한함수
+            function getUrlParams() {
+                const params = {};
+                window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
+                return params;
+            }
+
+            var query = getUrlParams();
+
+            $('#teamManagementDate').val(query.date);
+
+
             var radioChecked = $('input:radio[name=radio-choice-1]:checked').val();
             switch (radioChecked) {
                 case '1':
                     teamManagement();
                     break;
                 case '2':
+                    $('#teamManagementDateDiv').hide();
                     fileUpload();
                     break;
                 case '3':
+                    $('#teamManagementDateDiv').hide();
                     errorState();
                     break;
                 case '4':
-                    //
+                    $('#teamManagementDateDiv').hide();
                     break;
                 case '5':
+                    $('#teamManagementDateDiv').hide();
                     callState();
                     break;
                 case '6':
+                    $('#teamManagementDateDiv').hide();
                     //
                     break;
                 case '7':
+                    $('#teamManagementDateDiv').hide();
                     analystReport();
                     break;
                 case '8':
+                    $('#teamManagementDateDiv').hide();
                     //
                     break;
                 case '9':
+                    $('#teamManagementDateDiv').hide();
                     //
                     break;
             }
@@ -669,6 +703,7 @@
 //            $('#home').click(function() {
 //                $('input:radio[name=radio-choice-1]:input[value=7]').attr("checked", true);
 //            });
+            $('#teamManagementDate').val()
 
             //내근자 업무보고 탭이 클릭 되었을 시
             $("#analyst-report").click(function() {
@@ -704,6 +739,7 @@
             $("#car-state").click(function() {
                 $('#calls-state-div').hide();
                 $('#error-state-div').hide();
+                $('#teamManagementDateDiv').hide();
                 return window.location.href = "http://localhost:3000/reports/cars";
             });
 
