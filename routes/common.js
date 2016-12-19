@@ -40,6 +40,13 @@ function isAuthenticatedForMeasurerManager_Officer(req, res, next) { //김경헌
     next();
 }
 
+function isAuthenticatedAdmin(req, res, next) { //어드민권한만!
+    if ((req.user.teamPosition !== 0)) {
+        return res.redirect('http://localhost:3000/auth');
+    }
+    next();
+}
+
 
 module.exports.isAuthenticatedForMeasurer = isAuthenticatedForMeasurer;
 module.exports.isAuthenticatedForAnalyst = isAuthenticatedForAnalyst;
@@ -47,3 +54,4 @@ module.exports.isAuthenticatedForOfficer = isAuthenticatedForOfficer;
 module.exports.isAuthenticatedForMeasurerManager = isAuthenticatedForMeasurerManager;
 module.exports.isAuthenticatedForMeasurerManager_Officer = isAuthenticatedForMeasurerManager_Officer;
 module.exports.isAuthenticated = isAuthenticated;
+module.exports.isAuthenticatedAdmin = isAuthenticatedAdmin;

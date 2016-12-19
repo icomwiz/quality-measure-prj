@@ -354,7 +354,7 @@ function managementInsert(info, callback) {
     "employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) " +
     "VALUES(?, HEX(AES_ENCRYPT(?, 'wiz')), "+
     "HEX(AES_ENCRYPT(?, 'wiz')), "+
-    "HEX(AES_ENCRYPT(SHA2('1111', 512), 'wiz')), ?, ?, ?, ?, null)";
+    "HEX(AES_ENCRYPT(SHA2('6688', 512), 'wiz')), ?, ?, ?, ?, null)";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);

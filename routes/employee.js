@@ -4,7 +4,8 @@ var Team = require('../models/team');
 var Employee = require('../models/employee');
 var Admin = require('../models/admin');
 var isAuthenticated = require('./common').isAuthenticated;
-var isAuthenticatedForMeasurerManager_Officer = require('./common').isAuthenticatedForMeasurerManager_Officer;
+var isAuthenticatedAdmin = require('./common').isAuthenticatedAdmin;
+
 
 /* GET home page. */
 router.get('/partsmain', isAuthenticated, function(req, res, next) {
@@ -83,7 +84,7 @@ router.post('/admin', isAuthenticated, function(req, res, next) {
     });
 });
 
-router.get('/management', isAuthenticated, function(req, res, next) {
+router.get('/management', isAuthenticatedAdmin, function(req, res, next) {
     Admin.managementView(function(err, result) {
         res.render('management-employee', {
             managementList: result
@@ -91,7 +92,7 @@ router.get('/management', isAuthenticated, function(req, res, next) {
     });
 });
 
-router.post('/management', isAuthenticated, function(req, res, next) {
+router.post('/management', isAuthenticatedAdmin, function(req, res, next) {
     var info = req.body;
     Admin.managementInsert(info, function(err, result) {
         res.send({
@@ -100,7 +101,7 @@ router.post('/management', isAuthenticated, function(req, res, next) {
     });
 });
 
-router.delete('/management', isAuthenticated, function(req, res, next) {
+router.delete('/management', isAuthenticatedAdmin, function(req, res, next) {
     var info = req.body;
     Admin.managementDelete(info, function(err, result) {
         res.send({
@@ -109,7 +110,7 @@ router.delete('/management', isAuthenticated, function(req, res, next) {
     });
 });
 
-router.put('/management', isAuthenticated, function(req, res, next) {
+router.put('/management', isAuthenticatedAdmin, function(req, res, next) {
     if (req.query.action === 'password') {  //비밀번호초기화
         var id = req.body.id;
         Admin.managementPassword(id, function(err, result) {

@@ -263,7 +263,7 @@
                             for (var i = 0; i < data.result.length; i++) {
                                 $(dateSelector + '> tbody:last').append(
                                         '<tr><td width=\"15%\">' + (data.result[i].startTime || '') + '</td><td width=\"15%\">' + (data.result[i].endTime || '') +
-                                        '</td><td width=\"15%\">' + findWorkType(data.result[i].type) + '</td><td>' +'<pre style=\"margin-bottom: 0px; background: white; border: 0px; margin-top: 0px; text-align: left;\">'+ (data.result[i].workDetails ||'') + '</pre>'+
+                                        '</td><td width=\"15%\">' + findWorkType(data.result[i].type) + '</td><td>' +'<pre style=\"margin-bottom: 0px; margin-top: 0px; background: white; border: 0px;  text-align: left;\">'+ (data.result[i].workDetails ||'') + '</pre>'+
                                         '</td><td width=\"15%\">' + (data.result[i].note || '') + '</td></tr>');
                             }
                         },
