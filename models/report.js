@@ -2048,46 +2048,81 @@ function getCarState(callback) {
         'SELECT DAYOFMONTH(LAST_DAY(STR_TO_DATE(?, \'%Y-%m\'))) lastDay';
 
     //년 월을 통해 차량 탑승팀 구하기
-    var select_team_and_cars_by_date =
-        'SELECT a.carType, a.carNumber, b.day1, b.day2, b.day3, b.day4, b.day5, b.day6, b.day7, b.day8, b.day9, b.day10, b.day11, b.day12, b.day13, b.day14, b.day15, b.day16, b.day17, b.day18, b.day19, b.day20, b.day21, b.day22, b.day23, b.day24, b.day25, b.day26, b.day27, b.day28, b.day29, b.day30, b.day31 ' +
-        'FROM(SELECT DISTINCT car_type carType, car_number carNumber ' +
-        'FROM ' +
-        'report ' +
-        'WHERE Year(date) = ? AND MONTH(date) = ?) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber, ' +
-        'CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, ' +
-        'CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, ' +
-        'CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, ' +
-        'CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, ' +
-        'CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, ' +
-        'CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, ' +
-        'CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, ' +
-        'CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, ' +
-        'CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, ' +
-        'CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, ' +
-        'CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, ' +
-        'CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, ' +
-        'CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, ' +
-        'CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, ' +
-        'CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, ' +
-        'CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, ' +
-        'CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, ' +
-        'CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, ' +
-        'CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, ' +
-        'CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, ' +
-        'CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, ' +
-        'CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, ' +
-        'CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, ' +
-        'CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, ' +
-        'CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, ' +
-        'CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, ' +
-        'CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, ' +
-        'CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, ' +
-        'CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, ' +
-        'CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, ' +
-        'CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31, date ' +
-        'FROM report ' +
-        'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ?) b ON (a.carNumber = b.carNumber) ' +
-        'ORDER BY a.carNumber';
+    var select_team_and_cars_by_date = "SELECT "+
+                                        "DISTINCT car_type carType,car_number carNumber, "+
+                                        "CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, "+
+                                        "CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, "+
+                                        "CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, "+
+                                        "CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, "+
+                                        "CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, "+
+                                        "CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, "+
+                                        "CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, "+
+                                        "CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, "+
+                                        "CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, "+
+                                        "CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, "+
+                                        "CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, "+
+                                        "CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, "+
+                                        "CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, "+
+                                        "CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, "+
+                                        "CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, "+
+                                        "CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, "+
+                                        "CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, "+
+                                        "CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, "+
+                                        "CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, "+
+                                        "CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, "+
+                                        "CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, "+
+                                        "CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, "+
+                                        "CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, "+
+                                        "CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, "+
+                                        "CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, "+
+                                        "CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, "+
+                                        "CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, "+
+                                        "CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, "+
+                                        "CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, "+
+                                        "CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, "+
+                                        "CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31 "+
+                                        "FROM report "+
+                                        "WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? ";
+    /* var select_team_and_cars_by_date =
+         'SELECT a.carType, a.carNumber, b.day1, b.day2, b.day3, b.day4, b.day5, b.day6, b.day7, b.day8, b.day9, b.day10, b.day11, b.day12, b.day13, b.day14, b.day15, b.day16, b.day17, b.day18, b.day19, b.day20, b.day21, b.day22, b.day23, b.day24, b.day25, b.day26, b.day27, b.day28, b.day29, b.day30, b.day31 ' +
+         'FROM(SELECT DISTINCT car_type carType, car_number carNumber ' +
+         'FROM ' +
+         'report ' +
+         'WHERE Year(date) = ? AND MONTH(date) = ?) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber, ' +
+         'CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, ' +
+         'CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, ' +
+         'CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, ' +
+         'CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, ' +
+         'CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, ' +
+         'CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, ' +
+         'CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, ' +
+         'CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, ' +
+         'CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, ' +
+         'CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, ' +
+         'CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, ' +
+         'CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, ' +
+         'CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, ' +
+         'CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, ' +
+         'CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, ' +
+         'CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, ' +
+         'CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, ' +
+         'CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, ' +
+         'CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, ' +
+         'CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, ' +
+         'CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, ' +
+         'CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, ' +
+         'CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, ' +
+         'CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, ' +
+         'CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, ' +
+         'CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, ' +
+         'CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, ' +
+         'CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, ' +
+         'CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, ' +
+         'CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, ' +
+         'CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31, date ' +
+         'FROM report ' +
+         'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ?) b ON (a.carNumber = b.carNumber) ' +
+         'ORDER BY a.carNumber';*/
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -2139,7 +2174,7 @@ function getCarState(callback) {
         function getCarAndTeamInfo(resDatas, callback) {
 
             async.each(resDatas, function(data, callback) {
-                dbConn.query(select_team_and_cars_by_date, [data.year, data.month, data.year, data.month], function(err, results) {
+                dbConn.query(select_team_and_cars_by_date, [data.year, data.month], function(err, results) {
                     if (err) {
                         callback(err);
                     }
