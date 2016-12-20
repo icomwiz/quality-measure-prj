@@ -323,44 +323,54 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     }
                 }
             }
-            for (var i = 0; i < plans.length; i++) {
-                var date = plans[i].date.split('-'); //2016-10-31 형식으로 되어있는 날짜 형식을 - 단위로 자름.
-                if (date[1].length === 1) { //date[1]은 월. 1월이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
-                    date[1] = '0' + date[1];
-                }
-                if (date[2].length === 1) { //date[2]는 일. 1일이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
-                    date[2] = '0' + date[2];
-                }
-                date = date[0] + '-' + date[1] + '-' + date[2];
-                if (date === today) { //계획의 날짜가 오늘이면 바로 업데이트
-                    Report.updatePlan(plans[i], function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                    });
-                } else { //계획의 날짜가 오늘이 아니면 cron을 통해 스케쥴링
+            // for (var i = 0; i < plans.length; i++) {
+            //
+            // }
+            var i = 0;
+            var loop = setInterval(function () {
+                if (i < plans.length) {
                     var date = plans[i].date.split('-'); //2016-10-31 형식으로 되어있는 날짜 형식을 - 단위로 자름.
-                    var month = (parseInt(date[1]) - 1).toString(); //01월이라 되어있는 형식을 앞의 0을 제거하여 표현
-                    var day = parseInt(date[2]).toString(); //01일이라 되어있는 형식을 앞의 0을 제거하여 표현
-                    var cronTime = '0 0 0' + ' ' + day + ' ' + month + ' ' + '*';
-                    (function(index) {
-                        var job = new CronJob(cronTime ,function() {
-                            Report.updatePlan(plans[index], function(err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
-                            });
-                            job.stop();
-                        }, function() {
-                        }, true, 'Asia/Seoul');
-                    })(i);
+                    if (date[1].length === 1) { //date[1]은 월. 1월이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
+                        date[1] = '0' + date[1];
+                    }
+                    if (date[2].length === 1) { //date[2]는 일. 1일이라 적었을 경우 앞에 0을 붙여 01로 바꿔줌
+                        date[2] = '0' + date[2];
+                    }
+                    date = date[0] + '-' + date[1] + '-' + date[2];
+                    if (date === today) { //계획의 날짜가 오늘이면 바로 업데이트
+                        Report.updatePlan(plans[i], function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+                        });
+                    } else { //계획의 날짜가 오늘이 아니면 cron을 통해 스케쥴링
+                        var date = plans[i].date.split('-'); //2016-10-31 형식으로 되어있는 날짜 형식을 - 단위로 자름.
+                        var month = (parseInt(date[1]) - 1).toString(); //01월이라 되어있는 형식을 앞의 0을 제거하여 표현
+                        var day = parseInt(date[2]).toString(); //01일이라 되어있는 형식을 앞의 0을 제거하여 표현
+                        var cronTime = '0 0 0' + ' ' + day + ' ' + month + ' ' + '*';
+                        (function (index) {
+                            var job = new CronJob(cronTime, function () {
+                                Report.updatePlan(plans[index], function (err, result) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                });
+                                job.stop();
+                            }, function () {
+                            }, true, 'Asia/Seoul');
+                        })(i);
+                    }
+                    i++;
+                } else {
+                    clearInterval(loop);
+                    res.send({
+                        result: '계획서 업로드 완료!'
+                    });
                 }
-            }
-            res.send({
-                result: '계획서 업로드 완료!'
-            });
+            }, 100);
         });
     });
+
 });
 
 //에러 통계 보기
