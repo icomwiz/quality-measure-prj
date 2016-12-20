@@ -2246,7 +2246,7 @@ function getDetailCarState(reqData, callback) {
         'WHERE r.type = 1 AND r.team_position = \'조장\' AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
         'ORDER BY rd.start_time) a JOIN(SELECT e.name teamLeader, r.team_name teamName ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE type = 0 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON (a.teamName = b.teamName) ' +
+        'WHERE type = 1 AND r.team_name = ? AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON (a.teamName = b.teamName) ' +
         'WHERE work_details NOT IN (103) ' +
         'ORDER BY a.startTime';
 
@@ -2263,8 +2263,12 @@ function getDetailCarState(reqData, callback) {
                 resData.code = 0;
                 return callback(null, resData);
             }
+
             resData.code = 1;
             resData.date = reqData.date;
+
+            console.log(results[0]);
+
             resData.teamName = results[0].teamName || '미작성';
             resData.teamLeader = results[0].teamLeader || '미작성';
             resData.teamMember = results[0].teamMember || '미작성';
@@ -2276,6 +2280,8 @@ function getDetailCarState(reqData, callback) {
             resData.refuelingPrice = results[0].refuelingPrice || '미작성';
             resData.carSignificant = results[0].carSignificant || '미작성';
             resData.carDriveInfo = [];
+
+
             for(var i = 0; i < results.length; i++) {
                 resData.carDriveInfo.push({
                     time: (results[i].startTime || '') + ' ~ ' + (results[i].endTime || ''),
