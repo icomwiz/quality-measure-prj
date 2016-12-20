@@ -1,0 +1,24 @@
+table {
+    text-align: center;
+}
+
+.date {
+    background-color: lightgray;
+    font-size: x-large;
+}
+
+.summary {
+    background-color: cornsilk;
+}
+
+.totalSummary {
+    background-color: cornsilk;
+}
+
+a {
+    cursor: pointer;
+}
+
+.excelDownBtn {
+    float: right;
+}

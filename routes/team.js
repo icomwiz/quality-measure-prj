@@ -3,7 +3,10 @@ var router = express.Router();
 var Team = require('../models/team');
 
 router.get('/', function(req, res, next) {
-    Team.getTeamListByTeamName(req.query.teamName, function(err, results) {
+    var reqData = {};
+    reqData.teamName = req.query.teamName;
+    reqData.date = req.query.date;
+    Team.getTeamListByTeamName(reqData, function(err, results) {
         if (err) {
             return next(err);
         }

@@ -5,376 +5,518 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <!-- 제이쿼리 모바일, 제이쿼리 라이브러리 파일 선언 -->
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 
     <!-- 사용자 스타일 시트 파일 선언 -->
-    <link rel='stylesheet' href='/stylesheets/parts-day-error-style.css' />
+    <link rel='stylesheet' href='/stylesheets/parts-error-style.css' />
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
     <!-- table을 excel로 export하기 위한 library 선언 -->
     <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 </head>
 <body>
-    <!-- 일별 에러 사항 페이지 -->
-    <div data-role="page" id="main">
-        <!--헤더-->
-        <div data-role="header" data-position="fixed">
-            <h1>일별 에러 사항</h1>
-        </div>
-        <!--콘텐츠-->
-        <div data-role="content">
-            <% for(var i = 0; i < result.length; i++ ) { %>
-            <table id="errorTbl<%=i%>">
-                <thead>
-                    <tr>
-                        <th class="date" colspan="<%=result[i].length + 2%>"><%=result[i][0].date%></th>
-                    </tr>
-                    <tr>
-                        <td class="team" rowspan="2">구분1</td>
-                        <td class="team" rowspan="2">구분2</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="team"><%=result[i][j].teamName%></td>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="team"><%=result[i][j].teamLeader%></td>
-                        <% } %>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!--Human 요약-->
-                    <tr>
-                        <td rowspan="4" class="team">Human<br>(측정자오류)</td>
-                        <td class="error-kind">업로드 오류</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                                if (parseInt(result[i][j].uploadError) != 0) { %>
-                        <td class="error"><%=result[i][j].uploadError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].uploadError%></td>
-                        <%      }
-                            } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">압축파일명오류</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                                if (parseInt(result[i][j].compressionNameError) != 0) { %>
-                        <td class="error"><%=result[i][j].compressionNameError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].compressionNameError%></td>
-                        <%      }
-                            } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">Setting오류</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].settingError) != 0) { %>
-                        <td class="error"><%=result[i][j].settingError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].settingError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">기타오류</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].etcError) != 0) { %>
-                        <td class="error"><%=result[i][j].etcError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].etcError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="sum" colspan="2">Human요약</td>
-                        <%  for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="error-sum"><%=result[i][j].humanErrorSum%></td>
-                        <%  } %>
-                    </tr>
+<div class="container">
+    <h1>팀별 에러 현황 <small>일별 현황</small></h1>
 
-                    <!--IQA 요약-->
-                    <tr>
-                        <td rowspan="3" class="team">IQA<br>(기능오류)</td>
-                        <td class="error-kind">Conversion Error</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].conversionError) != 0) { %>
-                        <td class="error"><%=result[i][j].conversionError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].conversionError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">Server오류</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].serverError) != 0) { %>
-                        <td class="error"><%=result[i][j].serverError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].serverError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">Segment누락</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].segmentOmissionError) != 0) { %>
-                        <td class="error"><%=result[i][j].segmentOmissionError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].segmentOmissionError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="sum" colspan="2">IQA 요약</td>
-                        <%  for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="error-sum"><%=result[i][j].iqaErrorSum%></td>
-                        <%  } %>
-                    </tr>
+    <%
+        for(var i = 0; i < result.length; i++) {
+    %>
+    <table class="table table-bordered" id="errorTbl<%=i%>">
+        <thead>
+            <tr class="date">
+                <td colspan="<%=result[i].teams.length + 2%>"><%=result[i].date%></td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    구분1
+                </td>
+                <td rowspan="3">
+                    구분2
+                </td>
+                <%
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        var partsColsNum = 0;
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                partsColsNum++;
+                            }
+                        }
+                %>
+                    <td colspan="<%=partsColsNum%>">
+                        <%=result[i].parts[j].partName%>
+                    </td>
+                <%
+                    }
+                %>
+            </tr>
+            <tr>
+            <%
+                for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                        if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                            <td><%=result[i].teams[j].teamName%></td>
+            <%
+                        }
+                    }
+                }
+            %>
+            </tr>
+            <tr>
+            <%
+                for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                        if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                <td><%=result[i].teams[j].teamLeader%></td>
+            <%
+                        }
+                    }
+                }
+            %>
+            </tr>
+        </thead>
+        <tbody>
+            <!--측정자오류-->
+            <div>
+                <tr>
+                    <td rowspan="4">Human<BR>(측정자오류)</td>
+                    <td>업로드오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].uploadError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>압축파일명오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].compressionNameError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>Setting오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].settingError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>기타오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].etcError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td colspan="2" class="summary">Human 요약</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[j].humanErrorSum%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+            </div>
 
-                    <!--측정기 요약-->
-                    <tr>
-                        <td rowspan="5" class="team">측정기<br>(장비 + 노트북 +<br>기자재 + 단말기 +<br>차량)</td>
-                        <td class="error-kind">장비오류</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].equipmentError) != 0) { %>
-                        <td class="error">
-                            <a href="#errorDetails" data-rel="popup" data-position-to="window" data-transition="pop" class="error-detail"><%=result[i][j].equipmentError%>
-                                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                                <input type="hidden" name="errorType" value="장비오류"/>
-                            </a>
-                        </td>
-                        <%  } else { %>
-                        <td><%=result[i][j].equipmentError%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">프로그램오류</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].programError) != 0) { %>
-                        <td class="error">
-                            <a href="#errorDetails" data-rel="popup" data-position-to="window" data-transition="pop" class="error-detail"><%=result[i][j].programError%>
-                                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                                <input type="hidden" name="errorType" value="프로그램오류"/>
-                            </a>
-                        </td>
-                        <%  } else { %>
-                        <td><%=result[i][j].programError%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">단말기오류</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].terminalError) != 0) { %>
-                        <td class="error">
-                            <a href="#errorDetails" data-rel="popup" data-position-to="window" data-transition="pop" class="error-detail"><%=result[i][j].terminalError%>
-                                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                                <input type="hidden" name="errorType" value="단말기오류"/>
-                            </a>
-                        </td>
-                        <%  } else { %>
-                        <td><%=result[i][j].terminalError%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">측정차량</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].carError) != 0) { %>
-                        <td class="error">
-                            <a href="#errorDetails" data-rel="popup" data-position-to="window" data-transition="pop" class="error-detail"><%=result[i][j].carError%>
-                                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                                <input type="hidden" name="errorType" value="측정차량"/>
-                            </a>
-                        </td>
-                        <%  } else { %>
-                        <td><%=result[i][j].carError%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">부수기자재</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].toolsError) != 0) { %>
-                        <td class="error">
-                            <a href="#errorDetails" data-rel="popup" data-position-to="window" data-transition="pop" class="error-detail"><%=result[i][j].toolsError%>
-                                <input type="hidden" name="teamId" value="<%=result[i][j].teamId%>"/>
-                                <input type="hidden" name="date" value="<%=result[i][j].date%>"/>
-                                <input type="hidden" name="errorType" value="부수기자재"/>
-                            </a>
-                        </td>
-                        <%  } else { %>
-                        <td><%=result[i][j].toolsError%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
-                    <tr>
-                        <td class="sum" colspan="2">측정기 요약</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <%  if (parseInt(result[i][j].sum) != 0) { %>
-                        <td class="error-sum"><%=result[i][j].sum%></td>
-                        <%  } else { %>
-                        <td class="sum"><%=result[i][j].sum%></td>
-                        <%  } %>
-                        <% } %>
-                    </tr>
+            <!--IQA요약-->
+            <div>
+                <tr>
+                    <td rowspan="3">IQA<BR>(기능오류)</td>
+                    <td>Conversion Error</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].conversionError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>Server오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].serverError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>Segment누락</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].segmentOmissionError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td colspan="2" class="summary">IQA 요약</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[j].iqaErrorSum%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+            </div>
 
-                    <!--기타 요약-->
-                    <tr>
-                        <td rowspan="2" class="team">기타<br>(원인 불명)</td>
-                        <td class="error-kind">압축해제에러</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].compressionLiftError) != 0) { %>
-                        <td class="error"><%=result[i][j].compressionLiftError%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].compressionLiftError%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="error-kind">기타</td>
-                        <%  for(var j = 0; j < result[i].length; j++) {
-                        if (parseInt(result[i][j].etc) != 0) { %>
-                        <td class="error"><%=result[i][j].etc%></td>
-                        <%      } else { %>
-                        <td><%=result[i][j].etc%></td>
-                        <%      }
-                        } %>
-                    </tr>
-                    <tr>
-                        <td class="sum" colspan="2">기타 요약</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="error-sum"><%=result[i][j].etcSum%></td>
-                        <% } %>
-                    </tr>
-
-                    <!--총합계-->
-                    <tr>
-                        <td colspan="2" class="sum">총합계(Human+IQA+측정기+기타)</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="sum">0</td>
-                        <% } %>
-                    </tr>
-
-                    <!--Human 오류 발생률(대표/인지)-->
-                    <tr>
-                        <td colspan="2" class="sum">Human 오류 발생률(대표/인지)</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="sum">0</td>
-                        <% } %>
-                    </tr>
-
-                    <!--Human 오류 발생률(종합)-->
-                    <tr>
-                        <td colspan="2" class="sum">Human 오류 발생률(종합)</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="sum">0</td>
-                        <% } %>
-                    </tr>
-
-                    <!--Human 오류 발생 순위-->
-                    <tr>
-                        <td colspan="2" class="sum">오류 발생 순위</td>
-                        <% for(var j = 0; j < result[i].length; j++) { %>
-                        <td class="sum">0</td>
-                        <% } %>
-                    </tr>
-                </tbody>
-            </table>
-            <a data-role="button" class="excelDownBtn" data-inline="true" data-theme="b" id="<%=i%>">엑셀로 다운로드</a>
-            <br/><br/><br/><br/>
-            <% } %>
-        </div>
-        <!--풋터-->
-        <div data-role="footer" data-position="fixed">
-            <h4>icomwiz</h4>
-        </div>
-
-        <!--에러 자세히 보기 위한 팝업-->
-        <div data-role="popup" id="errorDetails" data-theme="a" class="ui-corner-all">
-            <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-                <div style="padding:10px 20px;">
-                    <h2>에러 현황</h2>
-                    <ul data-role="listview" id="errorListArea" data-inset="true">
-                    </ul>
-                </div>
-        </div>
-    </div>
-
-    <script>
-        $(function() {
-            $('.error-detail').click(function() {
-                $.ajax({
-                    url: "http://localhost:3000/reports/statistics",
-                    type: "GET",
-                    dataType: "JSON",
-                    data: {
-                        action: 4,
-                        teamId: $(this).children('input[name="teamId"]').val(),
-                        date: $(this).children('input[name="date"]').val(),
-                        obstacleClassification: encodeURI($(this).children('input[name="errorType"]').val(), "UTF-8")
-                    },
-                    success: function(data) {
-                        var tagList = "";
-                        var workdetails = '';
-                        for (var i = 0; i < data.result.length; i++) {
-                            if (data.result[i].workDetails < 100) {
-                                workdetails = data.result[i].workDetails + '차 측정 중 에러 발생';
-                            } else {
-                                switch (data.result[i].workDetails) {
-                                    case 100:
-                                        workdetails = '집 대상지 이동 중 에러 발생'
-                                        break;
-                                    case 101:
-                                        workdetails = '대상지 도착 후 SETUP 중 에러 발생'
-                                        break;
-                                    case 102:
-                                        workdetails = '측정 종료 후 복귀 중 에러 발생'
-                                        break;
-                                    case 103:
-                                        workdetails = 'FTP측정 데이터 업로드 중 에러 발생'
-                                        break;
+            <!--측정기 요약-->
+            <div>
+                <tr>
+                    <td rowspan="5">측정기<br>(장비+노트북+<br>+기자재+단말기+<br>차량)</td>
+                    <td>장비오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                        for (var k = 0; k < result[i].parts.length; k ++) {
+                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
+                                if (result[i].teams[j].equipmentError != 0) {
+                    %>
+                    <td>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].equipmentError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                            <input type="hidden" name="date" value="<%=result[i].date%>"/>
+                            <input type="hidden" name="errorType" value="장비오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
+                    <td><%=result[i].teams[j].equipmentError%></td>
+                    <%
                                 }
                             }
-                            tagList += "<li><div><table>" +
-                                    '<tr>' + '<td colspan=\'2\'>' + data.result[i].obstacleClassification+ '에러사항' + '</td>' +'</tr>' +
-                                    '<tr>' + '<td>' + '에러 발생 날짜' + '</td>' + '<td>' + data.result[i].date + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '팀' + '</td>' + '<td>' + data.result[i].teamName + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '조장' + '</td>' + '<td>' + data.result[i].teamLeader + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 발견자' + '</td>' + '<td>' + data.result[i].errorGenerator + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 발생 시점' + '</td>' + '<td>' + workdetails + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 구분' + '</td>' + '<td>' + data.result[i].obstacleClassification + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 세부' + '</td>' + '<td>' + data.result[i].obstacleDetails + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 발생 시간' + '</td>' + '<td>' + data.result[i].obstacleTime + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 증상' + '</td>' + '<td>' + data.result[i].obstaclePhenomenon + '</td>' + '</tr>' +
-                                    '<tr>' + '<td>' + '에러 조치' + '</td>' + '<td>' + data.result[i].obstacleResult + '</td>' + '</tr>' + "</table></div></li>"
                         }
-                        $('#errorListArea').empty();
-                        $('#errorListArea').append(tagList);
-                        $('#listArea').listview('refresh');
-                    },
-                    error: function(data) {
-                        console.log('실패');
                     }
-                });
-            });
+                    %>
+                </tr>
+                <tr>
+                    <td>프로그램오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                        for (var k = 0; k < result[i].parts.length; k ++) {
+                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
+                                if (result[i].teams[j].programError != 0) {
+                    %>
+                    <td>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].programError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                            <input type="hidden" name="date" value="<%=result[i].date%>"/>
+                            <input type="hidden" name="errorType" value="프로그램오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
+                    <td><%=result[i].teams[j].programError%></td>
+                    <%
+                                }
+                            }
+                        }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>단말기오류</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                        for (var k = 0; k < result[i].parts.length; k ++) {
+                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
+                                if (result[i].teams[j].terminalError != 0) {
+                    %>
+                    <td>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].terminalError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                            <input type="hidden" name="date" value="<%=result[i].date%>"/>
+                            <input type="hidden" name="errorType" value="단말기오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
+                    <td><%=result[i].teams[j].terminalError%></td>
+                    <%
+                                }
+                            }
+                        }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>측정차량</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                        for (var k = 0; k < result[i].parts.length; k ++) {
+                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
+                                if (result[i].teams[j].carError != 0) {
+                    %>
+                    <td>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].carError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                            <input type="hidden" name="date" value="<%=result[i].date%>"/>
+                            <input type="hidden" name="errorType" value="측정차량"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
+                    <td><%=result[i].teams[j].carError%></td>
+                    <%
+                                }
+                            }
+                        }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>부수기자재</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                        for (var k = 0; k < result[i].parts.length; k ++) {
+                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
+                                if (result[i].teams[j].toolsError != 0) {
+                    %>
+                    <td>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].toolsError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                            <input type="hidden" name="date" value="<%=result[i].date%>"/>
+                            <input type="hidden" name="errorType" value="부수기자재"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
+                    <td><%=result[i].teams[j].toolsError%></td>
+                    <%
+                                }
+                            }
+                        }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td colspan="2" class="summary">측정기 요약</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[j].sum%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+            </div>
 
-            $('.excelDownBtn').click(function() {
-                var tableId = 'errorTbl' + $(this).attr('id');
-                console.log(tableId);
-                $('#' + tableId).excelexportjs({
-                    containerid: tableId,
-                    datatype: 'table'
-                });
+            <!--기타 요약-->
+            <div>
+                <tr>
+                    <td rowspan="2">기타<BR>(원인불명)</td>
+                    <td>압축해제에러</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].compressionLiftError%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td>기타</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td><%=result[i].teams[j].etc%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+                <tr>
+                    <td colspan="2" class="summary">기타 요약</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[j].etcSum%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+            </div>
+
+            <!--총합계-->
+            <div>
+                <tr>
+                    <td colspan="2" class="totalSummary">총합계(Human+IQA+측정기+기타)</td>
+                    <%
+                    for (var j = 0; j < result[i].teams.length; j++) {
+                    for (var k = 0; k < result[i].parts.length; k ++) {
+                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
+                    <td class="totalSummary"><%=result[i].teams[j].totalSum%></td>
+                    <%
+                    }
+                    }
+                    }
+                    %>
+                </tr>
+            </div>
+        </tbody>
+    </table>
+    <button type="button" class="excelDownBtn" id="<%=i%>">엑셀 다운로드</button>
+    <BR><BR><BR><BR><BR><BR>
+    <%
+        }
+    %>
+
+    <!-- 모달 팝업 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">에러 사항</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group" id="errorListArea">
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $('.error').click(function() {
+            $.ajax({
+                url: "http://localhost:3000/reports/statistics",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    action: 4,
+                    teamId: $(this).children('input[name="teamId"]').val(),
+                    date: $(this).children('input[name="date"]').val(),
+                    obstacleClassification: encodeURI($(this).children('input[name="errorType"]').val(), "UTF-8")
+                },
+                success: function(data) {
+                    var tagList = "";
+                    var workdetails = '';
+                    for (var i = 0; i < data.result.length; i++) {
+                        if (data.result[i].workDetails < 100) {
+                            workdetails = data.result[i].workDetails + '차 측정 중 에러 발생';
+                        } else {
+                            switch (data.result[i].workDetails) {
+                                case 100:
+                                    workdetails = '집 대상지 이동 중 에러 발생'
+                                    break;
+                                case 101:
+                                    workdetails = '대상지 도착 후 SETUP 중 에러 발생'
+                                    break;
+                                case 102:
+                                    workdetails = '측정 종료 후 복귀 중 에러 발생'
+                                    break;
+                                case 103:
+                                    workdetails = 'FTP측정 데이터 업로드 중 에러 발생'
+                                    break;
+                            }
+                        }
+                        tagList += "<li class=\"list-group-item\"><div><table class=\"table table-bordered\">" +
+                            '<tr>' + '<td colspan=\'2\'>' + data.result[i].obstacleClassification+ '에러사항' + '</td>' +'</tr>' +
+                            '<tr>' + '<td>' + '에러 발생 날짜' + '</td>' + '<td>' + data.result[i].date + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '팀' + '</td>' + '<td>' + data.result[i].teamName + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '조장' + '</td>' + '<td>' + data.result[i].teamLeader + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 발견자' + '</td>' + '<td>' + data.result[i].errorGenerator + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 발생 시점' + '</td>' + '<td>' + workdetails + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 구분' + '</td>' + '<td>' + data.result[i].obstacleClassification + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 세부' + '</td>' + '<td>' + data.result[i].obstacleDetails + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 발생 시간' + '</td>' + '<td>' + data.result[i].obstacleTime + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 증상' + '</td>' + '<td>' + data.result[i].obstaclePhenomenon + '</td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 조치' + '</td>' + '<td>' + data.result[i].obstacleResult + '</td>' + '</tr>' + "</table></div></li>"
+                    }
+                    $('#errorListArea').empty();
+                    $('#errorListArea').append(tagList);
+                    $('#listArea').listview('refresh');
+                },
+                error: function(data) {
+                    console.log('실패');
+                }
             });
         });
-    </script>
+
+        $('.excelDownBtn').click(function() {
+            var tableId = 'errorTbl' + $(this).attr('id');
+            console.log(tableId);
+            $('#' + tableId).excelexportjs({
+                containerid: tableId,
+                datatype: 'table'
+            });
+        });
+    });
+</script>
 </body>
 </html>

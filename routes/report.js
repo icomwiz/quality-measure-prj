@@ -371,7 +371,7 @@ router.get('/statistics', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result[0][0].uploadError);
+            console.log(result[0]);
             res.render('parts-day-error', {
                 result: result
             });

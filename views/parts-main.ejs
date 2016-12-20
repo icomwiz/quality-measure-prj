@@ -340,7 +340,10 @@
                         url: "http://localhost:3000/teams",
                         type: "GET",
                         dataType: "JSON",
-                        data: { teamName: this.teamName },
+                        data: {
+                            teamName: this.teamName,
+                            date: date
+                        },
                         success: function(data) {
                             if( data.result ) {
                                 for(var i = 0; i < data.result.length; i++) {

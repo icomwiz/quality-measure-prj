@@ -24,17 +24,18 @@ function getTeamList(date, callback) {
 }
 
 // INPUT: partId, OUTPUT: teamId, teamName, teamNo
-function getTeamListByTeamName(teamName, callback) {
-    var sql_select_owns_teams = 'SELECT id teamId, name teamName, team_no teamNo ' +
-                                'FROM team ' +
-                                'WHERE name = ? ' +
-                                'GROUP BY id';
+function getTeamListByTeamName(reqData, callback) {
+    var sql_select_owns_teams =
+        'SELECT t.id teamId, t.name teamName, t.team_no teamNo ' +
+        'FROM team t JOIN report r ON(r.team_id = t.id) ' +
+        'WHERE t.name = ? AND r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
+        'GROUP BY t.id';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_select_owns_teams, [teamName], function(err, results) {
+        dbConn.query(sql_select_owns_teams, [reqData.teamName, reqData.date], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
