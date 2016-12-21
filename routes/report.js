@@ -379,7 +379,6 @@ router.get('/statistics', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result[0]);
             res.render('parts-day-error', {
                 result: result
             });
@@ -389,7 +388,7 @@ router.get('/statistics', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
+            console.log(result[0]);
             res.render('parts-week-error', {
                 result: result
             });

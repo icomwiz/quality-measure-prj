@@ -1636,35 +1636,6 @@ function getErrorStatisticsPerDay(callback) {
 
 //주별 에러 통계
 function getErrorStatisticsPerWeek(callback) {
-    //실제 측정 리포트가 있는 week들을 가져옴
-    var sql_select_day = 'SELECT ' +
-                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 2) DAY), \'%Y-%m-%d\') startDay, ' +
-                         'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 8) DAY), \'%Y-%m-%d\') endDay ' +
-                         'FROM report ' +
-                         'WHERE type = 1 ' +
-                         'GROUP BY startDay DESC';
-
-    //week에 따라 에러사항 가져옴
-    var sql_select_error_statistics_per_day =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
-        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
-        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
-        'FROM team t ' +
-        'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
-        'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
-        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
-        'JOIN team t ON(t.id = r.team_id) ' +
-        'WHERE r.type = 1 AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 ' +
-        'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
-        'ORDER BY a.teamId';
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -1672,71 +1643,163 @@ function getErrorStatisticsPerWeek(callback) {
 
         var resData = [];
 
-        async.waterfall([function(callback) {
-            dbConn.query(sql_select_day, [], function(err, results) {
-                if (err) {
-                    return callback(err);
-                }
-                var dates = [];
-                for(var i = 0; i < results.length; i++) {
-                    dates.push({
-                        startDay: results[i].startDay,
-                        endDay: results[i].endDay
-                    });
-                }
-                callback(null, dates);
-            });
-        }, getErrorPerWeek
-        ], function(err, result) {
+        async.waterfall([getWeeks, getPartsAndTeams], function(err, results) {
             if (err) {
                 return callback(err);
             }
             callback(null, resData);
         });
 
-        function getErrorPerWeek(dates, callback) {
-            async.each(dates, function(date, callback) {
-                var dateObj = new Date();
-                var today = dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate();
-                var endDay = date.endDay.split('-');
-                if ((endDay[0] >= dateObj.getFullYear()) && (endDay[1] >= dateObj.getMonth() + 1) && (endDay[2] >= dateObj.getDate())) {
-                    date.endDay = today;
+        function getWeeks(callback) {
+            //실제 측정 리포트가 있는 주들을 가져옴
+            var sql_select_week =
+                'SELECT ' +
+                'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 2) DAY), \'%Y-%m-%d\') startDay, ' +
+                'DATE_FORMAT(DATE_SUB(date, INTERVAL (DAYOFWEEK(date) - 8) DAY), \'%Y-%m-%d\') endDay ' +
+                'FROM report ' +
+                'WHERE type = 1 ' +
+                'GROUP BY startDay DESC';
+
+            dbConn.query(sql_select_week, [], function(err, results) {
+                if (err) {
+                    return callback(err);
                 }
-
-                var week = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-                var dayOfweek = week[dateObj.getDay()];
-
-                dbConn.query(sql_select_error_statistics_per_day, [date.startDay, date.endDay], function(err, results) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var data = [];
-                    for (var i = 0; i < results.length; i++) {
-                        var week;
-                        if (date.endDay === today) {
-                            week = date.startDay + '(월요일)' + ' ~ ' + date.endDay + '(' + dayOfweek + ')';
-                        } else {
-                            week = date.startDay + '(월요일)' + ' ~ ' + date.endDay + '(일요일)';
-                        }
-                        data.push({
-                            startDay: date.startDay,
-                            endDay: date.endDay,
-                            week: week,
-                            teamId: results[i].teamId,
-                            teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
-                            teamLeader: results[i].teamLeader || '',
-                            equipmentError: results[i].equipmentError || 0,
-                            programError: results[i].programError || 0,
-                            terminalError: results[i].terminalError || 0,
-                            carError: results[i].carError || 0,
-                            toolsError: results[i].toolsError || 0,
-                            sum: results[i].sum || 0
+                if (results.length === 0) {
+                    return callback(null);
+                } else {
+                    var weeks = [];
+                    for (var i = 0; i < results.length; i++ ) {
+                        weeks.push({
+                            startDay: results[i].startDay,
+                            endDay: results[i].endDay
                         });
                     }
-                    resData.push(data);
-                    callback();
+                    callback(null, weeks);
+                }
+            });
+        }
+
+        function getPartsAndTeams(weeks, callback) {
+            var sql_select_parts =
+                'SELECT p.id partId, p.name partName ' +
+                'FROM part p JOIN teams_parts tp ON(p.id = tp.part_id) ' +
+                'JOIN team t ON(t.id = tp.team_id) ' +
+                'JOIN report r ON(r.team_id = t.id) ' +
+                'WHERE ptype = 1 AND r.type = 1 AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') ' +
+                'GROUP BY p.id';
+
+            var sql_select_error_statistics_per_week =
+                'SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum, c.uploadError, c.compressionNameError, c.settingError, c.etcError, c.humanErrorSum, c.conversionError, c.serverError, c.segmentOmissionError, c.iqaErrorSum, c.compressionLiftError, c.etc, c.etcSum ' +
+                'FROM(SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, b.name ' +
+                'FROM(SELECT p.id partId, p.name partName, t.id teamId, t.name teamName, t.team_no teamNo ' +
+                'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+                'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
+                'JOIN part p ON (p.id = tp.part_id) ' +
+                'WHERE t.team_no > 0 AND r.type = 1 AND r.date BETWEEN str_to_date(?, \'%Y-%m-%d\') AND str_to_date(?, \'%Y-%m-%d\') ' +
+                'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                'WHERE r.team_position = \'조장\' AND r.date BETWEEN str_to_date(?, \'%Y-%m-%d\') AND str_to_date(?, \'%Y-%m-%d\') AND type = 1 ' +
+                'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
+                'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+                'JOIN team t ON(t.id = r.team_id) ' +
+                'WHERE r.type = 1 AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 ' +
+                'GROUP BY teamId) b ON (a.teamId = b.teamId) LEFT JOIN ((SELECT t.id teamId, SUM(CASE WHEN aee.name = \'업로드오류\' THEN 1 ELSE 0 END) uploadError, ' +
+                'SUM(CASE WHEN aee.name = \'압축파일명오류\' THEN 1 ELSE 0 END) compressionNameError, ' +
+                'SUM(CASE WHEN aee.name = \'Setting오류\' THEN 1 ELSE 0 END) settingError, ' +
+                'SUM(CASE WHEN aee.name = \'기타오류\' THEN 1 ELSE 0 END) etcError, ' +
+                'SUM(CASE WHEN aee.name = \'Conversion Error\' THEN 1 ELSE 0 END) conversionError, ' +
+                'SUM(CASE WHEN aee.name = \'Server오류\' THEN 1 ELSE 0 END) serverError, ' +
+                'SUM(CASE WHEN aee.name = \'Segment누락\' THEN 1 ELSE 0 END) segmentOmissionError, ' +
+                'SUM(CASE WHEN aee.name = \'압축해제에러\' THEN 1 ELSE 0 END) compressionLiftError, ' +
+                'SUM(CASE WHEN aee.name = \'기타\' THEN 1 ELSE 0 END) etc, ' +
+                'SUM(CASE WHEN aee.type = 1 THEN 1 ELSE 0 END) humanErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 2 THEN 1 ELSE 0 END) iqaErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 3 THEN 1 ELSE 0 END) etcSum ' +
+                'FROM team_analyst_error tae JOIN analyst_evaluation_error aee ON (tae.analyst_evaluation_error_id = aee.id) ' +
+                'JOIN team t ON (t.id = tae.team_id) ' +
+                'WHERE date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') ' +
+                'GROUP BY t.id)) c ON (a.teamId = c.teamId) ' +
+                'ORDER BY a.teamId';
+
+            async.each(weeks, function(week, callback) {
+                var dateObj = new Date();
+                var today = dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate();
+                var endDay = week.endDay.split('-');
+                if ((endDay[0] >= dateObj.getFullYear()) && (endDay[1] >= dateObj.getMonth() + 1) && (endDay[2] >= dateObj.getDate())) {
+                    week.endDay = today;
+                }
+                var weeks = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                var dayOfweek = weeks[dateObj.getDay()];
+                dbConn.query(sql_select_parts, [week.startDay, week.endDay], function(err, results) {
+                    if (err) {
+                        return callback(null);
+                    }
+                    if (results.length === 0) {
+                        callback(null);
+                    } else {
+                        var dataOfWeek = {};
+                        if (week.endDay === today) {
+                            dataOfWeek.week = week.startDay + '(월요일)' + ' ~ ' + week.endDay + '(' + dayOfweek + ')';
+                        } else {
+                            dataOfWeek.week = week.startDay + '(월요일)' + ' ~ ' + week.endDay + '(일요일)';
+                        }
+                        dataOfWeek.parts = [];
+                        dataOfWeek.teams = [];
+                        for (var i = 0; i < results.length; i++) {
+                            dataOfWeek.parts.push({
+                                partId: results[i].partId,
+                                partName: results[i].partName
+                            });
+                        }
+                        dbConn.query(sql_select_error_statistics_per_week, [week.startDay, week.endDay, week.startDay, week.endDay, week.startDay, week.endDay, week.startDay, week.endDay], function(err, results) {
+                            if (err) {
+                                return callback(err);
+                            }
+                            if (results.length === 0) {
+                                callback(null);
+                            } else {
+                                for (var i = 0; i < results.length; i++ ) {
+                                    dataOfWeek.teams.push({
+                                        startDay: week.startDay,
+                                        endDay: week.endDay,
+                                        partId: results[i].partId,
+                                        partName: results[i].partName,
+                                        teamId: results[i].teamId,
+                                        teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                                        teamLeader: results[i].teamLeader || '',
+                                        equipmentError: results[i].equipmentError || 0,
+                                        programError: results[i].programError || 0,
+                                        terminalError: results[i].terminalError || 0,
+                                        carError: results[i].carError || 0,
+                                        toolsError: results[i].toolsError || 0,
+                                        sum: results[i].sum || 0,
+                                        uploadError: results[i].uploadError || 0,
+                                        compressionNameError: results[i].compressionNameError || 0,
+                                        settingError: results[i].settingError || 0,
+                                        etcError: results[i].etcError || 0,
+                                        humanErrorSum: results[i].humanErrorSum || 0,
+                                        conversionError: results[i].conversionError || 0,
+                                        serverError: results[i].serverError || 0,
+                                        segmentOmissionError: results[i].segmentOmissionError || 0,
+                                        iqaErrorSum: results[i].iqaErrorSum || 0,
+                                        compressionLiftError: results[i].compressionLiftError || 0,
+                                        etc: results[i].etc || 0,
+                                        etcSum: results[i].etcSum || 0,
+                                        totalSum: (results[i].sum || 0) + (results[i].humanErrorSum || 0) + (results[i].iqaErrorSum || 0) + (results[i].etcSum || 0)
+                                    });
+                                }
+                            }
+                            resData.push(dataOfWeek);
+                            callback();
+                        });
+                    }
                 });
-            }, function(err, result) {
+            }, function(err) {
                 if (err) {
                     return callback(err);
                 }
