@@ -323,9 +323,6 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                     }
                 }
             }
-            // for (var i = 0; i < plans.length; i++) {
-            //
-            // }
             var i = 0;
             var loop = setInterval(function () {
                 if (i < plans.length) {

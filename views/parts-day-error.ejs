@@ -35,9 +35,12 @@
     %>
     <table class="table table-bordered" id="errorTbl<%=i%>">
         <thead>
+            <!--날짜-->
             <tr class="date">
                 <td colspan="<%=result[i].teams.length + 2%>"><%=result[i].date%></td>
             </tr>
+
+            <!--구분1, 구분2, 파트1, 파트2 ..-->
             <tr>
                 <td rowspan="3">
                     구분1
@@ -54,31 +57,37 @@
                             }
                         }
                 %>
-                    <td colspan="<%=partsColsNum%>">
-                        <%=result[i].parts[j].partName%>
-                    </td>
+                <!--파트-->
+                <td colspan="<%=partsColsNum%>">
+                    <%=result[i].parts[j].partName%>
+                </td>
                 <%
                     }
                 %>
             </tr>
+
+            <!--팀 이름-->
             <tr>
             <%
-                for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                        if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                            <td><%=result[i].teams[j].teamName%></td>
+                for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k++) {
+                        if (result[i].parts[j].partId === result[i].teams[k].partId) {
+            %>
+                <td><%=result[i].teams[k].teamName%></td>
             <%
                         }
                     }
                 }
             %>
             </tr>
+            <!--팀 리더-->
             <tr>
             <%
-                for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                        if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                <td><%=result[i].teams[j].teamLeader%></td>
+                for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k++) {
+                        if (result[i].parts[j].partId === result[i].teams[k].partId) {
+            %>
+                <td><%=result[i].teams[k].teamLeader%></td>
             <%
                         }
                     }
@@ -93,66 +102,66 @@
                     <td rowspan="4">Human<BR>(측정자오류)</td>
                     <td>업로드오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].uploadError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].uploadError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>압축파일명오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].compressionNameError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].compressionNameError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>Setting오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].settingError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].settingError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>기타오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].etcError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].etcError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td colspan="2" class="summary">Human 요약</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td class="summary"><%=result[i].teams[j].humanErrorSum%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[k].humanErrorSum%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
             </div>
@@ -163,53 +172,53 @@
                     <td rowspan="3">IQA<BR>(기능오류)</td>
                     <td>Conversion Error</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].conversionError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].conversionError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>Server오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].serverError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].serverError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>Segment누락</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].segmentOmissionError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].segmentOmissionError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td colspan="2" class="summary">IQA 요약</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td class="summary"><%=result[i].teams[j].iqaErrorSum%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[k].iqaErrorSum%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
             </div>
@@ -220,14 +229,14 @@
                     <td rowspan="5">측정기<br>(장비+노트북+<br>+기자재+단말기+<br>차량)</td>
                     <td>장비오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                        for (var k = 0; k < result[i].parts.length; k ++) {
-                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
-                                if (result[i].teams[j].equipmentError != 0) {
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].equipmentError != 0) {
                     %>
                     <td>
-                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].equipmentError%>
-                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].equipmentError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
                             <input type="hidden" name="date" value="<%=result[i].date%>"/>
                             <input type="hidden" name="errorType" value="장비오류"/>
                         </a>
@@ -235,7 +244,7 @@
                     <%
                                 } else {
                     %>
-                    <td><%=result[i].teams[j].equipmentError%></td>
+                    <td><%=result[i].teams[k].equipmentError%></td>
                     <%
                                 }
                             }
@@ -246,14 +255,14 @@
                 <tr>
                     <td>프로그램오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                        for (var k = 0; k < result[i].parts.length; k ++) {
-                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
-                                if (result[i].teams[j].programError != 0) {
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].programError != 0) {
                     %>
                     <td>
-                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].programError%>
-                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].programError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
                             <input type="hidden" name="date" value="<%=result[i].date%>"/>
                             <input type="hidden" name="errorType" value="프로그램오류"/>
                         </a>
@@ -261,7 +270,7 @@
                     <%
                                 } else {
                     %>
-                    <td><%=result[i].teams[j].programError%></td>
+                    <td><%=result[i].teams[k].programError%></td>
                     <%
                                 }
                             }
@@ -272,14 +281,14 @@
                 <tr>
                     <td>단말기오류</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                        for (var k = 0; k < result[i].parts.length; k ++) {
-                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
-                                if (result[i].teams[j].terminalError != 0) {
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].terminalError != 0) {
                     %>
                     <td>
-                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].terminalError%>
-                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].terminalError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
                             <input type="hidden" name="date" value="<%=result[i].date%>"/>
                             <input type="hidden" name="errorType" value="단말기오류"/>
                         </a>
@@ -287,7 +296,7 @@
                     <%
                                 } else {
                     %>
-                    <td><%=result[i].teams[j].terminalError%></td>
+                    <td><%=result[i].teams[k].terminalError%></td>
                     <%
                                 }
                             }
@@ -298,14 +307,14 @@
                 <tr>
                     <td>측정차량</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                        for (var k = 0; k < result[i].parts.length; k ++) {
-                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
-                                if (result[i].teams[j].carError != 0) {
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].carError != 0) {
                     %>
                     <td>
-                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].carError%>
-                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].carError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
                             <input type="hidden" name="date" value="<%=result[i].date%>"/>
                             <input type="hidden" name="errorType" value="측정차량"/>
                         </a>
@@ -313,7 +322,7 @@
                     <%
                                 } else {
                     %>
-                    <td><%=result[i].teams[j].carError%></td>
+                    <td><%=result[i].teams[k].carError%></td>
                     <%
                                 }
                             }
@@ -324,14 +333,14 @@
                 <tr>
                     <td>부수기자재</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                        for (var k = 0; k < result[i].parts.length; k ++) {
-                            if (result[i].teams[j].partId === result[i].parts[k].partId) {
-                                if (result[i].teams[j].toolsError != 0) {
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].toolsError != 0) {
                     %>
                     <td>
-                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[j].toolsError%>
-                            <input type="hidden" name="teamId" value="<%=result[i].teams[j].teamId%>"/>
+                        <a class="error" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].toolsError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
                             <input type="hidden" name="date" value="<%=result[i].date%>"/>
                             <input type="hidden" name="errorType" value="부수기자재"/>
                         </a>
@@ -339,7 +348,7 @@
                     <%
                                 } else {
                     %>
-                    <td><%=result[i].teams[j].toolsError%></td>
+                    <td><%=result[i].teams[k].toolsError%></td>
                     <%
                                 }
                             }
@@ -350,14 +359,14 @@
                 <tr>
                     <td colspan="2" class="summary">측정기 요약</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td class="summary"><%=result[i].teams[j].sum%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[k].sum%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
             </div>
@@ -368,40 +377,40 @@
                     <td rowspan="2">기타<BR>(원인불명)</td>
                     <td>압축해제에러</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].compressionLiftError%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].compressionLiftError%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td>기타</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td><%=result[i].teams[j].etc%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td><%=result[i].teams[k].etc%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
                 <tr>
                     <td colspan="2" class="summary">기타 요약</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td class="summary"><%=result[i].teams[j].etcSum%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td class="summary"><%=result[i].teams[k].etcSum%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
             </div>
@@ -411,14 +420,14 @@
                 <tr>
                     <td colspan="2" class="totalSummary">총합계(Human+IQA+측정기+기타)</td>
                     <%
-                    for (var j = 0; j < result[i].teams.length; j++) {
-                    for (var k = 0; k < result[i].parts.length; k ++) {
-                    if (result[i].teams[j].partId === result[i].parts[k].partId) { %>
-                    <td class="totalSummary"><%=result[i].teams[j].totalSum%></td>
+                        for (var j = 0; j < result[i].parts.length; j++) {
+                            for (var k = 0; k < result[i].teams.length; k ++) {
+                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    <td class="totalSummary"><%=result[i].teams[k].totalSum%></td>
                     <%
-                    }
-                    }
-                    }
+                                }
+                            }
+                        }
                     %>
                 </tr>
             </div>
