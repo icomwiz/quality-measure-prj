@@ -27,21 +27,21 @@ function isAuthenticatedForOfficer(req, res, next) { //사장님 전무님
 }
 
 function isAuthenticatedForMeasurerManager(req, res, next) { //김경헌 과장님
-    if ((!req.user) || (req.user.teamPosition !== 10 )) {
+    if ((!req.user) || (req.user.teamPosition !== 5 )) {
         return res.redirect('http://localhost:3000/auth');
     }
     next();
 }
 
 function isAuthenticatedForMeasurerManager_Officer(req, res, next) { //김경헌 과장님, 사장님 전무님
-    if ((!req.user) || (req.user.teamPosition !== 10 ) || (req.user.teamPosition !== 0 )) {
+    if ((!req.user) || (req.user.teamPosition !== 5 ) || (req.user.teamPosition !== 0 )) {
         return res.redirect('http://localhost:3000/auth');
     }
     next();
 }
 
 function isAuthenticatedAdmin(req, res, next) { //어드민권한만!
-    if ((req.user.teamPosition !== 0)) {
+    if (!((req.user.teamPosition === 0) || (req.user.teamPosition === 6))) {
         return res.redirect('http://localhost:3000/auth');
     }
     next();

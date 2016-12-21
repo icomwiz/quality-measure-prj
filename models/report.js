@@ -654,7 +654,7 @@ function confirmUpdate(info, callback) {
     });
 }
 
-// INPUT: teamName, OUTPUT: teamName, date, location
+// INPUT: teamName, OUTPUT: teamName, date, location (dbConn release함)
 function getReportsByteamId(teamId, callback) {
     var sql_select_reports_order_by_date =
         "SELECT t.name teamName, t.team_no teamNo, DATE_FORMAT(CONVERT_TZ(r.date, '+00:00', '+09:00'), '%Y-%m-%d') date, r.location " +
@@ -677,7 +677,7 @@ function getReportsByteamId(teamId, callback) {
     });
 }
 
-//엑셀 파일을 통해 리포트 업데이트 하기
+//엑셀 파일을 통해 리포트 업데이트 하기(dbConn release함)
 function updatePlan(plan, callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -686,6 +686,7 @@ function updatePlan(plan, callback) {
         var info = {};
 
         async.series([setDepartmentAndPartAndTeam, setTeamsPart1, setTeamsPart2, findAndRemoveTeamMember, setEmployee, setReport], function(err) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -1230,7 +1231,7 @@ function updatePlan(plan, callback) {
     });
 }
 
-//일자별 리포트 디테일 가져오기
+//일자별 리포트 디테일 가져오기(dbConn release함)
 function getReportDetailperDate(reqData, callback) {
     var sql_select_report_basic_information =
         'SELECT r.id reportId, r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, r.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
@@ -1480,7 +1481,7 @@ function getReportDetailperDate(reqData, callback) {
     });
 }
 
-//일별 에러 통계
+//일별 에러 통계(dbConn release함)
 function getErrorStatisticsPerDay(callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -1490,6 +1491,7 @@ function getErrorStatisticsPerDay(callback) {
         var resData = [];
 
         async.waterfall([getDates, getPartsAndTeams], function(err, results) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -1634,7 +1636,7 @@ function getErrorStatisticsPerDay(callback) {
     });
 }
 
-//주별 에러 통계
+//주별 에러 통계(dbConn release함)
 function getErrorStatisticsPerWeek(callback) {
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -1644,6 +1646,7 @@ function getErrorStatisticsPerWeek(callback) {
         var resData = [];
 
         async.waterfall([getWeeks, getPartsAndTeams], function(err, results) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }
@@ -1809,36 +1812,8 @@ function getErrorStatisticsPerWeek(callback) {
     });
 }
 
-//월별 에러 통계
+//월별 에러 통계(dbConn release함)
 function getErrorStatisticsPerMonth(callback) {
-    //실제 측정 리포트가 있는 날짜들을 가져옴
-    var sql_select_month =
-        'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
-        'FROM report ' +
-        'WHERE type = 1 ' +
-        'ORDER BY MONTH(date) DESC';
-
-    //날짜에 따라 에러사항 가져옴
-    var sql_select_error_statistics_per_month =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
-        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
-        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
-        'FROM team t ' +
-        'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
-        'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
-        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
-        'JOIN team t ON(t.id = r.team_id) ' +
-        'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1    ' +
-        'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
-        'ORDER BY a.teamId';
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -1846,22 +1821,7 @@ function getErrorStatisticsPerMonth(callback) {
 
         var resData = [];
 
-        async.waterfall([function(callback) {
-            dbConn.query(sql_select_month, [], function(err, results) {
-                if (err) {
-                    return callback(err);
-                }
-                var months = [];
-                for(var i = 0; i < results.length; i++) {
-                    months.push({
-                        year: results[i].year,
-                        month: results[i].month
-                    });
-                }
-                callback(null, months);
-            });
-        }, getErrorPerDay
-        ], function(err, result) {
+        async.waterfall([getMonths, getPartsAndTeams], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -1869,32 +1829,142 @@ function getErrorStatisticsPerMonth(callback) {
             callback(null, resData);
         });
 
-        function getErrorPerDay(months, callback) {
+        function getMonths(callback) {
+            //실제 측정 리포트가 있는 년도와 월들을 가져옴
+            var sql_select_week =
+                'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
+                'FROM report ' +
+                'WHERE type = 1 ' +
+                'ORDER BY MONTH(date) DESC';
+
+            dbConn.query(sql_select_week, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                if (results.length === 0) {
+                    return callback(null);
+                } else {
+                    var months = [];
+                    for (var i = 0; i < results.length; i++ ) {
+                        months.push({
+                            year: results[i].year,
+                            month: results[i].month
+                        });
+                    }
+                    callback(null, months);
+                }
+            });
+        }
+
+        function getPartsAndTeams(months, callback) {
+            var sql_select_parts =
+                'SELECT p.id partId, p.name partName ' +
+                'FROM part p JOIN teams_parts tp ON(p.id = tp.part_id) ' +
+                'JOIN team t ON(t.id = tp.team_id) ' +
+                'JOIN report r ON(r.team_id = t.id) ' +
+                'WHERE ptype = 1 AND r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? ' +
+                'GROUP BY p.id';
+
+            var sql_select_error_statistics_per_month =
+                'SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum, c.uploadError, c.compressionNameError, c.settingError, c.etcError, c.humanErrorSum, c.conversionError, c.serverError, c.segmentOmissionError, c.iqaErrorSum, c.compressionLiftError, c.etc, c.etcSum ' +
+                'FROM(SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, b.name ' +
+                'FROM(SELECT p.id partId, p.name partName, t.id teamId, t.name teamName, t.team_no teamNo ' +
+                'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+                'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
+                'JOIN part p ON (p.id = tp.part_id) ' +
+                'WHERE t.team_no > 0 AND r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? ' +
+                'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND type = 1 ' +
+                'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
+                'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+                'JOIN team t ON(t.id = r.team_id) ' +
+                'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1 ' +
+                'GROUP BY teamId) b ON (a.teamId = b.teamId) LEFT JOIN ((SELECT t.id teamId, SUM(CASE WHEN aee.name = \'업로드오류\' THEN 1 ELSE 0 END) uploadError, ' +
+                'SUM(CASE WHEN aee.name = \'압축파일명오류\' THEN 1 ELSE 0 END) compressionNameError, ' +
+                'SUM(CASE WHEN aee.name = \'Setting오류\' THEN 1 ELSE 0 END) settingError, ' +
+                'SUM(CASE WHEN aee.name = \'기타오류\' THEN 1 ELSE 0 END) etcError, ' +
+                'SUM(CASE WHEN aee.name = \'Conversion Error\' THEN 1 ELSE 0 END) conversionError, ' +
+                'SUM(CASE WHEN aee.name = \'Server오류\' THEN 1 ELSE 0 END) serverError, ' +
+                'SUM(CASE WHEN aee.name = \'Segment누락\' THEN 1 ELSE 0 END) segmentOmissionError, ' +
+                'SUM(CASE WHEN aee.name = \'압축해제에러\' THEN 1 ELSE 0 END) compressionLiftError, ' +
+                'SUM(CASE WHEN aee.name = \'기타\' THEN 1 ELSE 0 END) etc, ' +
+                'SUM(CASE WHEN aee.type = 1 THEN 1 ELSE 0 END) humanErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 2 THEN 1 ELSE 0 END) iqaErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 3 THEN 1 ELSE 0 END) etcSum ' +
+                'FROM team_analyst_error tae JOIN analyst_evaluation_error aee ON (tae.analyst_evaluation_error_id = aee.id) ' +
+                'JOIN team t ON (t.id = tae.team_id) ' +
+                'WHERE YEAR(date) = ? AND MONTH(date) = ? ' +
+                'GROUP BY t.id)) c ON (a.teamId = c.teamId) ' +
+                'ORDER BY a.teamId';
+
             async.each(months, function(month, callback) {
-                dbConn.query(sql_select_error_statistics_per_month, [month.year, month.month], function(err, results) {
+                dbConn.query(sql_select_parts, [month.year, month.month], function(err, results) {
                     if (err) {
-                        return callback(err);
+                        return callback(null);
                     }
-                    var data = [];
-                    for (var i = 0; i < results.length; i++) {
-                        data.push({
-                            teamId: results[i].teamId,
-                            year: month.year,
-                            month: month.month,
-                            teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
-                            teamLeader: results[i].teamLeader || '',
-                            equipmentError: results[i].equipmentError || 0,
-                            programError: results[i].programError || 0,
-                            terminalError: results[i].terminalError || 0,
-                            carError: results[i].carError || 0,
-                            toolsError: results[i].toolsError || 0,
-                            sum: results[i].sum || 0
+                    if (results.length === 0) {
+                        callback(null);
+                    } else {
+                        var dataOfMonth = {};
+                        dataOfMonth.month = month.year + '년 ' + month.month + '월';
+                        dataOfMonth.parts = [];
+                        dataOfMonth.teams = [];
+                        for (var i = 0; i < results.length; i++) {
+                            dataOfMonth.parts.push({
+                                partId: results[i].partId,
+                                partName: results[i].partName
+                            });
+                        }
+                        dbConn.query(sql_select_error_statistics_per_month, [month.year, month.month, month.year, month.month, month.year, month.month, month.year, month.month], function(err, results) {
+                            if (err) {
+                                return callback(err);
+                            }
+                            if (results.length === 0) {
+                                callback(null);
+                            } else {
+                                for (var i = 0; i < results.length; i++ ) {
+                                    dataOfMonth.teams.push({
+                                        year: month.year,
+                                        month: month.month,
+                                        partId: results[i].partId,
+                                        partName: results[i].partName,
+                                        teamId: results[i].teamId,
+                                        teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                                        teamLeader: results[i].teamLeader || '',
+                                        equipmentError: results[i].equipmentError || 0,
+                                        programError: results[i].programError || 0,
+                                        terminalError: results[i].terminalError || 0,
+                                        carError: results[i].carError || 0,
+                                        toolsError: results[i].toolsError || 0,
+                                        sum: results[i].sum || 0,
+                                        uploadError: results[i].uploadError || 0,
+                                        compressionNameError: results[i].compressionNameError || 0,
+                                        settingError: results[i].settingError || 0,
+                                        etcError: results[i].etcError || 0,
+                                        humanErrorSum: results[i].humanErrorSum || 0,
+                                        conversionError: results[i].conversionError || 0,
+                                        serverError: results[i].serverError || 0,
+                                        segmentOmissionError: results[i].segmentOmissionError || 0,
+                                        iqaErrorSum: results[i].iqaErrorSum || 0,
+                                        compressionLiftError: results[i].compressionLiftError || 0,
+                                        etc: results[i].etc || 0,
+                                        etcSum: results[i].etcSum || 0,
+                                        totalSum: (results[i].sum || 0) + (results[i].humanErrorSum || 0) + (results[i].iqaErrorSum || 0) + (results[i].etcSum || 0)
+                                    });
+                                }
+                            }
+                            resData.push(dataOfMonth);
+                            callback();
                         });
                     }
-                    resData.push(data);
-                    callback();
                 });
-            }, function(err, result) {
+            }, function(err) {
                 if (err) {
                     return callback(err);
                 }
@@ -1904,58 +1974,16 @@ function getErrorStatisticsPerMonth(callback) {
     });
 }
 
-//분기별 에러 통계
+//분기별 에러 통계(dbConn release함)
 function getErrorStatisticsPerQuarter(callback) {
-    //실제 측정 리포트가 있는 날짜들을 가져옴
-    var sql_select_month =
-        'SELECT DISTINCT YEAR(date) year, QUARTER(date) quarter ' +
-        'FROM report ' +
-        'WHERE type = 1 ' +
-        'ORDER BY QUARTER(date) DESC';
-
-    //날짜에 따라 에러사항 가져옴
-    var sql_select_error_statistics_per_month =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum ' +
-        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
-        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
-        'FROM team t ' +
-        'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
-        'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT t.id teamId, t.name, t.team_no, count(*) sum, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
-        'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
-        'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
-        'JOIN team t ON(t.id = r.team_id) ' +
-        'WHERE r.type = 1 AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 ' +
-        'GROUP BY teamId) b ON (a.teamId = b.teamId) ' +
-        'ORDER BY a.teamId';
-
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
+
         var resData = [];
-        async.waterfall([function(callback) {
-            dbConn.query(sql_select_month, [], function(err, results) {
-                if (err) {
-                    return callback(err);
-                }
-                var quarters = [];
-                for(var i = 0; i < results.length; i++) {
-                    quarters.push({
-                        year: results[i].year,
-                        quarter: results[i].quarter
-                    });
-                }
-                callback(null, quarters);
-            });
-        }, getErrorPerDay
-        ], function(err, result) {
+
+        async.waterfall([getQuarters, getPartsAndTeams], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -1963,32 +1991,142 @@ function getErrorStatisticsPerQuarter(callback) {
             callback(null, resData);
         });
 
-        function getErrorPerDay(quarters, callback) {
-            async.each(quarters, function(quarter, callback) {
-                dbConn.query(sql_select_error_statistics_per_month, [quarter.year, quarter.quarter], function(err, results) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    var data = [];
-                    for (var i = 0; i < results.length; i++) {
-                        data.push({
-                            teamId: results[i].teamId,
-                            year: quarter.year,
-                            quarter: quarter.quarter,
-                            teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
-                            teamLeader: results[i].teamLeader || '',
-                            equipmentError: results[i].equipmentError || 0,
-                            programError: results[i].programError || 0,
-                            terminalError: results[i].terminalError || 0,
-                            carError: results[i].carError || 0,
-                            toolsError: results[i].toolsError || 0,
-                            sum: results[i].sum || 0
+        function getQuarters(callback) {
+            //실제 측정 리포트가 있는 년도와 월들을 분기들을 가져옴
+            var sql_select_quarter =
+                'SELECT DISTINCT YEAR(date) year, QUARTER(date) quarter ' +
+                'FROM report ' +
+                'WHERE type = 1 ' +
+                'ORDER BY QUARTER(date) DESC';
+
+            dbConn.query(sql_select_quarter, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                if (results.length === 0) {
+                    return callback(null);
+                } else {
+                    var quarters = [];
+                    for (var i = 0; i < results.length; i++ ) {
+                        quarters.push({
+                            year: results[i].year,
+                            quarter: results[i].quarter
                         });
                     }
-                    resData.push(data);
-                    callback();
+                    callback(null, quarters);
+                }
+            });
+        }
+
+        function getPartsAndTeams(quarters, callback) {
+            var sql_select_parts =
+                'SELECT p.id partId, p.name partName ' +
+                'FROM part p JOIN teams_parts tp ON(p.id = tp.part_id) ' +
+                'JOIN team t ON(t.id = tp.team_id) ' +
+                'JOIN report r ON(r.team_id = t.id) ' +
+                'WHERE ptype = 1 AND r.type = 1 AND YEAR(r.date) = ? AND QUARTER(r.date) = ? ' +
+                'GROUP BY p.id';
+
+            var sql_select_error_statistics_per_month =
+                'SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.equipmentError, b.programError, b.terminalError, b.carError, b.toolsError, b.sum, c.uploadError, c.compressionNameError, c.settingError, c.etcError, c.humanErrorSum, c.conversionError, c.serverError, c.segmentOmissionError, c.iqaErrorSum, c.compressionLiftError, c.etc, c.etcSum ' +
+                'FROM(SELECT a.partId, a.partName, a.teamId, a.teamName, a.teamNo, b.name ' +
+                'FROM(SELECT p.id partId, p.name partName, t.id teamId, t.name teamName, t.team_no teamNo ' +
+                'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+                'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
+                'JOIN part p ON (p.id = tp.part_id) ' +
+                'WHERE t.team_no > 0 AND r.type = 1 AND YEAR(r.date) = ? AND QUARTER(r.date) = ? ' +
+                'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND QUARTER(r.date) = ? AND type = 1 ' +
+                'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'프로그램오류\' THEN 1 ELSE 0 END) programError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'단말기오류\' THEN 1 ELSE 0 END) terminalError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'측정차량\' THEN 1 ELSE 0 END) carError, ' +
+                'SUM(CASE WHEN rd.obstacle_classification = \'부수기자재\' THEN 1 ELSE 0 END) toolsError ' +
+                'FROM report r JOIN report_details rd ON(r.id = rd.report_id) ' +
+                'JOIN team t ON(t.id = r.team_id) ' +
+                'WHERE r.type = 1 AND YEAR(r.date) = ? AND QUARTER(r.date) = ? AND rd.type = 1 ' +
+                'GROUP BY teamId) b ON (a.teamId = b.teamId) LEFT JOIN ((SELECT t.id teamId, SUM(CASE WHEN aee.name = \'업로드오류\' THEN 1 ELSE 0 END) uploadError, ' +
+                'SUM(CASE WHEN aee.name = \'압축파일명오류\' THEN 1 ELSE 0 END) compressionNameError, ' +
+                'SUM(CASE WHEN aee.name = \'Setting오류\' THEN 1 ELSE 0 END) settingError, ' +
+                'SUM(CASE WHEN aee.name = \'기타오류\' THEN 1 ELSE 0 END) etcError, ' +
+                'SUM(CASE WHEN aee.name = \'Conversion Error\' THEN 1 ELSE 0 END) conversionError, ' +
+                'SUM(CASE WHEN aee.name = \'Server오류\' THEN 1 ELSE 0 END) serverError, ' +
+                'SUM(CASE WHEN aee.name = \'Segment누락\' THEN 1 ELSE 0 END) segmentOmissionError, ' +
+                'SUM(CASE WHEN aee.name = \'압축해제에러\' THEN 1 ELSE 0 END) compressionLiftError, ' +
+                'SUM(CASE WHEN aee.name = \'기타\' THEN 1 ELSE 0 END) etc, ' +
+                'SUM(CASE WHEN aee.type = 1 THEN 1 ELSE 0 END) humanErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 2 THEN 1 ELSE 0 END) iqaErrorSum, ' +
+                'SUM(CASE WHEN aee.type = 3 THEN 1 ELSE 0 END) etcSum ' +
+                'FROM team_analyst_error tae JOIN analyst_evaluation_error aee ON (tae.analyst_evaluation_error_id = aee.id) ' +
+                'JOIN team t ON (t.id = tae.team_id) ' +
+                'WHERE YEAR(date) = ? AND QUARTER(date) = ? ' +
+                'GROUP BY t.id)) c ON (a.teamId = c.teamId) ' +
+                'ORDER BY a.teamId';
+
+            async.each(quarters, function(quarter, callback) {
+                dbConn.query(sql_select_parts, [quarter.year, quarter.quarter], function(err, results) {
+                    if (err) {
+                        return callback(null);
+                    }
+                    if (results.length === 0) {
+                        callback(null);
+                    } else {
+                        var dataOfQuarter = {};
+                        dataOfQuarter.quarter = quarter.year + '년 ' + quarter.quarter + '분기';
+                        dataOfQuarter.parts = [];
+                        dataOfQuarter.teams = [];
+                        for (var i = 0; i < results.length; i++) {
+                            dataOfQuarter.parts.push({
+                                partId: results[i].partId,
+                                partName: results[i].partName
+                            });
+                        }
+                        dbConn.query(sql_select_error_statistics_per_month, [quarter.year, quarter.quarter, quarter.year, quarter.quarter, quarter.year, quarter.quarter, quarter.year, quarter.quarter], function(err, results) {
+                            if (err) {
+                                return callback(err);
+                            }
+                            if (results.length === 0) {
+                                callback(null);
+                            } else {
+                                for (var i = 0; i < results.length; i++ ) {
+                                    dataOfQuarter.teams.push({
+                                        year: quarter.year,
+                                        quarter: quarter.quarter,
+                                        partId: results[i].partId,
+                                        partName: results[i].partName,
+                                        teamId: results[i].teamId,
+                                        teamName: results[i].teamName + ' ' + results[i].teamNo + '조',
+                                        teamLeader: results[i].teamLeader || '',
+                                        equipmentError: results[i].equipmentError || 0,
+                                        programError: results[i].programError || 0,
+                                        terminalError: results[i].terminalError || 0,
+                                        carError: results[i].carError || 0,
+                                        toolsError: results[i].toolsError || 0,
+                                        sum: results[i].sum || 0,
+                                        uploadError: results[i].uploadError || 0,
+                                        compressionNameError: results[i].compressionNameError || 0,
+                                        settingError: results[i].settingError || 0,
+                                        etcError: results[i].etcError || 0,
+                                        humanErrorSum: results[i].humanErrorSum || 0,
+                                        conversionError: results[i].conversionError || 0,
+                                        serverError: results[i].serverError || 0,
+                                        segmentOmissionError: results[i].segmentOmissionError || 0,
+                                        iqaErrorSum: results[i].iqaErrorSum || 0,
+                                        compressionLiftError: results[i].compressionLiftError || 0,
+                                        etc: results[i].etc || 0,
+                                        etcSum: results[i].etcSum || 0,
+                                        totalSum: (results[i].sum || 0) + (results[i].humanErrorSum || 0) + (results[i].iqaErrorSum || 0) + (results[i].etcSum || 0)
+                                    });
+                                }
+                            }
+                            resData.push(dataOfQuarter);
+                            callback();
+                        });
+                    }
                 });
-            }, function(err, result) {
+            }, function(err) {
                 if (err) {
                     return callback(err);
                 }
@@ -1998,7 +2136,7 @@ function getErrorStatisticsPerQuarter(callback) {
     });
 }
 
-//일별 에러 통계의 자세한 에러 사항 보기
+//일별 에러 통계의 자세한 에러 사항 보기(dbConn release함)
 function getDetailErrorStatePerDay(reqData, callback) {
     var sql_detail_error_state =
         'SELECT DATE_FORMAT(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
@@ -2042,7 +2180,7 @@ function getDetailErrorStatePerDay(reqData, callback) {
     });
 }
 
-//주별 에러 통계의 자세한 에러 사항 보기
+//주별 에러 통계의 자세한 에러 사항 보기(dbConn release함)
 function getDetailErrorStatePerWeek(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
@@ -2085,7 +2223,7 @@ function getDetailErrorStatePerWeek(reqData, callback) {
     });
 }
 
-//월별 에러 통계의 자세한 에러 사항 보기
+//월별 에러 통계의 자세한 에러 사항 보기(dbConn release함)
 function getDetailErrorStatePerMonth(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
@@ -2128,7 +2266,7 @@ function getDetailErrorStatePerMonth(reqData, callback) {
     });
 }
 
-//분기별 에러 통계의 자세한 에러 사항 보기
+//분기별 에러 통계의 자세한 에러 사항 보기(dbConn release함)
 function getDetailErrorStatePerQuarter(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
@@ -2171,7 +2309,7 @@ function getDetailErrorStatePerQuarter(reqData, callback) {
     });
 }
 
-//월별 차량 상태
+//월별 차량 상태(dbConn release함)
 function getCarState(callback) {
     //리포트의 년과 월을 가져온다.
     var select_reports_year_and_month =
@@ -2374,7 +2512,7 @@ function getCarState(callback) {
     });
 }
 
-//월별 차량 자세한 정보
+//월별 차량 자세한 정보(dbConn release함)
 function getDetailCarState(reqData, callback) {
     var select_detail_car_state =
         'SELECT a.teamName, b.teamLeader, a.teamMember, a.work_details, a.startTime, a.endTime, a.location1, a.location2, a.target1, a.target2, a.carType, a.carNumber, a.carMileageBefore, a.carMileageAfter, a.carRefuelState, a.refuelingPrice, a.carSignificant ' +
@@ -2392,6 +2530,7 @@ function getDetailCarState(reqData, callback) {
             return callback(err);
         }
         dbConn.query(select_detail_car_state, [reqData.teamName, reqData.date, reqData.teamName, reqData.date], function(err, results) {
+            dbConn.release();
             if (err) {
                 return callback(err);
             }

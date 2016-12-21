@@ -60,7 +60,7 @@ router.post('/', function(req, res, next) {
         });
     })(req, res, next);
 }, function(req, res, next) {
-    if (req.user.teamPosition === 0 || req.user.teamPosition === 1 || req.user.teamPosition === 2) { //분석자, 관리자
+    if (req.user.teamPosition === 0 || req.user.teamPosition === 1 || req.user.teamPosition === 2 || req.user.teamPosition === 5 || req.user.teamPosition === 6 ) { //분석자, 관리자
         res.send({
             result: 1
         });

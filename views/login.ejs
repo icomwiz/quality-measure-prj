@@ -41,8 +41,6 @@
                 data: param,
                 success: function(data) {
                     if(data.result === 2) { //측정자용
-                        //return window.location.href = "http://localhost:3000/reports?action=0";
-                        // 뒤로가기방지 (뒤로가기자체를 삭제해버린다.)
                         return location.replace('http://localhost:3000/reports?action=0');
                     } else if(data.result === 1) { //분석자용, 관리자용
                         //오늘날짜계산함수

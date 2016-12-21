@@ -22,10 +22,15 @@
     <div data-role="content">
         <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
+            <% if (result.teamPosition !== 0) { %>
             <input type="radio" name="radio-choice-1" id="analyst-report" value="7" checked="checked"/>
             <label class="partsmain-radio-labels" id="analyst-report-label" for="analyst-report">내근자 업무 보고</label>
             <input type="radio" name="radio-choice-1" id="owns-team" value="1"/>
             <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">외근팀 관리</label>
+            <% } else { %>
+            <input type="radio" name="radio-choice-1" id="owns-team" value="1" checked="checked"/>
+            <label class="partsmain-radio-labels" id="owns-team-label" for="owns-team">외근팀 관리</label>
+            <% } %>
             <input type="radio" name="radio-choice-1" id="file-upload" value="2"/>
             <label class="partsmain-radio-labels" for="file-upload">계획서 업로드</label>
             <input type="radio" name="radio-choice-1" id="error-state" value="3"/>
@@ -34,9 +39,11 @@
             <label class="partsmain-radio-labels" for="call-state">콜수 현황</label>
             <input type="radio" name="radio-choice-1" id="car-state" value="4"/>
             <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
-            <% if (result.teamPosition === 0) { %>
+            <% if (result.teamPosition === 0 || result.teamPosition === 5) { %>
             <input type="radio" name="radio-choice-1" id="admin-page" value="6"/>
             <label class="partsmain-radio-labels" for="admin-page">품질측정팀 일일업무보고</label>
+            <% } %>
+            <% if (result.teamPosition === 0 || result.teamPosition === 6) { %>
             <input type="radio" name="radio-choice-1" id="indoor-employee-management" value="8"/>
             <label class="partsmain-radio-labels" for="indoor-employee-management">내근자 관리</label>
             <input type="radio" name="radio-choice-1" id="indoor-employee-report" value="9"/>
