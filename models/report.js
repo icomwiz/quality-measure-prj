@@ -1233,7 +1233,7 @@ function updatePlan(plan, callback) {
 //일자별 리포트 디테일 가져오기
 function getReportDetailperDate(reqData, callback) {
     var sql_select_report_basic_information =
-        'SELECT r.id reportId, r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, e.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
+        'SELECT r.id reportId, r.team_name teamName, r.location location, r.team_member teamMember, r.team_position teamPosition, e.name, r.equipment_name equipmentName, r.car_type carType, r.car_number carNumber, r.car_manager carManager, r.car_mileage_before carMileageBefore, r.car_mileage_after carMileageAfter, r.car_refuel_state carRefuelState ' +
         'FROM report r JOIN employee e ON (e.id = r.employee_id) ' +
         'WHERE r.team_id = ? AND r.date = STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type = 1 ' +
         'GROUP BY r.equipment_name';
@@ -1271,13 +1271,13 @@ function getReportDetailperDate(reqData, callback) {
 
     //계획 대비 실적 가져오기
     var sql_select_maesure_per_plan =
-        'SELECT a.equipmentName, a.planCalls, b.measureCalls ' +
-        'FROM(SELECT equipment_name equipmentName, calls planCalls ' +
-        'FROM report ' +
-        'WHERE team_id = ? AND date=STR_TO_DATE(?, \'%Y-%m-%d\') AND type=0) a JOIN (SELECT r.equipment_name equipmentName, sum(rd.calls) measureCalls ' +
-        'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
-        'WHERE r.team_id = ? AND r.date=STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type=1 ' +
-        'GROUP BY r.equipment_name) b ON (a.equipmentName = b.equipmentName)';
+        'SELECT b.equipmentName, a.planCalls, b.measureCalls ' +
+        'FROM(SELECT team_id teamId, calls planCalls ' +
+             'FROM report ' +
+             'WHERE team_id = ? AND date=STR_TO_DATE(?, \'%Y-%m-%d\') AND type = 0) a JOIN (SELECT r.team_id teamId, r.equipment_name equipmentName, sum(rd.calls) measureCalls ' +
+                                                                                           'FROM report r JOIN report_details rd ON (r.id = rd.report_id) ' +
+                                                                                           'WHERE r.team_id = ? AND r.date=STR_TO_DATE(?, \'%Y-%m-%d\') AND r.type=1 ' +
+                                                                                           'GROUP BY r.equipment_name) b ON (a.teamId = b.teamId)';
 
     var sql_select_avg_details =
         'SELECT rd.work_details workDetails, SEC_TO_TIME(avg(TIME_TO_SEC(rd.start_time))) startTime, SEC_TO_TIME(avg(TIME_TO_SEC(rd.end_time))) endTime, rd.location, rd.target1, sum(rd.calls) calls, sum(rd.type) error ' +

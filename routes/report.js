@@ -68,6 +68,7 @@ router.get('/', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log(result);
             res.render('parts-team-report',
                 {
                     teamId: req.query.teamId,
