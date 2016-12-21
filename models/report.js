@@ -1384,8 +1384,8 @@ function getReportDetailperDate(reqData, callback) {
                 for(var i = 0; i < results.length; i++) {
                     resData.performances.push({
                         equipmentName: results[i].equipmentName,
-                        planCalls: results[i].planCalls,
-                        measureCalls: results[i].measureCalls
+                        planCalls: results[i].planCalls || 0,
+                        measureCalls: results[i].measureCalls || 0
                     });
                 }
                 callback(null);
