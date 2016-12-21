@@ -246,7 +246,7 @@
                                                 "<tr>" +
                                                     "<td>" +
                                                         "<a href=\"#deleteReportDialog\" data-rel=\"popup\" data-position-to=\"window\" data-transition=\"pop\" class=\"deleteReportTriger\">삭제</a>" +
-                                                        "<a href=\"#postReportDialog\" data-rel=\"popup\" data-position-to=\"window\" data-transition=\"pop\" class=\"editReport\">수정</a>" +
+                                                        "<a style=\"" + (this.vacation === 1 ? 'display: none;' : '') + "\" href=\"#postReportDialog\" data-rel=\"popup\" data-position-to=\"window\" data-transition=\"pop\" class=\"editReport\">수정</a>" +
                                                         "<input type=\"hidden\" class=\"hiddenReportId\" value=\"" + this.id + "\">" +
                                                     "</td>" +
                                                 "</tr>" +
