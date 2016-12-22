@@ -2597,12 +2597,12 @@ function getCallsPerDay(callback) {
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a LEFT JOIN (SELECT name, team_position teamPosition, team_id teamId ' +
-        'FROM employee ' +
-        'WHERE team_position = 3) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT a.team_id teamId, a.team_member teamMember, a.name, a.equipment_name equipmentName, a.calls planCalls, realCalls ' +
+        'GROUP BY t.id) a JOIN (SELECT e.name, r.team_id teamId ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT a.team_id teamId, a.team_member teamMember, a.name, a.equipment_name equipmentName, a.calls planCalls, realCalls ' +
         'FROM(SELECT e.id employeeId, r.team_id, r.team_member, e.id, e.name, r.equipment_name, r.calls ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a LEFT JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
+        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'JOIN report_details rd ON(r.id = rd.report_id) ' +
         'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.type = 1 ' +
@@ -2647,7 +2647,7 @@ function getCallsPerDay(callback) {
                 return callback(null, 0);
             } else {
                 async.each(dates, function(date, callback) {
-                    dbConn.query(select_calls_info, [date, date], function(err, results) {
+                    dbConn.query(select_calls_info, [date, date, date], function(err, results) {
                         if (err) {
                             callback(err);
                         }

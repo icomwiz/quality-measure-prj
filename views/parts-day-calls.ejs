@@ -27,71 +27,74 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 </head>
 <body>
+<div class="container">
     <div class="page-header">
         <h1>팀별 콜수 현황 <small>일별 현황</small></h1>
     </div>
     <% for (var i = 0; i < result.length; i++ ) { %>
-    <div class="panel panel-default">
-        <!-- Default panel contents -->
-        <div class="panel-heading"><%=result[i].date%></div>
-        <!-- Table -->
-        <table class="table" id="callsTbl<%=i%>">
-            <thead>
-                <tr class="date">
-                    <td colspan="<%=result[i].teams.length%>"><%=result[i].date%></td>
-                </tr>
-                <tr>
-                    <% for (var j = 0; j < result[i].teams.length; j++) {%>
-                    <td><%=result[i].teams[j].teamName%></td>
-                    <% } %>
-                </tr>
-                <tr>
-                    <% for (var j = 0; j < result[i].teams.length; j++) {%>
-                    <td>
-                        조장 <small><%=result[i].teams[j].teamLeader%></small><br>
-                        조원 <small><%=result[i].teams[j].teamMember%></small>
-                    </td>
-                    <% } %>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <% for (var j = 0; j < result[i].teams.length; j++) {%>
-                    <td>
-                        <div id="<%=i%>-<%=j%>"></div>
-                    </td>
-                    <% } %>
-                </tr>
-                <tr>
-                    <% for (var j = 0; j < result[i].teams.length; j++) {%>
-                    <td>
-                        <%  var planCalls = 0;
-                            var realCalls = 0;
-                            var totalResult = 0;
-                            for (var k = 0; k < result[i].teams[j].measureInfo.length;k ++ ) {
-                                planCalls += result[i].teams[j].measureInfo[k].planCalls;
-                                realCalls += result[i].teams[j].measureInfo[k].realCalls;
-                            }
-                            if (planCalls !== 0) {
-                                totalResult = (realCalls / planCalls * 100).toFixed(2);
-                            }
-                        %>
-                        전체 달성: <small><%=totalResult%>%</small><br>(<%=realCalls%>calls/<%=planCalls%>calls)<br><br>
-                        <%  for (var k = 0; k < result[i].teams[j].measureInfo.length;k ++ ) {
-                                if ( result[i].teams[j].measureInfo[k].planCalls !== null) { %>
-                        <%=result[i].teams[j].measureInfo[k].equipmentName%>(<%=result[i].teams[j].measureInfo[k].measurer%>):
-                        <small><%=(result[i].teams[j].measureInfo[k].realCalls/result[i].teams[j].measureInfo[k].planCalls).toFixed(2) * 100%>%</small><br>
-                        (<%=result[i].teams[j].measureInfo[k].realCalls || 0%>calls/<%=result[i].teams[j].measureInfo[k].planCalls%>calls)<br><br>
-                        <%      } %>
-                        <%  } %>
-                    </td>
-                    <% } %>
-                </tr>
-            </tbody>
-            <button type="button" class="btn btn-success" id="<%=i%>" style="float: right;">엑셀 다운로드</button>
-        </table>
-    </div>
+    <table class="table table-bordered" id="callsTbl<%=i%>">
+        <thead>
+        <!--날짜-->
+        <tr class="date">
+            <td colspan="<%=result[i].teams.length%>"><%=result[i].date%></td>
+        </tr>
+        <!--팀 이름-->
+        <tr>
+            <% for (var j = 0; j < result[i].teams.length; j++) {%>
+            <td><%=result[i].teams[j].teamName%></td>
+            <% } %>
+        </tr>
+        <!--조장 조원-->
+        <tr>
+            <% for (var j = 0; j < result[i].teams.length; j++) {%>
+            <td>
+                조장 <small><%=result[i].teams[j].teamLeader%></small><br>
+                조원 <small><%=result[i].teams[j].teamMember%></small>
+            </td>
+            <% } %>
+        </tr>
+        </thead>
+        <tbody>
+        <!--그래프-->
+        <tr>
+            <% for (var j = 0; j < result[i].teams.length; j++) {%>
+            <td>
+                <div id="<%=i%>-<%=j%>"></div>
+            </td>
+            <% } %>
+        </tr>
+        <!--요약-->
+        <tr>
+            <% for (var j = 0; j < result[i].teams.length; j++) {%>
+            <td>
+                <%  var planCalls = 0;
+                    var realCalls = 0;
+                    var totalResult = 0;
+                    for (var k = 0; k < result[i].teams[j].measureInfo.length;k ++ ) {
+                        planCalls += result[i].teams[j].measureInfo[k].planCalls;
+                        realCalls += result[i].teams[j].measureInfo[k].realCalls;
+                    }
+                    if (planCalls !== 0) {
+                        totalResult = (realCalls / planCalls * 100).toFixed(2);
+                    }
+                %>
+                전체 달성: <small><%=totalResult%>%</small><br>(<%=realCalls%>calls/<%=planCalls%>calls)<br><br>
+                <%  for (var k = 0; k < result[i].teams[j].measureInfo.length;k ++ ) {
+                if ( result[i].teams[j].measureInfo[k].planCalls !== null) { %>
+                <%=result[i].teams[j].measureInfo[k].equipmentName%>(<%=result[i].teams[j].measureInfo[k].measurer%>):
+                <small><%=(result[i].teams[j].measureInfo[k].realCalls/result[i].teams[j].measureInfo[k].planCalls).toFixed(2) * 100%>%</small><br>
+                (<%=result[i].teams[j].measureInfo[k].realCalls || 0%>calls/<%=result[i].teams[j].measureInfo[k].planCalls%>calls)<br><br>
+                <%      } %>
+                <%  } %>
+            </td>
+            <% } %>
+        </tr>
+        </tbody>
+    </table>
+    <button type="button" class="excelDownBtn" id="<%=i%>" style="float: right;">엑셀 다운로드</button>
+    <BR><BR><BR><BR><BR><BR>
     <% } %>
+</div>
 </body>
 <script>
     $(function() {
@@ -117,7 +120,7 @@
             }
         });
 
-        $('.btn').click(function() {
+        $('.excelDownBtn').click(function() {
             var tableId = 'callsTbl' + $(this).attr('id');
             console.log(tableId);
             $('#' + tableId).excelexportjs({
