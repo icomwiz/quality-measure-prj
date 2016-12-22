@@ -2559,8 +2559,6 @@ function getDetailCarState(reqData, callback) {
             resData.code = 1;
             resData.date = reqData.date;
 
-            console.log(results[0]);
-
             resData.teamName = results[0].teamName || '미작성';
             resData.teamLeader = results[0].teamLeader || '미작성';
             resData.teamMember = results[0].teamMember || '미작성';
