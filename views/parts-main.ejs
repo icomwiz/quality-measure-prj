@@ -20,7 +20,7 @@
         <h4><%= result.partName %></h4>
     </div>
     <div data-role="content">
-        <img id="home" src="http://localhost:3000/imgs/home.png"/><p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
+        <p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
             <% if (result.teamPosition !== 0) { %>
             <input type="radio" name="radio-choice-1" id="analyst-report" value="7" checked="checked"/>
