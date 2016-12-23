@@ -2708,7 +2708,7 @@ function getCallsPerMonth(callback) {
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a JOIN (SELECT GROUP_CONCAT(e.name) name, r.team_id teamId ' +
+        'GROUP BY t.id) a JOIN (SELECT e.name name, r.team_id teamId ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND r.team_position = \'조장\' ' +
         'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT b.team_id teamId, b.team_member teamMember, b.name, b.equipment_name equipmentName, a.calls planCalls, realCalls ' +
