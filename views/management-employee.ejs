@@ -76,15 +76,17 @@
         <td><%= managementList[i].email%></td>
         <td><%= managementList[i].phone_number%></td>
         <td><% if (managementList[i].team_id == 2) { %>
-            정기음성파트
+            QOE파트
             <% } else if (managementList[i].team_id == 3) { %>
             정기데이터파트
             <% } else if (managementList[i].team_id == 4) { %>
-            QOE파트
+            정기음성파트
             <% } else if (managementList[i].team_id == 22) { %>
             외근care파트
             <% } else if (managementList[i].team_id == 23) { %>
             총괄파트
+            <% } else if (managementList[i].team_id == 5) { %>
+            해당사항없음
             <% } %>
         </td>
         <td>
@@ -148,6 +150,7 @@
                         <option value="4">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
+                        <option value="5">해당사항없음</option>
                     </select>
                 </td>
             </tr>
@@ -233,6 +236,7 @@
                         <option value="4">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
+                        <option value="5">해당사항없음</option>
                     </select>
                 </td>
             </tr>
@@ -327,7 +331,7 @@
                     data: param,
                     success: function (data) {
                         if (data.result === 'ok') {
-                            return window.location.href = "http://localhost:3000";
+                            return window.location.href = "http://localhost:3000/employees/management";
                         }
                         alert('등록실패');
                     },
@@ -339,7 +343,6 @@
 
         });
 
-        //TODO : 사용자수정
         $(".UpdateAllEmployee").click(function() {
             var row = $(this).parent().parent().get(0);
 
@@ -372,8 +375,8 @@
                 $("#updatePart").val(22);
             } else if (partBlank === "총괄파트") {
                 $("#updatePart").val(23);
-            } else {
-                $("#updatePart").val("");
+            } else if (partBlank === "해당사항없음"){
+                $("#updatePart").val(5);
             }
 
 
@@ -423,6 +426,7 @@
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
+                        alert('수정성공');
                         return window.location.href = "http://localhost:3000/employees/management";
                     }
                     alert('수정실패');
@@ -433,7 +437,6 @@
             });
         });
 
-        //TODO : 패스워드초기화 아직미완
         $(".UpdateEmployee").click(function() {
             var row = $(this).parent().parent().get(0);
             var td = row.cells[0];
@@ -480,6 +483,7 @@
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
+                        alert('삭제완료');
                         return window.location.href = "http://localhost:3000/employees/management";
                     }
                     alert('삭제실패');

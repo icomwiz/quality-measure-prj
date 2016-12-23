@@ -401,6 +401,7 @@ function managementPassword(id, callback) {
     })
 }
 function managementUpdate(info, callback) {
+    console.log(info);
     var update_query = "UPDATE employee SET " +
     "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
     "team_id = ?, team_position = ?, department_id = ?, department_position = ? " +

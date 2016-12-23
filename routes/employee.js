@@ -120,8 +120,6 @@ router.put('/management', isAuthenticatedAdmin, function(req, res, next) {
         });
     } else if(req.query.action === 'info') {    //회원정보수정
         var info = req.body;
-        console.log(info);
-        info.updatePart = null;
         Admin.managementUpdate(info, function(err, result) {
             res.send({
                 result : 'ok'

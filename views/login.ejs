@@ -29,6 +29,13 @@
 </body>
 <script>
     $(function() {
+        $("#password").keypress(function(event) {
+            if (event.which == 13) {
+                $("#btnLogin").click();
+                return false;
+            }
+        });
+
         $("#btnLogin").click(function() {
             var param = {
                 email: $("#email").val(),
