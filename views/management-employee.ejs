@@ -150,7 +150,7 @@
                         <option value="2">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
-                        <option value="5">해당사항없음</option>
+                        <option value="NULL">해당사항없음</option>
                     </select>
                 </td>
             </tr>
@@ -236,7 +236,7 @@
                         <option value="2">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
-                        <option value="5">해당사항없음</option>
+                        <option value="NULL">해당사항없음</option>
                     </select>
                 </td>
             </tr>
@@ -365,6 +365,7 @@
             $("#updateName").val($(EmployeeName).html()); //이름
             $("#updateEmail").val($(EmployeeEmail).html()); //이메일
             $("#updatePhone").val($(EmployeePhone).html()); //전화번호
+
             if (partBlank === "QOE파트") {        //파트
                 $("#updatePart").val(4);
             } else if (partBlank === "정기데이터파트") {
@@ -375,8 +376,8 @@
                 $("#updatePart").val(22);
             } else if (partBlank === "총괄파트") {
                 $("#updatePart").val(23);
-            } else if (partBlank === "해당사항없음"){
-                $("#updatePart").val(5);
+            } else if (partBlank == ""){
+                $("#updatePart").val("NULL");
             }
 
 

@@ -350,6 +350,7 @@ function managementView(callback) {
     })
 }
 function managementInsert(info, callback) {
+    console.log(info);
     if(info.group == 1 && info.part == 22) {
         info.group = 5;
     } else if (info.group == 1 && info.part == 23) {
@@ -359,12 +360,12 @@ function managementInsert(info, callback) {
     "employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) " +
     "VALUES(?, HEX(AES_ENCRYPT(?, 'wiz')), "+
     "HEX(AES_ENCRYPT(?, 'wiz')), "+
-    "HEX(AES_ENCRYPT(SHA2('6688', 512), 'wiz')), ?, ?, ?, ?, null)";
+    "HEX(AES_ENCRYPT(SHA2('6688', 512), 'wiz')), IF(? = 'NULL', NULL , ?), ?, ?, ?, null)";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_insert, [info.name, info.email, info.phone, info.part, info.group, info.department, info.position],function(err, result) {
+        dbConn.query(sql_insert, [info.name, info.email, info.phone, info.part, info.part, info.group, info.department, info.position],function(err, result) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -411,15 +412,16 @@ function managementUpdate(info, callback) {
     } else if (info.updatePart == 22 && info.updateGroup == 1) {
         info.updateGroup = 5;
     }
+    //IF(? = 'NULL', NULL , ?)
     var update_query = "UPDATE employee SET " +
     "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
-    "team_id = ?, team_position = ?, department_id = ?, department_position = ? " +
+    "team_id = IF(? = 'NULL', NULL , ?), team_position = ?, department_id = ?, department_position = ? " +
     "WHERE id =  ?";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(update_query, [info.updateName, info.updateEmail, info.updatePhone, info.updatePart,
+        dbConn.query(update_query, [info.updateName, info.updateEmail, info.updatePhone, info.updatePart, info.updatePart,
             info.updateGroup, info.updateDepartment, info.updatePosition, info.UserId], function(err, result) {
             dbConn.release();
             if (err) {
