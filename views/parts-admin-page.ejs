@@ -593,7 +593,7 @@
         var theme_num = $("#theme_num").val() || 12;
         $(".D_date").val(query.date);
         $("#CencleBtn").click(function () {
-            return window.location.href = "http://localhost:3000/employees/partsmain";
+            return window.location.href = "http://localhost:3000/employees/admin?date="+query.date;
         });
         $("#SaveBtn").click(function() {
             var param = {};
@@ -664,7 +664,7 @@
                 data: param,
                 success: function (data) {
                     if (data.result === 'ok') {
-                        return window.location.href = "http://localhost:3000/employees/partsmain";
+                        return window.location.href = "http://localhost:3000/employees/admin?date="+query.date;
                     }
                     alert('등록실패');
                 },

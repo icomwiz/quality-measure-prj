@@ -334,7 +334,8 @@ function managementView(callback) {
                     "e.team_id, e.team_position, e.department_id, e.department_position "+
                     "FROM employee e "+
                     "LEFT JOIN team t ON (t.id = e.team_id) "+
-                    "WHERE (e.team_position = 0 OR e.team_position = 1 OR e.team_position = 2 OR e.team_position = 5 OR e.team_position = 6) AND e.e_type = 1 "+
+                    "WHERE (e.team_position = 0 OR e.team_position = 1 OR e.team_position = 2 OR e.team_position = 5 OR e.team_position = 6) " +
+                    "AND e.e_type = 1 AND CAST(AES_DECRYPT(UNHEX(e.email), 'wiz') AS CHAR) != 'admin'" +
                     "ORDER BY department_id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -481,8 +482,8 @@ function employeeJournal(date, callback) {
                 "WHEN e.team_id = 22 THEN '외근care파트' "+
                 "WHEN e.team_id = 23 THEN '총괄파트' END 'part', "+ "e.name "+
                 "FROM employee e "+
-                "JOIN team t ON (t.id = e.team_id) "+
-                "WHERE t.team_no = 0 AND e.e_type = 1 ) tmp ON (ar.employee_id = tmp.id) "+
+                "LEFT JOIN team t ON (t.id = e.team_id) "+
+                "WHERE e.e_type = 1 ) tmp ON (ar.employee_id = tmp.id) "+
                 "WHERE ar.date = ? AND name = ? " +
                 "ORDER BY startTime";
             async.each(nameList, function(item, done) {

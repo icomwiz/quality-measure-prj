@@ -243,8 +243,8 @@
     <% if(result) { %>
     <% for(var i = 0; i < result.length ; i++) {%>
     <tr>
-        <td style="display: none" ><div class="user_id<%= i%>"><%= result[i].id%></div></td>
-        <td style="display: none" ><div class="report_id<%= i%>"><%= result[i].report_id%></div></td>
+        <!--<td style="display: none" ><div style="display: none" class="user_id<%= i%>"><%= result[i].id%></div></td>-->
+        <!--<td style="display: none" ><div style="display: none" class="report_id<%= i%>"><%= result[i].report_id%></div></td>-->
         <td><%= result[i].team_name%></td>
         <td><%= result[i].name%></td>
         <td><%= result[i].start_time%></td>
@@ -254,10 +254,10 @@
     <% } %>
     <% } %>
 </table>
-<div style="padding: 1em; text-align: right">
-    <button id="SaveBtn">작성</button>
+<br><button type="button" class="excelDownBtn" id="<%=i%>" style="float: right;">엑셀 다운로드</button>
+<button id="SaveBtn" style="float: right; margin-left: 3px; margin-right: 3px;">작성</button>
+<button id="backBtn" style="float: right;">뒤로</button>
     <!--<button class="excelDownBtn">다운로드</button>-->
-</div>
 
 </body>
 <script>
@@ -312,17 +312,18 @@
         }
 
 
-        $('.excelDownBtn').click(function() {
-/*            $('#table1').excelexportjs({
-                containerid: "table1",
-                datatype: 'table'
-            });*/
 
+        $('.excelDownBtn').click(function() {
             $('#BusinessStatus').excelexportjs({
                 containerid: "BusinessStatus",
                 datatype: 'table'
             });
         });
+
+        $("#backBtn").click(function() {
+            return  window.location.href = "http://localhost:3000/employees/partsmain?date="+getYesterday();
+        });
+
     });
 
     function Change_date(date_val) {
@@ -333,6 +334,22 @@
         const params = {};
         window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) { params[key] = value; });
         return params;
+    }
+
+    function getYesterday(){
+        var today = new Date();
+        var yesterday = new Date(today.valueOf() - (24*60*60*1000));
+        var year = yesterday.getFullYear();
+        var month = yesterday.getMonth() + 1;
+        var day = yesterday.getDate();
+
+        if(month < 10) {
+            month = "0"+month;
+        }
+        if(day < 10) {
+            day = "0"+day
+        }
+        return year + '-' +month+ '-' +day;
     }
 
 
