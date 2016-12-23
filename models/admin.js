@@ -335,7 +335,7 @@ function managementView(callback) {
                     "FROM employee e "+
                     "LEFT JOIN team t ON (t.id = e.team_id) "+
                     "WHERE (t.team_no = 0 OR e.team_position = 0) AND e.e_type = 1 "+
-                    "ORDER BY id ASC ";
+                    "ORDER BY department_id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -350,6 +350,11 @@ function managementView(callback) {
     })
 }
 function managementInsert(info, callback) {
+    if(info.group == 1 && info.part == 22) {
+        info.group = 5;
+    } else if (info.group == 1 && info.part == 23) {
+        info.group = 6;
+    }
     var sql_insert = "INSERT INTO " +
     "employee(name, email, phone_number, password, team_id, team_position, department_id, department_position, equipment_name) " +
     "VALUES(?, HEX(AES_ENCRYPT(?, 'wiz')), "+
@@ -401,7 +406,11 @@ function managementPassword(id, callback) {
     })
 }
 function managementUpdate(info, callback) {
-    console.log(info);
+    if (info.updatePart == 23 && info.updateGroup == 1) {
+        info.updateGroup = 6;
+    } else if (info.updatePart == 22 && info.updateGroup == 1) {
+        info.updateGroup = 5;
+    }
     var update_query = "UPDATE employee SET " +
     "name = ? , email = HEX(AES_ENCRYPT(?, 'wiz')), phone_number = HEX(AES_ENCRYPT(?, 'wiz')), " +
     "team_id = ?, team_position = ?, department_id = ?, department_position = ? " +

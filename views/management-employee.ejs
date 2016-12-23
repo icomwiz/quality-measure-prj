@@ -76,11 +76,11 @@
         <td><%= managementList[i].email%></td>
         <td><%= managementList[i].phone_number%></td>
         <td><% if (managementList[i].team_id == 2) { %>
-            QOE파트
+            정기음성파트
             <% } else if (managementList[i].team_id == 3) { %>
             정기데이터파트
             <% } else if (managementList[i].team_id == 4) { %>
-            정기음성파트
+            QOE파트
             <% } else if (managementList[i].team_id == 22) { %>
             외근care파트
             <% } else if (managementList[i].team_id == 23) { %>
@@ -145,9 +145,9 @@
                 <td style="padding-bottom: 10px;">파트 : </td>
                 <td style="text-align: left; padding-bottom: 10px;">
                     <select id="part" style="width: 70%">
-                        <option value="2">QOE파트</option>
+                        <option value="4">QOE파트</option>
                         <option value="3">정기데이터파트</option>
-                        <option value="4">정기음성파트</option>
+                        <option value="2">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
                         <option value="5">해당사항없음</option>
@@ -231,9 +231,9 @@
                 <td style="padding-bottom: 10px;">파트 : </td>
                 <td style="text-align: left; padding-bottom: 10px;">
                     <select id="updatePart" style="width: 70%">
-                        <option value="2">QOE파트</option>
+                        <option value="4">QOE파트</option>
                         <option value="3">정기데이터파트</option>
-                        <option value="4">정기음성파트</option>
+                        <option value="2">정기음성파트</option>
                         <option value="22">외근care파트</option>
                         <option value="23">총괄파트</option>
                         <option value="5">해당사항없음</option>
@@ -366,11 +366,11 @@
             $("#updateEmail").val($(EmployeeEmail).html()); //이메일
             $("#updatePhone").val($(EmployeePhone).html()); //전화번호
             if (partBlank === "QOE파트") {        //파트
-                $("#updatePart").val(2);
+                $("#updatePart").val(4);
             } else if (partBlank === "정기데이터파트") {
                 $("#updatePart").val(3);
             } else if (partBlank === "정기음성파트") {
-                $("#updatePart").val(4);
+                $("#updatePart").val(2);
             } else if (partBlank === "외근care파트") {
                 $("#updatePart").val(22);
             } else if (partBlank === "총괄파트") {
