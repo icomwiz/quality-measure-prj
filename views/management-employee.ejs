@@ -61,20 +61,31 @@
     <tr>
         <th style="display: none">id</th>
         <th>이름</th>
+        <th>직급</th>
+        <th>부서</th>
+        <th>파트</th>
         <th>이메일</th>
         <th>핸드폰번호</th>
-        <th>파트</th>
-        <th>조장 | 조원</th>
-        <th>부서</th>
-        <th>직위</th>
+        <th>담당업무</th>
         <th></th>
     </tr>
     <% for(var i = 0 ; i < managementList.length; i ++) { %>
     <tr>
         <td class="item" style="display: none"><%= managementList[i].id%></td>
         <td><%= managementList[i].name%></td>
-        <td><%= managementList[i].email%></td>
-        <td><%= managementList[i].phone_number%></td>
+        <td><%= managementList[i].department_position%></td>
+        <td><% if (managementList[i].department_id == 3) { %>
+            품질분석팀
+            <% } else if(managementList[i].department_id == 1) { %>
+            대표이사
+            <% } else if(managementList[i].department_id == 2) { %>
+            사업총괄
+            <% } else if(managementList[i].department_id == 4) { %>
+            품질측정팀
+            <% } else if(managementList[i].department_id == 5) { %>
+            CEM팀
+            <% } %>
+        </td>
         <td><% if (managementList[i].team_id == 2) { %>
             정기음성파트
             <% } else if (managementList[i].team_id == 3) { %>
@@ -89,6 +100,8 @@
             해당사항없음
             <% } %>
         </td>
+        <td><%= managementList[i].email%></td>
+        <td><%= managementList[i].phone_number%></td>
         <td>
             <% if(managementList[i].team_position == 1 || managementList[i].team_position == 5 || managementList[i].team_position == 6) { %>
             조장(PM)
@@ -98,19 +111,6 @@
             관리자
             <% } %>
         </td>
-        <td><% if (managementList[i].department_id == 3) { %>
-            품질분석팀
-            <% } else if(managementList[i].department_id == 1) { %>
-            대표이사
-            <% } else if(managementList[i].department_id == 2) { %>
-            사업총괄
-            <% } else if(managementList[i].department_id == 4) { %>
-            품질측정팀
-            <% } else if(managementList[i].department_id == 5) { %>
-            CEM팀
-            <% } %>
-        </td>
-        <td><%= managementList[i].department_position%></td>
         <td style="width: 18%"><span class="UpdateEmployee">Password초기화</span> | <span class="UpdateAllEmployee">정보수정</span> | <span class="DeleteEmployee">삭제</span></td>
     </tr>
     <% } %>
