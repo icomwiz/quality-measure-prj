@@ -105,7 +105,7 @@
     <% if(briefing.routine[0]) { %>
     <tr class="item1">
         <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition1" placeholder="QOE측정" value="<%= briefing.routine[0].composition%>" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement1" placeholder="0" value="<%= briefing.routine[0].group_placement%>" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.routine[0].equipment%>"  style=" background-color: #FFFFC9"></td>
@@ -119,7 +119,7 @@
     <% } else { %>
         <tr class="item1">
             <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
-            <td class="base" >정기</td>
+            <td class="base" >대표</td>
             <td><input type="text" id="composition1" placeholder="QOE측정" value="" style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement1" placeholder="0" value="" style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value=""  style=" background-color: #FFFFC9"></td>
@@ -133,7 +133,7 @@
     <% for (var i = 1 ;i <  briefing.routine.length; i ++) { %>
     <% routineCount++%>
         <tr class="item<%= i+1%>">
-            <td class="base" >정기 <%= routineCount%></td>
+            <td class="base" >대표 <%= routineCount%></td>
             <td><input type="text" id="composition<%= i+1%>" value="<%= briefing.routine[i].composition%>" style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement<%= i+1%>" value="<%= briefing.routine[i].group_placement%>"style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment<%= i+1%>" value="<%= briefing.routine[i].equipment%>" style=" background-color: #FFFFC9"></td>
@@ -147,7 +147,7 @@
     <% routineCount++ ;%>
     <% for (var i = routineCount ;i <  6 ; i ++) { %>
     <tr class="item<%= i%>" style="display: none;">
-        <td class="base">정기</td>
+        <td class="base">대표</td>
         <td><input type="text" id="composition<%= i%>" value="" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement<%= i%>" value="" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment<%= i%>" value="" style=" background-color: #FFFFC9"></td>
@@ -165,7 +165,7 @@
             <% k1Count++%>
             <% if (i == 0) { %>
             <tr class="item<%= i+6%>">
-                <td class="base" >K1</td>
+                <td class="base" >인지</td>
                 <td><input type="text" id="composition<%= i+6%>" value="<%= briefing.k1[i].composition%>" style=" background-color: #FFFFC9;"></td>
                 <td><input type="number" id="group_placement<%= i+6%>" value="<%= briefing.k1[i].group_placement%>"style=" background-color: #FFFFC9"></td>
                 <td><input type="text" id="equipment<%= i+6%>" value="<%= briefing.k1[i].equipment%>" style=" background-color: #FFFFC9"></td>
@@ -178,7 +178,7 @@
             </tr>
             <% } else { %>
             <tr class="item<%= i+6%>">
-                <td class="base" >K1</td>
+                <td class="base" >인지</td>
                 <td><input type="text" id="composition<%= i+6%>" value="<%= briefing.k1[i].composition%>" style=" background-color: #FFFFC9;"></td>
                 <td><input type="number" id="group_placement<%= i+6%>" value="<%= briefing.k1[i].group_placement%>"style=" background-color: #FFFFC9"></td>
                 <td><input type="text" id="equipment<%= i+6%>" value="<%= briefing.k1[i].equipment%>" style=" background-color: #FFFFC9"></td>
@@ -193,7 +193,7 @@
     <% } else { %>
         <% var k1Count = 6%>
         <tr class="item<%= 6%>">
-            <td class="base" >K1</td>
+            <td class="base" >인지</td>
             <td><input type="text" id="composition6" value="" style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement6" value=""style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment6" value="" style=" background-color: #FFFFC9"></td>
@@ -206,7 +206,7 @@
     <% } %>
     <% for (var i = k1Count ;i <  11 ; i ++) { %>
         <tr class="item<%= i%>" style="display: none;" >
-            <td class="base">K1</td>
+            <td class="base">인지</td>
             <td><input type="text" id="composition<%= i%>" value="" style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement<%= i%>" value="" style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment<%= i%>" value="" style=" background-color: #FFFFC9"></td>
@@ -331,7 +331,7 @@
     <!-- 정 기 -->
     <tr class="item1">
         <td rowspan="3" class="base" id="measurePersonTeam">품질측정팀</td>
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition1" placeholder="QOE측정" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement1" placeholder="0" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" style=" background-color: #FFFFC9"></td>
@@ -344,7 +344,7 @@
         </td>
     </tr>
     <tr class="item2" style="display: none;">
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition2" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement2" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment2" style=" background-color: #FFFFC9"></td>
@@ -357,7 +357,7 @@
         </td>
     </tr>
     <tr class="item3" style="display: none">
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition3" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement3" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment3" style=" background-color: #FFFFC9"></td>
@@ -370,7 +370,7 @@
         </td>
     </tr>
     <tr class="item4" style="display: none">
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition4"  style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement4" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment4" style=" background-color: #FFFFC9"></td>
@@ -383,7 +383,7 @@
         </td>
     </tr>
     <tr class="item5" style="display: none">
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition5" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement5" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment5" style=" background-color: #FFFFC9"></td>
@@ -399,7 +399,7 @@
 
     <!-- k1 -->
     <tr class="item6">
-        <td class="base">K1</td>
+        <td class="base">인지</td>
         <td><input type="text" id="composition6" placeholder="자율측정" style=" background-color: #FFFFC9"></td>
         <td><input type="number" id="group_placement6" placeholder="0" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment6" placeholder="OPTis-Solo, N_PM10" style=" background-color: #FFFFC9"></td>
@@ -412,7 +412,7 @@
         </td>
     </tr>
     <tr class="item7" style="display: none">
-        <td class="base">K1</td>
+        <td class="base">인지</td>
         <td><input type="text" id="composition7" style=" background-color: #FFFFC9"></td>
         <td><input type="number" id="group_placement7" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment7" style=" background-color: #FFFFC9"></td>
@@ -425,7 +425,7 @@
         </td>
     </tr>
     <tr class="item8" style="display: none">
-        <td class="base">K1</td>
+        <td class="base">인지</td>
         <td><input type="text" id="composition8" style=" background-color: #FFFFC9"></td>
         <td><input type="number" id="group_placement8" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment8" style="background-color: #FFFFC9"></td>
@@ -438,7 +438,7 @@
         </td>
     </tr>
     <tr class="item9" style="display: none">
-        <td class="base">K1</td>
+        <td class="base">인지</td>
         <td><input type="text" id="composition9" style=" background-color: #FFFFC9"></td>
         <td><input type="number" id="group_placement9" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment9" style="background-color: #FFFFC9"></td>
@@ -451,7 +451,7 @@
         </td>
     </tr>
     <tr class="item10" style="display: none">
-        <td class="base">K1</td>
+        <td class="base">인지</td>
         <td><input type="text" id="composition10" style=" background-color: #FFFFC9"></td>
         <td><input type="number" id="group_placement10" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment10" style="background-color: #FFFFC9"></td>

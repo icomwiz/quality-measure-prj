@@ -343,7 +343,7 @@
 
         });
 
-        $(".UpdateAllEmployee").click(function() {
+        /*$(".UpdateAllEmployee").click(function() {
             var row = $(this).parent().parent().get(0);
 
             //저장된정보 가지고오기위한 변수 초기화 || 초기값설정
@@ -358,6 +358,76 @@
             var EmployeeTeam = row.cells[6];    //부서
             var teamBlank= $(EmployeeTeam).html().replace( /(\s*)/g, "");    // 부서 공백제거
             var EmployeePosition = row.cells[7];    //직위
+
+
+            //정보 뿌려주기
+            $("#UserId").val($(EmployeeId).html()); //아이디값
+            $("#updateName").val($(EmployeeName).html()); //이름
+            $("#updateEmail").val($(EmployeeEmail).html()); //이메일
+            $("#updatePhone").val($(EmployeePhone).html()); //전화번호
+
+            if (partBlank === "QOE파트") {        //파트
+                $("#updatePart").val(4);
+            } else if (partBlank === "정기데이터파트") {
+                $("#updatePart").val(3);
+            } else if (partBlank === "정기음성파트") {
+                $("#updatePart").val(2);
+            } else if (partBlank === "외근care파트") {
+                $("#updatePart").val(22);
+            } else if (partBlank === "총괄파트") {
+                $("#updatePart").val(23);
+            } else if (partBlank == ""){
+                $("#updatePart").val("NULL");
+            }
+
+
+            if (departmentBlank === "조장(PM)") {     //조장||조원
+                $("#updateGroup").val(1);
+            } else if (departmentBlank === "조원") {
+                $("#updateGroup").val(2);
+            } else {
+                $("#updateGroup").val("0");
+            }
+
+//            $("#updateDepartment").val($(EmployeeTeam).html());
+            if (teamBlank === "대표이사") {    // 부서
+                $("#updateDepartment").val(1);
+            } else if (teamBlank === "사업총괄") {
+                $("#updateDepartment").val(2);
+            } else if (teamBlank === "품질분석팀") {
+                $("#updateDepartment").val(3);
+            } else if (teamBlank === "품질측정팀") {
+                $("#updateDepartment").val(4);
+            } else if (teamBlank === "CEM팀") {
+                $("#updateDepartment").val(5);
+            }
+
+            $("#updatePosition").val($(EmployeePosition).html());
+
+
+            //UpdatePopup창 오픈
+            $('#UpdatePopup').bPopup();
+        });*/
+
+        $(".UpdateAllEmployee").click(function() {
+            var row = $(this).parent().parent().get(0);
+
+            //저장된정보 가지고오기위한 변수 초기화 || 초기값설정
+            var EmployeeId = row.cells[0];      //id
+            var EmployeeName = row.cells[1];    //name
+            var EmployeePosition = row.cells[2];    //직위
+            var EmployeeTeam = row.cells[3];    //부서
+            var EmployeePart = row.cells[4];   //파트
+            var partBlank= $(EmployeePart).html().replace( /(\s*)/g, "");    //파트공백제거
+
+            var EmployeeEmail = row.cells[5];   //email
+            var EmployeePhone = row.cells[6];   //Phone
+
+            var EmployeeDepartment = row.cells[7];  //조장||조원
+            var departmentBlank= $(EmployeeDepartment).html().replace( /(\s*)/g, "");    // 조장||조원 공백제거
+
+            var teamBlank= $(EmployeeTeam).html().replace( /(\s*)/g, "");    // 부서 공백제거
+
 
 
             //정보 뿌려주기

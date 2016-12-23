@@ -96,7 +96,7 @@
     <% if(briefing.routine[0]) { %>
         <tr class="item1">
             <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
-            <td class="base" >정기</td>
+            <td class="base" >대표</td>
             <td><input type="text" id="composition" placeholder="QOE측정" value="<%= briefing.routine[0].composition%>" readonly="readonly" style=" background-color: #FFFFC9;"></td>
             <td><input type="number" id="group_placement1" placeholder="0" value="<%= briefing.routine[0].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.routine[0].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
@@ -110,7 +110,7 @@
 
         <% for (var i = 1 ;i <  briefing.routine.length; i ++) { %>
             <tr class="item<%= i+1%>">
-                <td class="base" >정기</td>
+                <td class="base" >대표</td>
                 <td><input type="text" id="composition<%= i+1%>" value="<%= briefing.routine[i].composition%>" readonly="readonly" style=" background-color: #FFFFC9;"></td>
                 <td><input type="number" id="group_placement<%= i+1%>" value="<%= briefing.routine[i].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
                 <td><input type="text" id="equipment<%= i+1%>" value="<%= briefing.routine[i].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
@@ -126,7 +126,7 @@
     <% } else { %>
     <tr class="item1">
         <td rowspan="<%= rowspanCount%>" class="base" id="measurePersonTeam">품질측정팀</td>
-        <td class="base" >정기</td>
+        <td class="base" >대표</td>
         <td><input type="text" id="composition1" placeholder="QOE측정" value="미작성" readonly="readonly" style=" background-color: #FFFFC9;"></td>
         <td><input type="number" id="group_placement1" placeholder="0" value="0" readonly="readonly" style=" background-color: #FFFFC9"></td>
         <td><input type="text" id="equipment1" placeholder="OPTis-Solo, N_PM10" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
@@ -143,7 +143,7 @@
     <% if (briefing.k1[0]) { %>
         <% for (var i = 0 ;i <  briefing.k1.length; i ++) { %>
             <tr class="item<%= i+6%>">
-                <td class="base">K1</td>
+                <td class="base">인지</td>
                 <td><input type="text" id="composition6" placeholder="자율측정" value="<%= briefing.k1[i].composition%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
                 <td><input type="number" id="group_placement<%= i+6%>" placeholder="0" value="<%= briefing.k1[i].group_placement%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
                 <td><input type="text" id="equipment<%= i+6%>" placeholder="OPTis-Solo, N_PM10" value="<%= briefing.k1[i].equipment%>" readonly="readonly" style=" background-color: #FFFFC9"></td>
@@ -156,7 +156,7 @@
         <% } %>
     <% } else { %>
         <tr class="item6">
-            <td class="base">K1</td>
+            <td class="base">인지</td>
             <td><input type="text" id="composition6" placeholder="자율측정" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
             <td><input type="number" id="group_placement6" value="0" readonly="readonly" style=" background-color: #FFFFC9"></td>
             <td><input type="text" id="equipment6" placeholder="OPTis-Solo, N_PM10" value="미작성" readonly="readonly" style=" background-color: #FFFFC9"></td>
