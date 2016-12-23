@@ -653,7 +653,9 @@
             var strTrTextarea = '';
             var arrInput = '';
             var arrTextarea = '';
-            if (workDetailsNum === 1) { //업무 상세내역이 한개일 때
+            if (workDetailsNum === 0) {
+                alert('안녕');
+            } else if (workDetailsNum === 1) { //업무 상세내역이 한개일 때
                 strTrInput = '#workDetailsTbl > tbody tr:nth-child(1) input[type=text]';
                 strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(1) textarea';
                 arrInput = $(strTrInput); // 배열의 0 : 업무 시작시간, 1 : 종료시간
@@ -1300,7 +1302,7 @@
                         } else {
                             $("#vacation").hide();
                         }
-                        $('#workDetailsTbl > tbody tr').remove();
+                        $('#workDetailsTbl > tbody tr:not(:first)').remove();
                         $.each(data.result.details, function() {
                             var workClassTypeTd = '';
                             if (this.type === 1) {
