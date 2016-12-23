@@ -427,7 +427,7 @@ function managementUpdate(info, callback) {
             }
             callback(null, null);
         });
-    })
+    });
 }
 function employeeJournal(date, callback) {
     var nameList;
