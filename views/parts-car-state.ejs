@@ -5,122 +5,147 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <!-- 제이쿼리 모바일, 제이쿼리 라이브러리 파일 선언 -->
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 
     <!-- 사용자 스타일 시트 파일 선언 -->
-    <link rel='stylesheet' href='/stylesheets/parts-car-state-style.css' />
+    <link rel='stylesheet' href='/stylesheets/parts-car-style.css' />
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
     <!-- table을 excel로 export하기 위한 library 선언 -->
     <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 </head>
 <body>
-<!-- 차량관리 페이지 -->
-<div data-role="page" id="main">
-    <div data-role="header" data-position="fixed">
-        <h1>차량 관리</h1>
+<div class="container">
+    <div class="page-header">
+        <h1>차량 현황 <small>월별 현황</small></h1>
     </div>
-    <div data-role="content">
-        <% for(var i = 0; i < result.length; i++) { %>
-        <table id="carTbl<%=i%>">
-            <thead>
-                <th class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></th>
-                <tr>
-                    <td>차량</td>
-                    <% for (var k = 1; k <= result[i].lastDay; k++) { %>
-                    <td><%=k%>일</td>
-                    <% } %>
-                </tr>
-            </thead>
-            <tbody>
-                <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
-                <tr>
-                    <td class="carName">
-                        <%=result[i].dayDatas[j].carType%>
-                        <%=result[i].dayDatas[j].carNumber%>
-                    </td>
-                    <% for (var k = 0; k < result[i].lastDay; k ++) {
-                        var day = 'day' + (k + 1);
-                    %>
-                    <td>
-                        <a href="#teamAndCarInfo" data-rel="popup" data-transition="pop" data-position-to="window" class="teamName"><%=result[i].dayDatas[j][day]%></a>
-                        <input type="hidden" name="year" value="<%=result[i].year%>">
-                        <input type="hidden" name="month" value="<%=result[i].month%>">
-                        <input type="hidden" name="day" value="<%=(k+1)%>">
-                    </td>
-                    <% } %>
-                </tr>
-                <% } %>
-            </tbody>
-        </table>
-        <a data-role="button" class="excelDownBtn" data-inline="true" data-theme="b" id="<%=i%>">엑셀로 다운로드</a>
-        <br/><br/><br/><br/>
+    <% for(var i = 0; i < result.length; i++) { %>
+    <table class="table table-bordered" id="carTbl<%=i%>">
+        <thead>
+        <tr>
+            <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
+        </tr>
+        <tr>
+            <td>차량</td>
+            <% for (var k = 1; k <= result[i].lastDay; k++) { %>
+            <td><%=k%>일</td>
+            <% } %>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
+        <tr>
+            <td class="carName">
+                <%=result[i].dayDatas[j].carType%>
+                <%=result[i].dayDatas[j].carNumber%>
+            </td>
+            <%
+                for (var k = 0; k < result[i].lastDay; k ++) {
+                    var day = 'day' + (k + 1);
+                    if (result[i].dayDatas[j][day]) { %>
+            <td class="true-teamName">
+                <a data-toggle="modal" data-target="#myModal" class="teamName"><%=result[i].dayDatas[j][day]%></a>
+                <input type="hidden" name="year" value="<%=result[i].year%>">
+                <input type="hidden" name="month" value="<%=result[i].month%>">
+                <input type="hidden" name="day" value="<%=(k+1)%>">
+            </td>
+            <%
+                    } else {
+            %>
+            <td></td>
+            <%      }
+                }
+            %>
+        </tr>
         <% } %>
-    </div>
-    <div data-role="footer" data-position="fixed">
-    </div>
+        </tbody>
+    </table>
+    <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
+    <BR><BR><BR><BR><BR><BR>
+    <% } %>
 
-    <!-- 팀 이름을 눌렀을때 팀이 그 차량을 탄 정보 -->
-    <div data-role="popup" id="teamAndCarInfo">
-        <a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-        <div style="padding:10px 20px;">
-            <table id="detailcarTbl">
-                <thead>
-                    <tr>
-                        <td colspan="2" id="date"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" id="popupTblTeamName"></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="property">차량</td>
-                        <td id="popupTblCar"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">조원</td>
-                        <td id="popupTblTeamMember"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">조장</td>
-                        <td id="popupTblTeamLeader"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" class="property">금일 차량 운행 정보</td>
-                    </tr>
-                    <tbody id="driveInfo">
-                    </tbody>
-                    <tr>
-                    </tr>
-                    <tr>
-                        <td class="property">측정 전 주행 Km</td>
-                        <td id="popupTblcarMileageBefore"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">측정 후 주행 Km</td>
-                        <td id="popupTblcarMileageAfter"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">주유 상태</td>
-                        <td id="popupTblrefuelingState"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">주유 금액</td>
-                        <td id="popupTblrefuelingPrice"></td>
-                    </tr>
-                    <tr>
-                        <td class="property">금일 차량 특이사항</td>
-                        <td id="popupTblcarSignificant"></td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- 모달 팝업 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">차량 현황</h4>
+                </div>
+                <div class="modal-body">
+                    <table id="detailcarTbl" class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <td colspan="2" id="date" class="month"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" id="popupTblTeamName"></td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="property">차량</td>
+                            <td class="value" id="popupTblCar"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">조원</td>
+                            <td class="value" id="popupTblTeamMember"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">조장</td>
+                            <td class="value" id="popupTblTeamLeader"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="property">금일 차량 운행 정보</td>
+                        </tr>
+                        <tbody id="driveInfo">
+                        </tbody>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td class="property">측정 전 주행 Km</td>
+                            <td class="value" id="popupTblcarMileageBefore"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">측정 후 주행 Km</td>
+                            <td class="value" id="popupTblcarMileageAfter"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">주유 상태</td>
+                            <td class="value" id="popupTblrefuelingState"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">주유 금액</td>
+                            <td class="value" id="popupTblrefuelingPrice"></td>
+                        </tr>
+                        <tr>
+                            <td class="property">금일 차량 특이사항</td>
+                            <td class="value" id="popupTblcarSignificant"></td>
+                        </tr>
+                        </tbody>
+                        <button class="excelDownBtn2">엑셀로 다운로드</button>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+                </div>
+            </div>
         </div>
-        <a data-role="button" class="excelDownBtn2" data-inline="true" data-theme="b">엑셀로 다운로드</a>
     </div>
 </div>
+
 <script>
     $(function() {
         $('.excelDownBtn').click(function() {

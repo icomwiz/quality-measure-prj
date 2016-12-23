@@ -1,0 +1,52 @@
+table {
+    text-align: center;
+}
+
+thead {
+    background-color: beige;
+}
+
+.month {
+    background-color: lightgray;
+    font-size: x-large;
+}
+
+.excelDownBtn {
+    float: right;
+}
+
+.excelDownBtn2 {
+    float: right;
+}
+
+a {
+    cursor: pointer;
+}
+
+.carName {
+    background-color: cornsilk;
+}
+
+.true-teamName {
+    background-color: cornsilk;
+}
+
+.property {
+    background-color: cornsilk;
+}
+
+#carDriveInfoLocation {
+    color: blue;
+}
+
+#carDriveInfoTime {
+    color: grey;
+}
+
+#driveInfo {
+    background-color: #f6f6f6;
+}
+
+.value {
+    background-color: #f6f6f6;
+}
