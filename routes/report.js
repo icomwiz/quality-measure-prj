@@ -68,7 +68,6 @@ router.get('/', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
             res.render('parts-team-report',
                 {
                     teamId: req.query.teamId,
@@ -261,7 +260,6 @@ router.put('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
 
 //엑셀파일을 통해 계획 업로드 하기
 router.post('/planner', isAuthenticated, function(req, res, next) {
-    console.log('/planner');
     var form = new formidable.IncomingForm();
     form.uploadDir = path.join(__dirname, '../planners');
     form.keepExtensions = true;
@@ -435,7 +433,6 @@ router.get('/statistics', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.log(result);
             res.send({
                 result: result
             });
