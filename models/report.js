@@ -2599,10 +2599,10 @@ function getCallsPerDay(callback) {
         'WHERE t.team_no > 0 ' +
         'GROUP BY t.id) a JOIN (SELECT e.name, r.team_id teamId ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT a.team_id teamId, a.team_member teamMember, a.name, a.equipment_name equipmentName, a.calls planCalls, realCalls ' +
+        'WHERE r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_position = \'조장\') b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT b.team_id teamId, b.team_member teamMember, b.name, b.equipment_name equipmentName, a.calls planCalls, realCalls ' +
         'FROM(SELECT e.id employeeId, r.team_id, r.team_member, e.id, e.name, r.equipment_name, r.calls ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
-        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, sum(rd.calls) realCalls ' +
+        'WHERE date = str_to_date(?, \'%Y-%m-%d\') AND type = 0) a RIGHT JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, r.team_member, sum(rd.calls) realCalls, e.name ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'JOIN report_details rd ON(r.id = rd.report_id) ' +
         'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.type = 1 ' +
@@ -2674,7 +2674,7 @@ function getCallsPerDay(callback) {
                                 var measureInfo = {};
                                 measureInfo.measurer = results[i].measurer;
                                 measureInfo.equipmentName = results[i].equipmentName;
-                                measureInfo.planCalls = results[i].planCalls;
+                                measureInfo.planCalls = results[i].planCalls || 0;
                                 measureInfo.realCalls = results[i].realCalls;
                                 callsInfo.teams[index].measureInfo.push(measureInfo);
                             }
@@ -2696,7 +2696,118 @@ function getCallsPerDay(callback) {
 
 //월별 콜수 정보
 function getCallsPerMonth(callback) {
+    var select_month =
+        'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
+        'FROM report ' +
+        'WHERE type = 1 ' +
+        'ORDER BY MONTH(date) DESC';
 
+    var select_calls_info =
+        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
+        'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
+        'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
+        'FROM team t ' +
+        'WHERE t.team_no > 0 ' +
+        'GROUP BY t.id) a JOIN (SELECT GROUP_CONCAT(e.name) name, r.team_id teamId ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND r.team_position = \'조장\' ' +
+        'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT b.team_id teamId, b.team_member teamMember, b.name, b.equipment_name equipmentName, a.calls planCalls, realCalls ' +
+        'FROM(SELECT e.id employeeId, r.team_id, r.team_member, e.id, e.name, r.equipment_name, sum(r.calls) calls ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE YEAR(r.date) = ? AND MONTH(r.date) = ? AND type = 0 ' +
+        'GROUP BY employeeId) a RIGHT JOIN (SELECT e.id employeeId, r.team_id, r.equipment_name, r.team_member, sum(rd.calls) realCalls, e.name ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'JOIN report_details rd ON(r.id = rd.report_id) ' +
+        'WHERE YEAR(r.date) = ? AND MONTH(r.date) = ? AND r.type = 1 ' +
+        'GROUP BY employeeId) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId);';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var resData = [];
+
+        async.waterfall([getDays, getCallsInfo], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results === 0) {
+                return callback(null, 0);
+            }
+            callback(null, resData);
+        });
+
+        function getDays(callback) {
+            dbConn.query(select_month, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var months = [];
+                if (results.length === 0) { //리포트가 없을 경우
+                    return callback(null, 0);
+                } else { //리포트가 있을 경우
+                    for(var i = 0; i < results.length; i++) {
+                        months.push({
+                            year: results[i].year,
+                            month: results[i].month
+                        });
+                    }
+                    callback(null, months);
+                }
+            });
+        }
+
+        function getCallsInfo(months, callback) {
+            if (months === 0) {
+                return callback(null, 0);
+            } else {
+                async.each(months, function(month, callback) {
+                    dbConn.query(select_calls_info, [month.year, month.month, month.year, month.month, month.year, month.month], function(err, results) {
+                        if (err) {
+                            callback(err);
+                        }
+                        var callsInfo = {};
+                        callsInfo.date = month.year + '년 ' + month.month + '월';
+                        callsInfo.teams = [];
+                        for (var i = 0; i < results.length; i++) {
+                            var index = findWithAttr(callsInfo.teams, 'teamId', results[i].teamId);
+                            if (index === -1) { //팀 배열에 팀이 없다면
+                                var team ={};
+                                team.measureInfo = [];
+                                team.teamId = results[i].teamId;
+                                team.teamName = results[i].teamName + ' ' + results[i].teamNo + '조';
+                                team.teamLeader = results[i].teamLeader;
+                                team.teamMember = results[i].teamMember || '계획서 미업로드';
+                                var measureInfo = {};
+                                measureInfo.measurer = results[i].measurer;
+                                measureInfo.equipmentName = results[i].equipmentName;
+                                measureInfo.planCalls = results[i].planCalls;
+                                measureInfo.realCalls = results[i].realCalls;
+                                team.measureInfo.push(measureInfo);
+                                callsInfo.teams.push(team);
+                            } else { //팀 배열에 이미 팀이 있다면
+                                var measureInfo = {};
+                                measureInfo.measurer = results[i].measurer;
+                                measureInfo.equipmentName = results[i].equipmentName;
+                                measureInfo.planCalls = results[i].planCalls || 0;
+                                measureInfo.realCalls = results[i].realCalls;
+                                callsInfo.teams[index].measureInfo.push(measureInfo);
+                            }
+
+                        }
+                        resData.push(callsInfo);
+                        callback();
+                    });
+                }, function(err, result) {
+                    if (err) {
+                        return callback(err);
+                    }
+                    callback(null);
+                });
+            }
+        }
+    });
 }
 
 //객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수

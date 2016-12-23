@@ -519,9 +519,15 @@ router.get('/calls', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            res.render('parts-month-calls', {
-                result: result
-            });
+            if (result === 0) {
+                res.send({
+                    result: 0
+                });
+            } else {
+                res.render('parts-month-calls', {
+                    result: result
+                });
+            }
         });
     }
 });
@@ -549,9 +555,15 @@ router.get('/calls/ajax', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
-            res.send({
-                result: result
-            });
+            if (result === 0) {
+                res.send({
+                    result: 0
+                });
+            } else {
+                res.send({
+                    result: result
+                });
+            }
         });
     }
 });
