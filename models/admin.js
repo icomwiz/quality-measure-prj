@@ -334,7 +334,7 @@ function managementView(callback) {
                     "e.team_id, e.team_position, e.department_id, e.department_position "+
                     "FROM employee e "+
                     "LEFT JOIN team t ON (t.id = e.team_id) "+
-                    "WHERE (t.team_no = 0 OR e.team_position = 0) AND e.e_type = 1 "+
+                    "WHERE (e.team_position = 0 OR e.team_position = 1 OR e.team_position = 2 OR e.team_position = 5 OR e.team_position = 6) AND e.e_type = 1 "+
                     "ORDER BY department_id ASC ";
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
