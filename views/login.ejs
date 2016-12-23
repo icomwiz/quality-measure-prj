@@ -44,12 +44,12 @@
                         return location.replace('http://localhost:3000/reports?action=0');
                     } else if(data.result === 1) { //분석자용, 관리자용
                         //오늘날짜계산함수
-                        function date(){
-                            var date = new Date();
-
-                            var year  = date.getFullYear();
-                            var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
-                            var day   = date.getDate() - 1;
+                        function getYesterday(){
+                            var today = new Date();
+                            var yesterday = new Date(today.valueOf() - (24*60*60*1000));
+                            var year = yesterday.getFullYear();
+                            var month = yesterday.getMonth() + 1;
+                            var day = yesterday.getDate();
 
                             if(month < 10) {
                                 month = "0"+month;
@@ -57,9 +57,9 @@
                             if(day < 10) {
                                 day = "0"+day
                             }
-                            return year +'-'+month+'-'+day;
+                            return year + '-' +month+ '-' +day;
                         }
-                        return window.location.href = "http://localhost:3000/employees/partsmain?date=" + date();
+                        return window.location.href = "http://localhost:3000/employees/partsmain?date=" + getYesterday();
                     }
                     alert('ID나 PASSWORD를 확인해주세요.');
                 },
