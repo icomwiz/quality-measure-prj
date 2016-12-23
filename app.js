@@ -61,6 +61,7 @@ app.use('/details', detail);
 app.use('/analystReports', analystReport);
 app.use('/analystReportDetails', analystReportDetails);
 app.use('/excelforms', express.static(path.join(__dirname, 'planners/form/excelform.xlsx')));
+app.use('/uploaded', express.static(path.join(__dirname, 'planners')));
 app.use('/imgs', express.static(path.join(__dirname, 'public/img')));
 
 // catch 404 and forward to error handler

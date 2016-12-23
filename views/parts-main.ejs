@@ -74,6 +74,19 @@
             <input class="call-state" type="button" id="monthCallsBtn" value="월별 콜수 현황"/>
         </div>
 
+        <table id="planner">
+            <thead>
+                <tr>
+                    <th colspan="3">계획서 업로드 현황</th>
+                </tr>
+                <tr>
+                    <td>날짜</td><td>파일</td><td>올린사람</td>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
         <!-- 업무일지 작성 팝업 -->
         <div data-role="popup" id="postReportDialog">
             <div data-role="header">
@@ -153,7 +166,7 @@
                             </td>
                             <td>
                                 <select name="workType" class="workType">
-                                    <option value="1">분석 업무</option>
+                                    <option value="1">주 업무</option>
                                     <option value="2">SKT manager care</option>
                                     <option value="3">외근자 care</option>
                                 </select>
@@ -202,6 +215,7 @@
     <script>
         //내근자 업무보고 탭을 눌렀을 때 실행되는 function
         function analystReport() {
+            $('#planner').hide();
             $('#teamManagementDateDiv').hide();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
@@ -285,7 +299,7 @@
             function findWorkType(num) {
                 switch (num) {
                     case 1:
-                        return '분석 업무';
+                        return '주 업무';
                         break;
                     case 2:
                         return 'SKT manager care';
@@ -329,6 +343,7 @@
 
         //팀관리 탭을 선택했을 때 실행되는 function
         function teamManagement() {
+            $('#planner').hide();
             $('#teamManagementDateDiv').show();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
@@ -376,6 +391,32 @@
 
         //파일업로드 탭을 선택했을 때 실행되는 function
         function fileUpload() {
+            //엑셀 로그 불러오기
+            $.ajax({
+                url: "http://localhost:3000/reports/plannerlog",
+                type: "GET",
+                dataType: 'JSON',
+                success: function(data) {
+                    $('#planner > tbody tr').remove();
+                    for (var i = 0 ; i < data.result.length; i ++) {
+                        $('#planner > tbody:last').append(
+                            '<tr>' +
+                                '<td>' + data.result[i].date + '</td>' +
+                                '<td>' +
+                                    '<a href="#" class="download-uploaded-plan">계획서 다운로드' +
+                                        '<input type="hidden" name="pathName" value=\"' + data.result[i].fileName +'\"/>' +
+                                    '</a>' +
+                                '</td>' +
+                                '</td>' + '<td>' + data.result[i].employeeName + '</td>' +
+                            '</tr>'
+                        );
+                    }
+                },
+                error: function(data) {
+                    alert('계획서 로그 불러오기 실패');
+                }
+            });
+            $('#planner').show();
             $('#teamManagementDateDiv').hide();
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
@@ -393,6 +434,7 @@
 
         //오류현황 탭을 선택했을 때 폼을 실행되는 function
         function errorState() {
+            $('#planner').hide();
             $('#listArea').empty();
             $('#calls-state-div').css('display','none');
             $('#error-state-div').show();
@@ -402,6 +444,7 @@
 
         //콜수 현황 탭을 선택했을 때 실행되는 function
         function callState() {
+            $('#planner').hide();
             $('#listArea').empty();
             $('#error-state-div').css('display','none');
             $('#calls-state-div').show();
@@ -445,7 +488,7 @@
             return window.location.href = "http://localhost:3000/employees/management";
         }
 
-        //TODO : 내근자 업무 일지 관리 탭을 선택했을 때 실행되는 function
+        //내근자 업무 일지 관리 탭을 선택했을 때 실행되는 function
         function indoorEmployeeReport() {
             $('#calls-state-div').hide();
             $('#error-state-div').hide();
@@ -674,6 +717,7 @@
             var radioChecked = $('input:radio[name=radio-choice-1]:checked').val();
             switch (radioChecked) {
                 case '1':
+                    $('#planner').hide();
                     teamManagement();
                     break;
                 case '2':
@@ -681,29 +725,36 @@
                     fileUpload();
                     break;
                 case '3':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     errorState();
                     break;
                 case '4':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     break;
                 case '5':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     callState();
                     break;
                 case '6':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     //
                     break;
                 case '7':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     analystReport();
                     break;
                 case '8':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     //
                     break;
                 case '9':
+                    $('#planner').hide();
                     $('#teamManagementDateDiv').hide();
                     //
                     break;
@@ -780,7 +831,23 @@
                         data: formData,
                         type: 'POST',
                         success: function(data) {
-                            alert(data.result);
+                            $.ajax({
+                                url: "http://localhost:3000/reports/plannerlog",
+                                type: "POST",
+                                dataType: "JSON",
+                                data: {
+                                    fileName: data.fileName
+                                },
+                                success: function(data) {
+                                    if (data.result === 1) {
+                                        alert('계획서 업로드 완료');
+                                    }
+                                    fileUpload();
+                                },
+                                error: function(data) {
+                                    alert("접속 에러");
+                                }
+                            });
                         }
                     });
                 } else {
@@ -803,12 +870,15 @@
             $('#dayErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=0";
             });
+
             $('#weekErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=1";
             });
+
             $('#monthErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=2";
             });
+
             $('#quarterErrorBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/statistics?action=3";
             });
@@ -817,6 +887,7 @@
             $('#dayCallsBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/calls?action=0";
             });
+
             $('#monthCallsBtn').click(function() {
                 return window.location.href = "http://localhost:3000/reports/calls?action=1";
             });
@@ -842,7 +913,7 @@
                             '</td>' +
                             '<td>' +
                                 '<select name="workType" class="workType">' +
-                                    '<option value="1">분석 업무</option>' +
+                                    '<option value="1">주 업무</option>' +
                                     '<option value="2">SKT manager care</option>' +
                                     '<option value="3">외근자 care</option>' +
                                 '</select>' +
@@ -1236,7 +1307,7 @@
                                 workClassTypeTd =
                                     '<td>' +
                                     '<select name="workType" class="workType">' +
-                                    '<option value="1" selected="selected" >분석 업무</option>' +
+                                    '<option value="1" selected="selected" >주 업무</option>' +
                                     '<option value="2">SKT manager care</option>' +
                                     '<option value="3">외근자 care</option>' +
                                     '</select>' +
@@ -1245,7 +1316,7 @@
                                 workClassTypeTd =
                                     '<td>' +
                                     '<select name="workType" class="workType">' +
-                                    '<option value="1">분석 업무</option>' +
+                                    '<option value="1">주 업무</option>' +
                                     '<option value="2" selected="selected">SKT manager care</option>' +
                                     '<option value="3">외근자 care</option>' +
                                     '</select>' +
@@ -1254,7 +1325,7 @@
                                 workClassTypeTd =
                                     '<td>' +
                                     '<select name="workType" class="workType">' +
-                                    '<option value="1">분석 업무</option>' +
+                                    '<option value="1">주 업무</option>' +
                                     '<option value="2">SKT manager care</option>' +
                                     '<option value="3" selected="selected" >외근자 care</option>' +
                                     '</select>' +
@@ -1284,6 +1355,12 @@
                     }
                 });
 
+            });
+
+            //기존 계획서 다운로드 버튼 눌렀을 경우
+            $(document).on('click', '.download-uploaded-plan', function() {
+                var url = $(this).children('input[name="pathName"]').val();
+                return window.location.href = url;
             });
         });
     </script>

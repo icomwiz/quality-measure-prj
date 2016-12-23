@@ -261,6 +261,7 @@ router.put('/:id', isAuthenticatedForMeasurer, function(req, res, next) {
 
 //엑셀파일을 통해 계획 업로드 하기
 router.post('/planner', isAuthenticated, function(req, res, next) {
+    console.log('/planner');
     var form = new formidable.IncomingForm();
     form.uploadDir = path.join(__dirname, '../planners');
     form.keepExtensions = true;
@@ -271,10 +272,10 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
         }
         var srcExcelPath = files.uploadExcelfile.path;
         var date = new Date();
-        var dt = date.toFormat('YYYY-MM-DD HH24-MI-SS');
+        var dt = date.toFormat('YYYY-MM-DD_HH24-MI-SS');
         var today = date.toFormat('YYYY-MM-DD');
 
-        var excelFileName = req.user.name + ' ' + dt + path.extname(srcExcelPath);
+        var excelFileName = req.user.id + '_' + dt + path.extname(srcExcelPath);
         var destExcelPath = path.join(path.dirname(srcExcelPath), excelFileName);
         fs.rename(srcExcelPath, destExcelPath, function(err) {
             if (err) {
@@ -362,7 +363,8 @@ router.post('/planner', isAuthenticated, function(req, res, next) {
                 } else {
                     clearInterval(loop);
                     res.send({
-                        result: '계획서 업로드 완료!'
+                        msg: '계획서 업로드 완료!',
+                        fileName: excelFileName
                     });
                 }
             }, 100);
@@ -566,6 +568,34 @@ router.get('/calls/ajax', isAuthenticated, function(req, res, next) {
             }
         });
     }
+});
+
+// 계획서를 업로드 로그 post하기
+router.post('/plannerlog', isAuthenticated, function(req, res, next) {
+    console.log('/plannerlog');
+    var reqData = {};
+    reqData.fileName = req.body.fileName;
+    reqData.employeeId = req.user.id;
+    Report.setPlannerLog(reqData, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: 1
+        });
+    });
+});
+
+// 계획서 업로드 로그 get
+router.get('/plannerlog', isAuthenticated, function(req, res, next) {
+    Report.getPlannerLog(function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: result
+        });
+    });
 });
 
 module.exports = router;

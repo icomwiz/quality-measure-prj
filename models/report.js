@@ -2583,7 +2583,7 @@ function getDetailCarState(reqData, callback) {
     })
 }
 
-//일별 콜수 정보
+//일별 콜수 정보(dbConn release함)
 function getCallsPerDay(callback) {
     var select_day =
         'SELECT DISTINCT(DATE_FORMAT(date, \'%Y-%m-%d\')) date ' +
@@ -2694,7 +2694,7 @@ function getCallsPerDay(callback) {
     });
 }
 
-//월별 콜수 정보
+//월별 콜수 정보(dbConn release함)
 function getCallsPerMonth(callback) {
     var select_month =
         'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
@@ -2820,6 +2820,58 @@ function findWithAttr(array, attr, value) {
     return -1;
 }
 
+function setPlannerLog(reqData, callback) {
+    var sql_insert_log =
+        'INSERT INTO uploaded_plan(employee_id, file_name) ' +
+        'VALUES(?, ?)';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_insert_log, [reqData.employeeId, reqData.fileName], function(err) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null)
+        });
+    });
+}
+
+function getPlannerLog(callback) {
+    var sql_select_log =
+        'SELECT DATE_FORMAT(up.uploaded_date, \'%Y년%m월%d일 %H시%i분%s초\') date, up.file_name fileName, e.name employeeName ' +
+        'FROM uploaded_plan up JOIN employee e ON (up.employee_id = e.id) ' +
+        'ORDER BY date DESC ' +
+        'LIMIT 10';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        var resData = [];
+        dbConn.query(sql_select_log, [], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results.length !== 0) {
+                for (var i = 0; i < results.length; i++) {
+                    resData.push({
+                        date: results[i].date,
+                        fileName: 'http://localhost:3000/uploaded/' + results[i].fileName,
+                        employeeName: results[i].employeeName
+                    });
+                }
+                callback(null, resData);
+            } else {
+                callback(null);
+            }
+        });
+    });
+}
+
 
 module.exports.reportList = reportList;
 module.exports.addReport = addReport;
@@ -2846,3 +2898,5 @@ module.exports.getCarState = getCarState;
 module.exports.getDetailCarState = getDetailCarState;
 module.exports.getCallsPerDay = getCallsPerDay;
 module.exports.getCallsPerMonth = getCallsPerMonth;
+module.exports.setPlannerLog = setPlannerLog;
+module.exports.getPlannerLog = getPlannerLog;
