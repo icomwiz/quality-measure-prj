@@ -50,3 +50,11 @@ a {
 .value {
     background-color: #f6f6f6;
 }
+
+.km-property {
+    color: brown;
+}
+
+.km-value {
+    color: blue;
+}

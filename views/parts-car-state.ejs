@@ -56,7 +56,9 @@
                     var day = 'day' + (k + 1);
                     if (result[i].dayDatas[j][day]) { %>
             <td class="true-teamName">
-                <a data-toggle="modal" data-target="#myModal" class="teamName"><%=result[i].dayDatas[j][day]%></a>
+                <a data-toggle="modal" data-target="#myModal" class="teamName"><p><%=result[i].dayDatas[j][day]%></p></a><BR>
+                <p class="km-property">측정 전<br><small class="km-value"><%=result[i].dayDatas[j][day + 'Before']%>Km</small></p>
+                <p class="km-property">측정 후<br><small class="km-value"><%=result[i].dayDatas[j][day + 'After']%>Km</small></p>
                 <input type="hidden" name="year" value="<%=result[i].year%>">
                 <input type="hidden" name="month" value="<%=result[i].month%>">
                 <input type="hidden" name="day" value="<%=(k+1)%>">

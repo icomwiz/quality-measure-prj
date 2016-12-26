@@ -2341,79 +2341,39 @@ function getCarState(callback) {
     //년 월을 통해 차량 탑승팀 구하기
     var select_team_and_cars_by_date = "SELECT "+
                                         "DISTINCT car_type carType,car_number carNumber, "+
-                                        "CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, "+
-                                        "CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, "+
-                                        "CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, "+
-                                        "CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, "+
-                                        "CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, "+
-                                        "CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, "+
-                                        "CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, "+
-                                        "CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, "+
-                                        "CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, "+
-                                        "CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, "+
-                                        "CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, "+
-                                        "CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, "+
-                                        "CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, "+
-                                        "CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, "+
-                                        "CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, "+
-                                        "CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, "+
-                                        "CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, "+
-                                        "CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, "+
-                                        "CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, "+
-                                        "CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, "+
-                                        "CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, "+
-                                        "CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, "+
-                                        "CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, "+
-                                        "CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, "+
-                                        "CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, "+
-                                        "CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, "+
-                                        "CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, "+
-                                        "CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, "+
-                                        "CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, "+
-                                        "CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, "+
-                                        "CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31 "+
+                                        "CASE WHEN DAY(date) = 1 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day1, "+
+                                        "CASE WHEN DAY(date) = 2 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day2, "+
+                                        "CASE WHEN DAY(date) = 3 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day3, "+
+                                        "CASE WHEN DAY(date) = 4 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day4, "+
+                                        "CASE WHEN DAY(date) = 5 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day5, "+
+                                        "CASE WHEN DAY(date) = 6 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day6, "+
+                                        "CASE WHEN DAY(date) = 7 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day7, "+
+                                        "CASE WHEN DAY(date) = 8 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day8, "+
+                                        "CASE WHEN DAY(date) = 9 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day9, "+
+                                        "CASE WHEN DAY(date) = 10 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day10, "+
+                                        "CASE WHEN DAY(date) = 11 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day11, "+
+                                        "CASE WHEN DAY(date) = 12 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day12, "+
+                                        "CASE WHEN DAY(date) = 13 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day13, "+
+                                        "CASE WHEN DAY(date) = 14 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day14, "+
+                                        "CASE WHEN DAY(date) = 15 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day15, "+
+                                        "CASE WHEN DAY(date) = 16 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day16, "+
+                                        "CASE WHEN DAY(date) = 17 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day17, "+
+                                        "CASE WHEN DAY(date) = 18 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day18, "+
+                                        "CASE WHEN DAY(date) = 19 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day19, "+
+                                        "CASE WHEN DAY(date) = 20 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day20, "+
+                                        "CASE WHEN DAY(date) = 21 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day21, "+
+                                        "CASE WHEN DAY(date) = 22 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day22, "+
+                                        "CASE WHEN DAY(date) = 23 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day23, "+
+                                        "CASE WHEN DAY(date) = 24 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day24, "+
+                                        "CASE WHEN DAY(date) = 25 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day25, "+
+                                        "CASE WHEN DAY(date) = 26 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day26, "+
+                                        "CASE WHEN DAY(date) = 27 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day27, "+
+                                        "CASE WHEN DAY(date) = 28 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day28, "+
+                                        "CASE WHEN DAY(date) = 29 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day29, "+
+                                        "CASE WHEN DAY(date) = 30 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day30, "+
+                                        "CASE WHEN DAY(date) = 31 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day31 "+
                                         "FROM report "+
                                         "WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? ";
-    /* var select_team_and_cars_by_date =
-         'SELECT a.carType, a.carNumber, b.day1, b.day2, b.day3, b.day4, b.day5, b.day6, b.day7, b.day8, b.day9, b.day10, b.day11, b.day12, b.day13, b.day14, b.day15, b.day16, b.day17, b.day18, b.day19, b.day20, b.day21, b.day22, b.day23, b.day24, b.day25, b.day26, b.day27, b.day28, b.day29, b.day30, b.day31 ' +
-         'FROM(SELECT DISTINCT car_type carType, car_number carNumber ' +
-         'FROM ' +
-         'report ' +
-         'WHERE Year(date) = ? AND MONTH(date) = ?) a LEFT JOIN (SELECT DISTINCT team_name teamName, team_member teamMember, car_type carType, car_number carNumber, ' +
-         'CASE WHEN DAY(date) = 1 THEN team_name ELSE NULL END day1, ' +
-         'CASE WHEN DAY(date) = 2 THEN team_name ELSE NULL END day2, ' +
-         'CASE WHEN DAY(date) = 3 THEN team_name ELSE NULL END day3, ' +
-         'CASE WHEN DAY(date) = 4 THEN team_name ELSE NULL END day4, ' +
-         'CASE WHEN DAY(date) = 5 THEN team_name ELSE NULL END day5, ' +
-         'CASE WHEN DAY(date) = 6 THEN team_name ELSE NULL END day6, ' +
-         'CASE WHEN DAY(date) = 7 THEN team_name ELSE NULL END day7, ' +
-         'CASE WHEN DAY(date) = 8 THEN team_name ELSE NULL END day8, ' +
-         'CASE WHEN DAY(date) = 9 THEN team_name ELSE NULL END day9, ' +
-         'CASE WHEN DAY(date) = 10 THEN team_name ELSE NULL END day10, ' +
-         'CASE WHEN DAY(date) = 11 THEN team_name ELSE NULL END day11, ' +
-         'CASE WHEN DAY(date) = 12 THEN team_name ELSE NULL END day12, ' +
-         'CASE WHEN DAY(date) = 13 THEN team_name ELSE NULL END day13, ' +
-         'CASE WHEN DAY(date) = 14 THEN team_name ELSE NULL END day14, ' +
-         'CASE WHEN DAY(date) = 15 THEN team_name ELSE NULL END day15, ' +
-         'CASE WHEN DAY(date) = 16 THEN team_name ELSE NULL END day16, ' +
-         'CASE WHEN DAY(date) = 17 THEN team_name ELSE NULL END day17, ' +
-         'CASE WHEN DAY(date) = 18 THEN team_name ELSE NULL END day18, ' +
-         'CASE WHEN DAY(date) = 19 THEN team_name ELSE NULL END day19, ' +
-         'CASE WHEN DAY(date) = 20 THEN team_name ELSE NULL END day20, ' +
-         'CASE WHEN DAY(date) = 21 THEN team_name ELSE NULL END day21, ' +
-         'CASE WHEN DAY(date) = 22 THEN team_name ELSE NULL END day22, ' +
-         'CASE WHEN DAY(date) = 23 THEN team_name ELSE NULL END day23, ' +
-         'CASE WHEN DAY(date) = 24 THEN team_name ELSE NULL END day24, ' +
-         'CASE WHEN DAY(date) = 25 THEN team_name ELSE NULL END day25, ' +
-         'CASE WHEN DAY(date) = 26 THEN team_name ELSE NULL END day26, ' +
-         'CASE WHEN DAY(date) = 27 THEN team_name ELSE NULL END day27, ' +
-         'CASE WHEN DAY(date) = 28 THEN team_name ELSE NULL END day28, ' +
-         'CASE WHEN DAY(date) = 29 THEN team_name ELSE NULL END day29, ' +
-         'CASE WHEN DAY(date) = 30 THEN team_name ELSE NULL END day30, ' +
-         'CASE WHEN DAY(date) = 31 THEN team_name ELSE NULL END day31, date ' +
-         'FROM report ' +
-         'WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ?) b ON (a.carNumber = b.carNumber) ' +
-         'ORDER BY a.carNumber';*/
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -2463,7 +2423,6 @@ function getCarState(callback) {
         }
 
         function getCarAndTeamInfo(resDatas, callback) {
-
             async.each(resDatas, function(data, callback) {
                 dbConn.query(select_team_and_cars_by_date, [data.year, data.month], function(err, results) {
                     if (err) {
@@ -2475,43 +2434,107 @@ function getCarState(callback) {
                             data.dayDatas.push({
                                 carType: results[i].carType,
                                 carNumber: results[i].carNumber,
-                                day1: results[i].day1,
-                                day2: results[i].day2,
-                                day3: results[i].day3,
-                                day4: results[i].day4,
-                                day5: results[i].day5,
-                                day6: results[i].day6,
-                                day7: results[i].day7,
-                                day8: results[i].day8,
-                                day9: results[i].day9,
-                                day10: results[i].day10,
-                                day11: results[i].day11,
-                                day12: results[i].day12,
-                                day13: results[i].day13,
-                                day14: results[i].day14,
-                                day15: results[i].day15,
-                                day16: results[i].day16,
-                                day17: results[i].day17,
-                                day18: results[i].day18,
-                                day19: results[i].day19,
-                                day20: results[i].day20,
-                                day21: results[i].day21,
-                                day22: results[i].day22,
-                                day23: results[i].day23,
-                                day24: results[i].day24,
-                                day25: results[i].day25,
-                                day26: results[i].day26,
-                                day27: results[i].day27,
-                                day28: results[i].day28,
-                                day29: results[i].day29,
-                                day30: results[i].day30,
-                                day31: results[i].day31
+                                day1: results[i].day1 === null ? '' : results[i].day1.split(',')[0],
+                                day1Before: results[i].day1 === null ? '' : results[i].day1.split(',')[1],
+                                day1After: results[i].day1 === null ? '' : results[i].day1.split(',')[2],
+                                day2: results[i].day2 === null ? '' : results[i].day2.split(',')[0],
+                                day2Before: results[i].day2 === null ? '' : results[i].day2.split(',')[1],
+                                day2After: results[i].day2 === null ? '' : results[i].day2.split(',')[2],
+                                day3: results[i].day3 === null ? '' : results[i].day3.split(',')[0],
+                                day3Before: results[i].day3 === null ? '' : results[i].day3.split(',')[1],
+                                day3After: results[i].day3 === null ? '' : results[i].day3.split(',')[2],
+                                day4: results[i].day4 === null ? '' : results[i].day4.split(',')[0],
+                                day4Before: results[i].day4 === null ? '' : results[i].day4.split(',')[1],
+                                day4After: results[i].day4 === null ? '' : results[i].day4.split(',')[2],
+                                day5: results[i].day5 === null ? '' : results[i].day5.split(',')[0],
+                                day5Before: results[i].day5 === null ? '' : results[i].day5.split(',')[1],
+                                day5After: results[i].day5 === null ? '' : results[i].day5.split(',')[2],
+                                day6: results[i].day6 === null ? '' : results[i].day6.split(',')[0],
+                                day6Before: results[i].day6 === null ? '' : results[i].day6.split(',')[1],
+                                day6After: results[i].day6 === null ? '' : results[i].day6.split(',')[2],
+                                day7: results[i].day7 === null ? '' : results[i].day7.split(',')[0],
+                                day7Before: results[i].day7 === null ? '' : results[i].day7.split(',')[1],
+                                day7After: results[i].day7 === null ? '' : results[i].day7.split(',')[2],
+                                day8: results[i].day8 === null ? '' : results[i].day8.split(',')[0],
+                                day8Before: results[i].day8 === null ? '' : results[i].day8.split(',')[1],
+                                day8After: results[i].day8 === null ? '' : results[i].day8.split(',')[2],
+                                day9: results[i].day9 === null ? '' : results[i].day9.split(',')[0],
+                                day9Before: results[i].day9 === null ? '' : results[i].day9.split(',')[1],
+                                day9After: results[i].day9 === null ? '' : results[i].day9.split(',')[2],
+                                day10: results[i].day10 === null ? '' : results[i].day10.split(',')[0],
+                                day10Before: results[i].day10 === null ? '' : results[i].day10.split(',')[1],
+                                day10After: results[i].day10 === null ? '' : results[i].day10.split(',')[2],
+                                day11: results[i].day11 === null ? '' : results[i].day11.split(',')[0],
+                                day11Before: results[i].day11 === null ? '' : results[i].day11.split(',')[1],
+                                day11After: results[i].day11 === null ? '' : results[i].day11.split(',')[2],
+                                day12: results[i].day12 === null ? '' : results[i].day12.split(',')[0],
+                                day12Before: results[i].day12 === null ? '' : results[i].day12.split(',')[1],
+                                day12After: results[i].day12 === null ? '' : results[i].day12.split(',')[2],
+                                day13: results[i].day13 === null ? '' : results[i].day13.split(',')[0],
+                                day13Before: results[i].day13 === null ? '' : results[i].day13.split(',')[1],
+                                day13After: results[i].day13 === null ? '' : results[i].day13.split(',')[2],
+                                day14: results[i].day14 === null ? '' : results[i].day14.split(',')[0],
+                                day14Before: results[i].day14 === null ? '' : results[i].day14.split(',')[1],
+                                day14After: results[i].day14 === null ? '' : results[i].day14.split(',')[2],
+                                day15: results[i].day15 === null ? '' : results[i].day15.split(',')[0],
+                                day15Before: results[i].day15 === null ? '' : results[i].day15.split(',')[1],
+                                day15After: results[i].day15 === null ? '' : results[i].day15.split(',')[2],
+                                day16: results[i].day16 === null ? '' : results[i].day16.split(',')[0],
+                                day16Before: results[i].day16 === null ? '' : results[i].day16.split(',')[1],
+                                day16After: results[i].day16 === null ? '' : results[i].day16.split(',')[2],
+                                day17: results[i].day17 === null ? '' : results[i].day17.split(',')[0],
+                                day17Before: results[i].day17 === null ? '' : results[i].day17.split(',')[1],
+                                day17After: results[i].day17 === null ? '' : results[i].day17.split(',')[2],
+                                day18: results[i].day18 === null ? '' : results[i].day18.split(',')[0],
+                                day18Before: results[i].day18 === null ? '' : results[i].day18.split(',')[1],
+                                day18After: results[i].day18 === null ? '' : results[i].day18.split(',')[2],
+                                day19: results[i].day19 === null ? '' : results[i].day19.split(',')[0],
+                                day19Before: results[i].day19 === null ? '' : results[i].day19.split(',')[1],
+                                day19After: results[i].day19 === null ? '' : results[i].day19.split(',')[2],
+                                day20: results[i].day20 === null ? '' : results[i].day20.split(',')[0],
+                                day20Before: results[i].day20 === null ? '' : results[i].day20.split(',')[1],
+                                day20After: results[i].day20 === null ? '' : results[i].day20.split(',')[2],
+                                day21: results[i].day21 === null ? '' : results[i].day21.split(',')[0],
+                                day21Before: results[i].day21 === null ? '' : results[i].day21.split(',')[1],
+                                day21After: results[i].day21 === null ? '' : results[i].day21.split(',')[2],
+                                day22: results[i].day22 === null ? '' : results[i].day22.split(',')[0],
+                                day22Before: results[i].day22 === null ? '' : results[i].day22.split(',')[1],
+                                day22After: results[i].day22 === null ? '' : results[i].day22.split(',')[2],
+                                day23: results[i].day23 === null ? '' : results[i].day23.split(',')[0],
+                                day23Before: results[i].day23 === null ? '' : results[i].day23.split(',')[1],
+                                day23After: results[i].day23 === null ? '' : results[i].day23.split(',')[2],
+                                day24: results[i].day24 === null ? '' : results[i].day24.split(',')[0],
+                                day24Before: results[i].day24 === null ? '' : results[i].day24.split(',')[1],
+                                day24After: results[i].day24 === null ? '' : results[i].day24.split(',')[2],
+                                day25: results[i].day25 === null ? '' : results[i].day25.split(',')[0],
+                                day25Before: results[i].day25 === null ? '' : results[i].day25.split(',')[1],
+                                day25After: results[i].day25 === null ? '' : results[i].day25.split(',')[2],
+                                day26: results[i].day26 === null ? '' : results[i].day26.split(',')[0],
+                                day26Before: results[i].day26 === null ? '' : results[i].day26.split(',')[1],
+                                day26After: results[i].day26 === null ? '' : results[i].day26.split(',')[2],
+                                day27: results[i].day27 === null ? '' : results[i].day27.split(',')[0],
+                                day27Before: results[i].day27 === null ? '' : results[i].day27.split(',')[1],
+                                day27After: results[i].day27 === null ? '' : results[i].day27.split(',')[2],
+                                day28: results[i].day28 === null ? '' : results[i].day28.split(',')[0],
+                                day28Before: results[i].day28 === null ? '' : results[i].day28.split(',')[1],
+                                day28After: results[i].day28 === null ? '' : results[i].day28.split(',')[2],
+                                day29: results[i].day29 === null ? '' : results[i].day29.split(',')[0],
+                                day29Before: results[i].day29 === null ? '' : results[i].day29.split(',')[1],
+                                day29After: results[i].day29 === null ? '' : results[i].day29.split(',')[2],
+                                day30: results[i].day30 === null ? '' : results[i].day30.split(',')[0],
+                                day30Before: results[i].day30 === null ? '' : results[i].day30.split(',')[1],
+                                day30After: results[i].day30 === null ? '' : results[i].day30.split(',')[2],
+                                day31: results[i].day31 === null ? '' : results[i].day31.split(',')[0],
+                                day31Before: results[i].day31 === null ? '' : results[i].day31.split(',')[1],
+                                day31After: results[i].day31 === null ? '' : results[i].day31.split(',')[2]
                             });
                         } else { //배열 속에 이미 car가 있을 때
                             for (var j = 1; j <= 31; j++) {
                                 var day = 'day' + j;
                                 if (!data.dayDatas[index][day]) {
-                                    data.dayDatas[index][day] = results[i][day];
+                                    data.dayDatas[index][day] = (results[i][day] === null ? '' : results[i][day].split(',')[0]);
+                                    data.dayDatas[index][day + 'Before'] = (results[i][day] === null ? '' : results[i][day].split(',')[1]);
+                                    data.dayDatas[index][day + 'After'] = (results[i][day] === null ? '' : results[i][day].split(',')[2]);
                                 }
                             }
                         }
