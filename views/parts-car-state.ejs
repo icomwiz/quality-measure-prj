@@ -28,56 +28,108 @@
 </head>
 <body>
 <div class="container">
+    <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="#first">팀별 차량현황</a></li>
+        <li role="presentation"><a href="#second">주행Km별 차량현황</a></li>
+    </ul>
     <div class="page-header">
         <h1>차량 현황 <small>월별 현황</small></h1>
     </div>
-    <% for(var i = 0; i < result.length; i++) { %>
-    <table class="table table-bordered" id="carTbl<%=i%>">
-        <thead>
-        <tr>
-            <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
-        </tr>
-        <tr>
-            <td>차량</td>
-            <% for (var k = 1; k <= result[i].lastDay; k++) { %>
-            <td><%=k%>일</td>
-            <% } %>
-        </tr>
-        </thead>
-        <tbody>
-        <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
-        <tr>
-            <td class="carName">
-                <%=result[i].dayDatas[j].carType%>
-                <%=result[i].dayDatas[j].carNumber%>
-            </td>
-            <%
-                for (var k = 0; k < result[i].lastDay; k ++) {
-                    var day = 'day' + (k + 1);
+    <div class="tab-content" style="margin-top: 80px;">
+        <div class="tab-pane fade active in" id="first">
+            <% for(var i = 0; i < result.length; i++) { %>
+            <table class="table table-bordered" id="carTbl<%=i%>">
+                <thead>
+                <tr>
+                    <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
+                </tr>
+                <tr>
+                    <td>차량</td>
+                    <% for (var k = 1; k <= result[i].lastDay; k++) { %>
+                    <td><%=k%>일</td>
+                    <% } %>
+                </tr>
+                </thead>
+                <tbody>
+                <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
+                <tr>
+                    <td class="carName">
+                        <%=result[i].dayDatas[j].carType%>
+                        <%=result[i].dayDatas[j].carNumber%>
+                    </td>
+                    <%
+                    for (var k = 0; k < result[i].lastDay; k ++) {
+                        var day = 'day' + (k + 1);
                     if (result[i].dayDatas[j][day]) { %>
-            <td class="true-teamName">
-                <a data-toggle="modal" data-target="#myModal" class="teamName"><p><%=result[i].dayDatas[j][day]%></p></a><BR>
-                <p class="km-property">측정 전<br><small class="km-value"><%=result[i].dayDatas[j][day + 'Before']%>Km</small></p>
-                <p class="km-property">측정 후<br><small class="km-value"><%=result[i].dayDatas[j][day + 'After']%>Km</small></p>
-                <input type="hidden" name="year" value="<%=result[i].year%>">
-                <input type="hidden" name="month" value="<%=result[i].month%>">
-                <input type="hidden" name="day" value="<%=(k+1)%>">
-            </td>
-            <%
+                    <td class="true-teamName">
+                        <a data-toggle="modal" data-target="#myModal" class="teamName"><%=result[i].dayDatas[j][day]%></a><BR>
+                        <input type="hidden" name="year" value="<%=result[i].year%>">
+                        <input type="hidden" name="month" value="<%=result[i].month%>">
+                        <input type="hidden" name="day" value="<%=(k+1)%>">
+                    </td>
+                    <%
                     } else {
-            %>
-            <td></td>
-            <%      }
-                }
-            %>
-        </tr>
-        <% } %>
-        </tbody>
-    </table>
-    <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
-    <BR><BR><BR><BR><BR><BR>
-    <% } %>
-
+                    %>
+                    <td></td>
+                    <%      }
+                    }
+                    %>
+                </tr>
+                <% } %>
+                </tbody>
+            </table>
+            <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
+            <BR><BR><BR><BR><BR><BR>
+            <% } %>
+        </div>
+        <div class="tab-pane fade" id="second">
+            <% for(var i = 0; i < result.length; i++) { %>
+            <table class="table table-bordered" id="carTbl<%=i%>">
+                <thead>
+                <tr>
+                    <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
+                </tr>
+                <tr>
+                    <td>차량</td>
+                    <% for (var k = 1; k <= result[i].lastDay; k++) { %>
+                    <td><%=k%>일</td>
+                    <% } %>
+                </tr>
+                </thead>
+                <tbody>
+                <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
+                <tr>
+                    <td class="carName">
+                        <%=result[i].dayDatas[j].carType%>
+                        <%=result[i].dayDatas[j].carNumber%>
+                    </td>
+                    <%
+                    for (var k = 0; k < result[i].lastDay; k ++) {
+                        var day = 'day' + (k + 1);
+                    if (result[i].dayDatas[j][day]) { %>
+                    <td class="true-teamName">
+                        <p class="km-property">측정 전<br><small class="km-value"><%=result[i].dayDatas[j][day + 'Before']%>Km</small></p>
+                        <p class="km-property">측정 후<br><small class="km-value"><%=result[i].dayDatas[j][day + 'After']%>Km</small></p>
+                        <input type="hidden" name="year" value="<%=result[i].year%>">
+                        <input type="hidden" name="month" value="<%=result[i].month%>">
+                        <input type="hidden" name="day" value="<%=(k+1)%>">
+                    </td>
+                    <%
+                    } else {
+                    %>
+                    <td></td>
+                    <%      }
+                    }
+                    %>
+                </tr>
+                <% } %>
+                </tbody>
+            </table>
+            <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
+            <BR><BR><BR><BR><BR><BR>
+            <% } %>
+        </div>
+    </div>
     <!-- 모달 팝업 -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
         <div class="modal-dialog">
@@ -224,6 +276,13 @@
                 }
             });
         });
+    });
+
+    $(function(){
+        $('ul.nav-pills a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        })
     });
 </script>
 </body>
