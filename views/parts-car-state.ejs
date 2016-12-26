@@ -27,7 +27,7 @@
     <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 </head>
 <body>
-<div class="container">
+
     <ul class="nav nav-pills">
         <li role="presentation" class="active"><a href="#first">팀별 차량현황</a></li>
         <li role="presentation"><a href="#second">주행Km별 차량현황</a></li>
@@ -81,6 +81,74 @@
             <button class="excelDownBtn1" id="<%=i%>">엑셀로 다운로드</button>
             <BR><BR><BR><BR><BR><BR>
             <% } %>
+            <!-- 모달 팝업 -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="myModalLabel">차량 현황</h4>
+                        </div>
+                        <div class="modal-body">
+                            <table id="detailcarTbl" class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <td colspan="2" id="date" class="month"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" id="popupTblTeamName"></td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="property">차량</td>
+                                    <td class="value" id="popupTblCar"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">조원</td>
+                                    <td class="value" id="popupTblTeamMember"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">조장</td>
+                                    <td class="value" id="popupTblTeamLeader"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="property">금일 차량 운행 정보</td>
+                                </tr>
+                                <tbody id="driveInfo">
+                                </tbody>
+                                <tr>
+                                </tr>
+                                <tr>
+                                    <td class="property">측정 전 주행 Km</td>
+                                    <td class="value" id="popupTblcarMileageBefore"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">측정 후 주행 Km</td>
+                                    <td class="value" id="popupTblcarMileageAfter"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">주유 상태</td>
+                                    <td class="value" id="popupTblrefuelingState"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">주유 금액</td>
+                                    <td class="value" id="popupTblrefuelingPrice"></td>
+                                </tr>
+                                <tr>
+                                    <td class="property">금일 차량 특이사항</td>
+                                    <td class="value" id="popupTblcarSignificant"></td>
+                                </tr>
+                                </tbody>
+                                <button class="excelDownBtn3">엑셀로 다운로드</button>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="tab-pane fade" id="second">
             <% for(var i = 0; i < result.length; i++) { %>
@@ -130,76 +198,6 @@
             <% } %>
         </div>
     </div>
-    <!-- 모달 팝업 -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">차량 현황</h4>
-                </div>
-                <div class="modal-body">
-                    <table id="detailcarTbl" class="table table-bordered">
-                        <thead>
-                        <tr>
-                            <td colspan="2" id="date" class="month"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" id="popupTblTeamName"></td>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="property">차량</td>
-                            <td class="value" id="popupTblCar"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">조원</td>
-                            <td class="value" id="popupTblTeamMember"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">조장</td>
-                            <td class="value" id="popupTblTeamLeader"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" class="property">금일 차량 운행 정보</td>
-                        </tr>
-                        <tbody id="driveInfo">
-                        </tbody>
-                        <tr>
-                        </tr>
-                        <tr>
-                            <td class="property">측정 전 주행 Km</td>
-                            <td class="value" id="popupTblcarMileageBefore"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">측정 후 주행 Km</td>
-                            <td class="value" id="popupTblcarMileageAfter"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">주유 상태</td>
-                            <td class="value" id="popupTblrefuelingState"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">주유 금액</td>
-                            <td class="value" id="popupTblrefuelingPrice"></td>
-                        </tr>
-                        <tr>
-                            <td class="property">금일 차량 특이사항</td>
-                            <td class="value" id="popupTblcarSignificant"></td>
-                        </tr>
-                        </tbody>
-                        <button class="excelDownBtn3">엑셀로 다운로드</button>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     $(function() {
         $('ul.nav-pills a').click(function (e) {
