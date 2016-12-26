@@ -11,11 +11,15 @@ thead {
     font-size: x-large;
 }
 
-.excelDownBtn {
+.excelDownBtn1 {
     float: right;
 }
 
 .excelDownBtn2 {
+    float: right;
+}
+
+.excelDownBtn3 {
     float: right;
 }
 

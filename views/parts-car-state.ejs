@@ -38,7 +38,7 @@
     <div class="tab-content" style="margin-top: 80px;">
         <div class="tab-pane fade active in" id="first">
             <% for(var i = 0; i < result.length; i++) { %>
-            <table class="table table-bordered" id="carTbl<%=i%>">
+            <table class="table table-bordered" id="carTbl1<%=i%>">
                 <thead>
                 <tr>
                     <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
@@ -78,13 +78,13 @@
                 <% } %>
                 </tbody>
             </table>
-            <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
+            <button class="excelDownBtn1" id="<%=i%>">엑셀로 다운로드</button>
             <BR><BR><BR><BR><BR><BR>
             <% } %>
         </div>
         <div class="tab-pane fade" id="second">
             <% for(var i = 0; i < result.length; i++) { %>
-            <table class="table table-bordered" id="carTbl<%=i%>">
+            <table class="table table-bordered" id="carTbl2<%=i%>">
                 <thead>
                 <tr>
                     <td class="month" colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
@@ -125,7 +125,7 @@
                 <% } %>
                 </tbody>
             </table>
-            <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button>
+            <button class="excelDownBtn2" id="<%=i%>">엑셀로 다운로드</button>
             <BR><BR><BR><BR><BR><BR>
             <% } %>
         </div>
@@ -189,7 +189,7 @@
                             <td class="value" id="popupTblcarSignificant"></td>
                         </tr>
                         </tbody>
-                        <button class="excelDownBtn2">엑셀로 다운로드</button>
+                        <button class="excelDownBtn3">엑셀로 다운로드</button>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -202,8 +202,13 @@
 
 <script>
     $(function() {
-        $('.excelDownBtn').click(function() {
-            var tableId = 'carTbl' + $(this).attr('id');
+        $('ul.nav-pills a').click(function (e) {
+            e.preventDefault()
+            $(this).tab('show')
+        });
+
+        $('.excelDownBtn1').click(function() {
+            var tableId = 'carTbl1' + $(this).attr('id');
             $('#' + tableId).excelexportjs({
                 containerid: tableId,
                 datatype: 'table'
@@ -211,6 +216,14 @@
         });
 
         $('.excelDownBtn2').click(function() {
+            var tableId = 'carTbl2' + $(this).attr('id');
+            $('#' + tableId).excelexportjs({
+                containerid: tableId,
+                datatype: 'table'
+            });
+        });
+
+        $('.excelDownBtn3').click(function() {
             $('#' + 'detailcarTbl').excelexportjs({
                 containerid: 'detailcarTbl',
                 datatype: 'table'
@@ -276,13 +289,6 @@
                 }
             });
         });
-    });
-
-    $(function(){
-        $('ul.nav-pills a').click(function (e) {
-            e.preventDefault()
-            $(this).tab('show')
-        })
     });
 </script>
 </body>

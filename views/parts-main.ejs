@@ -88,7 +88,7 @@
         </table>
 
         <!-- 업무일지 작성 팝업 -->
-        <div data-role="popup" id="postReportDialog">
+        <div data-role="popup" id="postReportDialog" data-dismissible="false">
             <div data-role="header">
                 <h1 id="postReportDialogTitle">업무일지 작성</h1>
             </div>
@@ -206,8 +206,22 @@
                 <input type="hidden" id="deleteReportDialogReportId" value=""/>
             </div>
         </div>
+        <div>
+            <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
+            <a href="#popupChange" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-inline ui-mini" data-transition="pop" id="passwordChange">비밀번호 변경</a>
+            <div data-role="popup" id="popupChange" data-theme="a" class="ui-corner-all">
+                <div style="padding:10px 20px;">
+                    <h3>변경할 비밀번호를 입력해주세요</h3>
+                    <input type="password" name="pw1" id="pw1" value="" placeholder="변경할비밀번호" data-theme="a">
+                    <input type="password" name="pw2" id="pw2" value="" placeholder="변경할비밀번호" data-theme="a">
+                    <div style="text-align: center">
+                        <a data-role="button" id="Change_pw" data-inline="true" data-rel="back">변경</a>
+                        <a data-role="button" href="#" id="Cancle_pw" data-inline="true" data-rel="back">취소</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <a class="ui-btn ui-btn-inline ui-mini" id="logoutBtn">로그아웃</a>
     </div>
     <div data-role="footer" data-position="fixed">
         <h4>icomwiz</h4>
@@ -698,6 +712,34 @@
 
         //html파싱이 완료 된 후 실행되는 function
         $(function() {
+            $('#Change_pw').click(function() {
+                var pw1 = $("#pw1").val();
+                var pw2 = $("#pw2").val();
+                if (pw1 !== pw2) {
+                    alert("비밀번호가 같지 않습니다.");
+                } else if(pw1 == '' || pw2 == '') {
+                    alert("비밀번호를 입력해주세요");
+                } else if(pw1 === pw2){
+                    var param ={
+                        password : pw1
+                    }
+                    $.ajax({
+                        url: "http://localhost:3000/employees",
+                        type: "PUT",
+                        dataType: "json",
+                        data: param,
+                        success: function (data) {
+                            if (data.result === 'ok') {
+                                alert('비밀번호 변경 성공');
+                            }
+                        },
+                        error: function(data){
+                            alert("code:"+data.status+"\n");
+                        }
+                    });
+                }
+            });
+
             //Query String을 위한함수
             function getUrlParams() {
                 const params = {};

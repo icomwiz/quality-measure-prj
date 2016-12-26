@@ -66,6 +66,10 @@ tr, td {
   float: right;
 }
 
+#passwordChange {
+  float: right;
+}
+
 #postReportDialog {
   *zoom:1;
 }
