@@ -658,10 +658,6 @@
                 strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(1) textarea';
                 arrInput = $(strTrInput); // 배열의 0 : 업무 시작시간, 1 : 종료시간
                 arrTextarea = $(strTrTextarea); //배열의 0 : 업무내용, 1 : 비고
-                console.log($(arrInput[0]).val());
-                console.log($(arrInput[1]).val());
-                console.log($(arrTextarea[0]).val());
-                console.log($(arrTextarea[1]).val());
                 if (($(arrInput[0]).val() == '') && ($(arrInput[1]).val() == '') && ($(arrTextarea[0]).val() =='') && ($(arrTextarea[0]).val() =='')) { //아무것도 입력하지 않았을 경우
                     return callback(1); //analystReport만 생성
                 } else {
@@ -903,10 +899,13 @@
 
             //내근자용 업무 작성 상세내용에서 추가 버튼 눌렀을 경우
             $('.workDetailsAddBtn').click(function() {
+                var rowsNum = $('#workDetailsTbl > tbody tr').length;
+                var strTrInput = '#workDetailsTbl > tbody tr:nth-child(' + (rowsNum) + ') input[type=text]';
+                var arrInput = $(strTrInput);
                 $('#workDetailsTbl > tbody:last').append(
                         '<tr>' +
                             '<td>' +
-                                '<input class="workDetailsStartTime" type="text" placeholder="09:00"/>' +
+                                '<input class="workDetailsStartTime" type="text" placeholder="09:00" value="' +$(arrInput[1]).val() + '"/>' +
                             '</td>' +
                             '<td>' +
                                 '<input class="workDetailsEndTime" type="text" placeholder="10:00"/>' +
