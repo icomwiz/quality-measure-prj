@@ -1539,7 +1539,7 @@ function getErrorStatisticsPerDay(callback) {
                     'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
                     'JOIN part p ON (p.id = tp.part_id) ' +
                     'WHERE t.team_no > 0 AND r.type = 1 AND r.date = str_to_date(?, \'%Y-%m-%d\') ' +
-                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, GROUP_CONCAT(e.name) name ' +
+                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, GROUP_CONCAT(DISTINCT e.name) name ' +
                     'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
                     'WHERE r.team_position = \'조장\' AND r.date = str_to_date(?, \'%Y-%m-%d\') AND type = 1 GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
                     'SUM(CASE WHEN rd.obstacle_classification = \'장비오류\' THEN 1 ELSE 0 END) equipmentError, ' +
@@ -1704,7 +1704,7 @@ function getErrorStatisticsPerWeek(callback) {
                     'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
                     'JOIN part p ON (p.id = tp.part_id) ' +
                     'WHERE t.team_no > 0 AND r.type = 1 AND r.date BETWEEN str_to_date(?, \'%Y-%m-%d\') AND str_to_date(?, \'%Y-%m-%d\') ' +
-                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(DISTINCT e.name) name ' +
                     'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
                     'WHERE r.team_position = \'조장\' AND r.date BETWEEN str_to_date(?, \'%Y-%m-%d\') AND str_to_date(?, \'%Y-%m-%d\') AND type = 1 ' +
                     'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
@@ -1882,7 +1882,7 @@ function getErrorStatisticsPerMonth(callback) {
                     'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
                     'JOIN part p ON (p.id = tp.part_id) ' +
                     'WHERE t.team_no > 0 AND r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? ' +
-                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(DISTINCT e.name) name ' +
                     'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
                     'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND type = 1 ' +
                     'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
@@ -2048,7 +2048,7 @@ function getErrorStatisticsPerQuarter(callback) {
                     'JOIN teams_parts tp ON (tp.team_id = t.id) ' +
                     'JOIN part p ON (p.id = tp.part_id) ' +
                     'WHERE t.team_no > 0 AND r.type = 1 AND YEAR(r.date) = ? AND QUARTER(r.date) = ? ' +
-                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                    'GROUP BY t.id) a JOIN (SELECT r.team_id teamId, group_concat(DISTINCT e.name) name ' +
                     'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
                     'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND QUARTER(r.date) = ? AND type = 1 ' +
                     'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT r.date, t.id teamId, t.name, t.team_no, count(*) sum, ' +
@@ -2708,7 +2708,7 @@ function getCallsPerMonth(callback) {
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
         'WHERE t.team_no > 0 ' +
-        'GROUP BY t.id) a JOIN (SELECT e.name name, r.team_id teamId ' +
+        'GROUP BY t.id) a JOIN (SELECT GROUP_CONCAT(DISTINCT e.name) name, r.team_id teamId ' +
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'WHERE r.type = 1 AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND r.team_position = \'조장\' ' +
         'GROUP BY teamId) b ON(a.teamId = b.teamId)) a LEFT JOIN (SELECT b.team_id teamId, b.team_member teamMember, b.name, b.equipment_name equipmentName, a.calls planCalls, realCalls ' +
