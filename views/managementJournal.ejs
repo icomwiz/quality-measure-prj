@@ -21,11 +21,20 @@
 
     <h1 style="text-align: center; margin-bottom: 15px;">내근자 업무 일지 관리</h1>
     <div style="text-align: right; margin-bottom: 10px">
-        <input type="date" class="D_date" placeholder="yyyy-mm-dd" onchange="Change_date(value)">
+        <input style="margin-bottom: 4px" type="date" class="D_date" placeholder="yyyy-mm-dd" onchange="Change_date(value)"><br>
+        <select class="checkPart" onchange="changePart(this.value)">
+            <option value="6">전체보기</option>
+            <option value="5">정기데이터파트</option>
+            <option value="1">정기음성파트</option>
+            <option value="2">QOE파트</option>
+            <option value="3">외근care파트</option>
+            <option value="4">총괄파트</option>
+        </select>
     </div>
 
     <% for(var i = 0 ;i < count; i ++ ) { %>
-    <div style="text-align: center">
+    <% if (info[i].result[0].part === "정기음성파트") { %>
+    <div style="text-align: center" class="VoicePart">
         <table border="1" width="100%">
             <thead>
             <tr>
@@ -63,7 +72,7 @@
             </tbody>
         </table>
     </div>
-    <div>
+    <div class="VoicePart">
         <table border="1" width="100%" >
             <thead>
             <tr>
@@ -97,8 +106,309 @@
             <% } %>
             </tbody>
         </table>
+        <br>
     </div>
-    <br>
+    <% } else if (info[i].result[0].part === "QOE파트") { %>
+        <div style="text-align: center;" class="QOEPart">
+        <table border="1" width="100%">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%>(<%= info[i].result[0].part%>)</th>
+            </tr>
+            <tr>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th>
+                <th style="text-align: center; background: #C0C0C0;">세부사항</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: center; width:10%; ">출근</td>
+                <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
+                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+            <tr>
+                <td style="text-align: center;">퇴근</td>
+                <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
+            </tr>
+            <td style="text-align: center;">기타</td>
+            <td style="text-align: center;"><%= info[i].result[0].etcTime%></td>
+            <tr>
+                <td style="text-align: center;">야근</td>
+                <td style="text-align: center;"><%= info[i].result[0].overTime%></td>
+            </tr>
+            <td style="text-align: center;">휴가</td>
+            <td style="text-align: center;">
+                <% if (info[i].result[0].vacation == 0) { %>
+                X
+                <% } else { %>
+                휴가중
+                <% } %>
+            </td>
+            <tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="QOEPart">
+        <table border="1" width="100%" >
+            <thead>
+            <tr>
+                <th colspan='5'  style="text-align: center; background: #C0C0C0;">업무 상세 내역</th>
+            </tr>
+            <tr>
+                <th style="text-align: center; width: 10%">업무 시작 시각</th>
+                <th style="text-align: center; width: 10%">업무 종료 시각</th>
+                <th style="text-align: center; width: 10%">업무 구분</th>
+                <th style="text-align: center;">업무 내용</th>
+                <th style="text-align: center; width: 10%">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (j = 0 ; j < info[i].result.length ; j ++ ) { %>
+            <tr>
+                <td style="text-align: center;"><%= info[i].result[j].startTime%></td>
+                <td style="text-align: center;"><%= info[i].result[j].endTime%></td>
+                <td style="text-align: center;">
+                    <% if (info[i].result[j].type == 1) { %>
+                    주업무
+                    <% } else if (info[i].result[j].type == 2) { %>
+                    SKT매니저
+                    <% } else if (info[i].result[j].type == 3) { %>
+                    외근자care
+                    <% } %>
+                </td>
+                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><%= info[i].result[j].note%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    <% } else if (info[i].result[0].part === "외근care파트") { %>
+    <div style="text-align: center;" class="CarePart">
+        <table border="1" width="100%">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%>(<%= info[i].result[0].part%>)</th>
+            </tr>
+            <tr>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th>
+                <th style="text-align: center; background: #C0C0C0;">세부사항</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: center; width:10%; ">출근</td>
+                <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
+                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+            <tr>
+                <td style="text-align: center;">퇴근</td>
+                <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
+            </tr>
+            <td style="text-align: center;">기타</td>
+            <td style="text-align: center;"><%= info[i].result[0].etcTime%></td>
+            <tr>
+                <td style="text-align: center;">야근</td>
+                <td style="text-align: center;"><%= info[i].result[0].overTime%></td>
+            </tr>
+            <td style="text-align: center;">휴가</td>
+            <td style="text-align: center;">
+                <% if (info[i].result[0].vacation == 0) { %>
+                X
+                <% } else { %>
+                휴가중
+                <% } %>
+            </td>
+            <tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="CarePart">
+        <table border="1" width="100%" >
+            <thead>
+            <tr>
+                <th colspan='5'  style="text-align: center; background: #C0C0C0;">업무 상세 내역</th>
+            </tr>
+            <tr>
+                <th style="text-align: center; width: 10%">업무 시작 시각</th>
+                <th style="text-align: center; width: 10%">업무 종료 시각</th>
+                <th style="text-align: center; width: 10%">업무 구분</th>
+                <th style="text-align: center;">업무 내용</th>
+                <th style="text-align: center; width: 10%">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (j = 0 ; j < info[i].result.length ; j ++ ) { %>
+            <tr>
+                <td style="text-align: center;"><%= info[i].result[j].startTime%></td>
+                <td style="text-align: center;"><%= info[i].result[j].endTime%></td>
+                <td style="text-align: center;">
+                    <% if (info[i].result[j].type == 1) { %>
+                    주업무
+                    <% } else if (info[i].result[j].type == 2) { %>
+                    SKT매니저
+                    <% } else if (info[i].result[j].type == 3) { %>
+                    외근자care
+                    <% } %>
+                </td>
+                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><%= info[i].result[j].note%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    <% } else if ( info[i].result[0].part === "총괄파트" ) { %>
+    <div style="text-align: center;" class="TotalPart">
+        <table border="1" width="100%">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%>(<%= info[i].result[0].part%>)</th>
+            </tr>
+            <tr>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th>
+                <th style="text-align: center; background: #C0C0C0;">세부사항</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: center; width:10%; ">출근</td>
+                <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
+                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+            <tr>
+                <td style="text-align: center;">퇴근</td>
+                <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
+            </tr>
+            <td style="text-align: center;">기타</td>
+            <td style="text-align: center;"><%= info[i].result[0].etcTime%></td>
+            <tr>
+                <td style="text-align: center;">야근</td>
+                <td style="text-align: center;"><%= info[i].result[0].overTime%></td>
+            </tr>
+            <td style="text-align: center;">휴가</td>
+            <td style="text-align: center;">
+                <% if (info[i].result[0].vacation == 0) { %>
+                X
+                <% } else { %>
+                휴가중
+                <% } %>
+            </td>
+            <tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="TotalPart">
+        <table border="1" width="100%" >
+            <thead>
+            <tr>
+                <th colspan='5'  style="text-align: center; background: #C0C0C0;">업무 상세 내역</th>
+            </tr>
+            <tr>
+                <th style="text-align: center; width: 10%">업무 시작 시각</th>
+                <th style="text-align: center; width: 10%">업무 종료 시각</th>
+                <th style="text-align: center; width: 10%">업무 구분</th>
+                <th style="text-align: center;">업무 내용</th>
+                <th style="text-align: center; width: 10%">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (j = 0 ; j < info[i].result.length ; j ++ ) { %>
+            <tr>
+                <td style="text-align: center;"><%= info[i].result[j].startTime%></td>
+                <td style="text-align: center;"><%= info[i].result[j].endTime%></td>
+                <td style="text-align: center;">
+                    <% if (info[i].result[j].type == 1) { %>
+                    주업무
+                    <% } else if (info[i].result[j].type == 2) { %>
+                    SKT매니저
+                    <% } else if (info[i].result[j].type == 3) { %>
+                    외근자care
+                    <% } %>
+                </td>
+                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><%= info[i].result[j].note%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    <% } else if ( info[i].result[0].part === "정기데이터파트" ) { %>
+    <div style="text-align: center;" class="dataPart">
+        <table border="1" width="100%">
+            <thead>
+            <tr>
+                <th colspan="3" style="text-align: center;  background: #FFFFCC"><%= info[i].result[0].name%>(<%= info[i].result[0].part%>)</th>
+            </tr>
+            <tr>
+                <th colspan='2' style="text-align: center;  background: #C0C0C0;">근태 현황</th>
+                <th style="text-align: center; background: #C0C0C0;">세부사항</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="text-align: center; width:10%; ">출근</td>
+                <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
+                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+            <tr>
+                <td style="text-align: center;">퇴근</td>
+                <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
+            </tr>
+            <td style="text-align: center;">기타</td>
+            <td style="text-align: center;"><%= info[i].result[0].etcTime%></td>
+            <tr>
+                <td style="text-align: center;">야근</td>
+                <td style="text-align: center;"><%= info[i].result[0].overTime%></td>
+            </tr>
+            <td style="text-align: center;">휴가</td>
+            <td style="text-align: center;">
+                <% if (info[i].result[0].vacation == 0) { %>
+                X
+                <% } else { %>
+                휴가중
+                <% } %>
+            </td>
+            <tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="dataPart">
+        <table border="1" width="100%" >
+            <thead>
+            <tr>
+                <th colspan='5'  style="text-align: center; background: #C0C0C0;">업무 상세 내역</th>
+            </tr>
+            <tr>
+                <th style="text-align: center; width: 10%">업무 시작 시각</th>
+                <th style="text-align: center; width: 10%">업무 종료 시각</th>
+                <th style="text-align: center; width: 10%">업무 구분</th>
+                <th style="text-align: center;">업무 내용</th>
+                <th style="text-align: center; width: 10%">비고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% for (j = 0 ; j < info[i].result.length ; j ++ ) { %>
+            <tr>
+                <td style="text-align: center;"><%= info[i].result[j].startTime%></td>
+                <td style="text-align: center;"><%= info[i].result[j].endTime%></td>
+                <td style="text-align: center;">
+                    <% if (info[i].result[j].type == 1) { %>
+                    주업무
+                    <% } else if (info[i].result[j].type == 2) { %>
+                    SKT매니저
+                    <% } else if (info[i].result[j].type == 3) { %>
+                    외근자care
+                    <% } %>
+                </td>
+                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><%= info[i].result[j].note%></td>
+            </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <br>
+    </div>
+    <% } %>
     <% } %>
     <div style="text-align: right"><button id="backBtn">뒤로가기</button></div>
 
@@ -110,12 +420,12 @@
         $(".D_date").val(query.date);
         $("#backBtn").click(function() {
             var now_date = date();
-            return window.location.href = "http://localhost:3000/employees/partsmain?date="+now_date;
+            return window.location.href = "http://124.137.28.247:8080/employees/partsmain?date="+now_date;
         });
     });
 
     function Change_date(date_val) {
-        return window.location.href = "http://localhost:3000/employees/management-journal?date="+date_val ;
+        return window.location.href = "http://124.137.28.247:8080/employees/management-journal?date="+date_val ;
     }
     //Query String을 위한함수
     function getUrlParams() {
@@ -124,21 +434,45 @@
         return params;
     }
 
-/*    function date(){
-        var date = new Date();
-
-        var year  = date.getFullYear();
-        var month = date.getMonth() + 1; // 0부터 시작하므로 1더함 더함
-        var day   = date.getDate();
-
-        if(month < 10) {
-            month = "0"+month;
-        }
-        if(day < 10) {
-            day = "0"+day
-        }
-        return year +'-'+month+'-'+day;
-    }*/
+    function changePart(value) {
+        if($(".checkPart").val() === "1") {
+            $(".VoicePart").css("display", "block");
+            $(".QOEPart").css("display", "none");
+            $(".CarePart").css("display", "none");
+            $(".dataPart").css("display", "none");
+            $(".TotalPart").css("display", "none");
+        } else if ($(".checkPart").val() === "2") {
+            $(".VoicePart").css("display", "none");
+            $(".QOEPart").css("display", "block");
+            $(".CarePart").css("display", "none");
+            $(".dataPart").css("display", "none");
+            $(".TotalPart").css("display", "none");
+        } else if ($(".checkPart").val() === "3") {
+            $(".VoicePart").css("display", "none");
+            $(".QOEPart").css("display", "none");
+            $(".CarePart").css("display", "block");
+            $(".dataPart").css("display", "none");
+            $(".TotalPart").css("display", "none");
+        } else if ($(".checkPart").val() === "4") {
+            $(".VoicePart").css("display", "none");
+            $(".QOEPart").css("display", "none");
+            $(".CarePart").css("display", "none");
+            $(".TotalPart").css("display", "block");
+            $(".dataPart").css("display", "none");
+        } else if ($(".checkPart").val() === "5") {
+            $(".VoicePart").css("display", "none");
+            $(".QOEPart").css("display", "none");
+            $(".CarePart").css("display", "none");
+            $(".TotalPart").css("display", "none");
+            $(".dataPart").css("display", "block");
+        } else { 
+            $(".VoicePart").css("display", "block");
+            $(".QOEPart").css("display", "block");
+            $(".CarePart").css("display", "block");
+            $(".dataPart").css("display", "block");
+            $(".TotalPart").css("display", "block");
+        };
+    }
 
     //전일날자계산함수
     function date(){
