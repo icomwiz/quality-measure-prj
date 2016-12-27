@@ -420,12 +420,12 @@
         $(".D_date").val(query.date);
         $("#backBtn").click(function() {
             var now_date = date();
-            return window.location.href = "http://124.137.28.247:8080/employees/partsmain?date="+now_date;
+            return window.location.href = "http://localhost:3000/employees/partsmain?date="+now_date;
         });
     });
 
     function Change_date(date_val) {
-        return window.location.href = "http://124.137.28.247:8080/employees/management-journal?date="+date_val ;
+        return window.location.href = "http://localhost:3000/employees/management-journal?date="+date_val ;
     }
     //Query String을 위한함수
     function getUrlParams() {
