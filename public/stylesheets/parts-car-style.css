@@ -6,6 +6,9 @@ table {
     text-align: center;
 }
 
+.table > tbody > tr > td {
+    vertical-align: middle !important;
+}
 
 thead {
     background-color: beige;
