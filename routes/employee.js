@@ -51,6 +51,9 @@ router.get('/admin', isAuthenticated, function(req, res, next) {
             if (err) {
                 return next(err);
             }
+            console.log('data_daily_briefing: ' + data_daily_briefing);
+            console.log('daily_briefing_id: ' + daily_briefing_id);
+            console.log('briefing: ' + briefing);
             if(daily_briefing_id[0]) {
                 res.render('parts-admin-page-view', {
                     result: data_daily_briefing,

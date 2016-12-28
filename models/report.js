@@ -1737,9 +1737,8 @@ function getErrorStatisticsPerWeek(callback) {
                 async.each(weeks, function(week, callback) {
                     var dateObj = new Date();
                     var today = dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate();
-                    console.log(today);
                     var endDay = week.endDay.split('-');
-                    if ((endDay[0] >= dateObj.getFullYear()) && (endDay[1] >= dateObj.getMonth() + 1) && (endDay[2] >= dateObj.getDate())) {
+                    if ((endDay[0] > dateObj.getFullYear()) || ((endDay[0] === dateObj.getFullYear()) && (endDay[1] > (dateObj.getMonth() + 1))) || ((endDay[0] === dateObj.getFullYear()) && (endDay[1] === (dateObj.getMonth() + 1)) && (endDay[2] > dateObj.getDate()))) {
                         week.endDay = today;
                     }
                     var weeks = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];

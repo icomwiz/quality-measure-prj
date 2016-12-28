@@ -511,10 +511,9 @@
             //오늘날짜계산함수
             function date(){
                 var today = new Date();
-                var yesterday = new Date();
-                var year = yesterday.getFullYear();
-                var month = yesterday.getMonth() + 1;
-                var day = yesterday.getDate();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+                var day = today.getDate();
 
                 if(month < 10) {
                     month = "0" + month;

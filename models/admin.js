@@ -57,7 +57,7 @@ function daily_briefingView(reportDate, callback) {
         "WHERE work_details < 100 AND r.date = ? "+
         "GROUP BY e.name) a ON (e.id = a.id) "+
         "WHERE work_details < 100 AND rd.work_details = 1 AND r.date = ? " +
-        "ORDER BY e.name";
+        "ORDER BY team_name";
     var sql_select_date = "SELECT id FROM daily_briefing WHERE date = ? LIMIT 1";
 
     dbPool.getConnection(function(err, dbConn) {
