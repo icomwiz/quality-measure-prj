@@ -2615,7 +2615,7 @@ function getCallsPerDay(callback) {
         'ORDER BY date DESC';
 
     var select_calls_info =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
+        'SELECT a.teamId, a.teamName, a.teamNo, concat(a.teamName, a.teamNo) concatTeamName, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
         'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
@@ -2629,7 +2629,8 @@ function getCallsPerDay(callback) {
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'JOIN report_details rd ON(r.id = rd.report_id) ' +
         'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.type = 1 ' +
-        'GROUP BY r.id) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId)';
+        'GROUP BY r.id) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY concatTeamName';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -2726,7 +2727,7 @@ function getCallsPerMonth(callback) {
         'ORDER BY MONTH(date) DESC';
 
     var select_calls_info =
-        'SELECT a.teamId, a.teamName, a.teamNo, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
+        'SELECT a.teamId, a.teamName, a.teamNo, concat(a.teamName, a.teamNo) concatTeamName, a.name teamLeader, b.teamMember teamMember, b.name measurer, b.equipmentName, b.planCalls, b.realCalls ' +
         'FROM(SELECT a.teamId, a.teamName, a.teamNo, b.name ' +
         'FROM(SELECT id teamId, name teamName, team_no teamNo ' +
         'FROM team t ' +
@@ -2742,7 +2743,8 @@ function getCallsPerMonth(callback) {
         'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
         'JOIN report_details rd ON(r.id = rd.report_id) ' +
         'WHERE YEAR(r.date) = ? AND MONTH(r.date) = ? AND r.type = 1 ' +
-        'GROUP BY employeeId) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId);';
+        'GROUP BY employeeId) b ON (a.employeeId = b.employeeId)) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY concatTeamName';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
