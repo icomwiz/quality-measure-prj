@@ -475,16 +475,16 @@
             //오늘날짜계산함수
             function date(){
                 var today = new Date();
-                var yesterday = new Date(today.valueOf() - (24*60*60*1000));
+                var yesterday = new Date();
                 var year = yesterday.getFullYear();
                 var month = yesterday.getMonth() + 1;
                 var day = yesterday.getDate();
 
                 if(month < 10) {
-                    month = "0"+month;
+                    month = "0" + month;
                 }
                 if(day < 10) {
-                    day = "0"+day
+                    day = "0" + day
                 }
                 return year + '-' +month+ '-' +day;
             }
@@ -511,16 +511,16 @@
             //오늘날짜계산함수
             function date(){
                 var today = new Date();
-                var yesterday = new Date(today.valueOf() - (24*60*60*1000));
+                var yesterday = new Date();
                 var year = yesterday.getFullYear();
                 var month = yesterday.getMonth() + 1;
                 var day = yesterday.getDate();
 
                 if(month < 10) {
-                    month = "0"+month;
+                    month = "0" + month;
                 }
                 if(day < 10) {
-                    day = "0"+day
+                    day = "0" + day
                 }
                 return year + '-' +month+ '-' +day;
             }

@@ -1737,6 +1737,7 @@ function getErrorStatisticsPerWeek(callback) {
                 async.each(weeks, function(week, callback) {
                     var dateObj = new Date();
                     var today = dateObj.getFullYear() + '-' + (dateObj.getMonth() + 1) + '-' + dateObj.getDate();
+                    console.log(today);
                     var endDay = week.endDay.split('-');
                     if ((endDay[0] >= dateObj.getFullYear()) && (endDay[1] >= dateObj.getMonth() + 1) && (endDay[2] >= dateObj.getDate())) {
                         week.endDay = today;
