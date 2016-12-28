@@ -39,3 +39,7 @@ pre {
     white-space: -o-pre-wrap;
     word-break: break-all;
 }
+
+.errorPopupProperty {
+    width: 30%;
+}
