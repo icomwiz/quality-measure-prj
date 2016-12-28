@@ -22,3 +22,16 @@ a {
 .excelDownBtn {
     float: right;
 }
+
+pre {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    background: white;
+    border: 0px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-break: break-all;
+}

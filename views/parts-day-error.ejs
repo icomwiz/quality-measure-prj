@@ -505,8 +505,8 @@
                             '<tr>' + '<td>' + '에러 구분' + '</td>' + '<td>' + data.result[i].obstacleClassification + '</td>' + '</tr>' +
                             '<tr>' + '<td>' + '에러 세부' + '</td>' + '<td>' + data.result[i].obstacleDetails + '</td>' + '</tr>' +
                             '<tr>' + '<td>' + '에러 발생 시간' + '</td>' + '<td>' + data.result[i].obstacleTime + '</td>' + '</tr>' +
-                            '<tr>' + '<td>' + '에러 증상' + '</td>' + '<td>' + data.result[i].obstaclePhenomenon + '</td>' + '</tr>' +
-                            '<tr>' + '<td>' + '에러 조치' + '</td>' + '<td>' + data.result[i].obstacleResult + '</td>' + '</tr>' + "</table></div></li>"
+                            '<tr>' + '<td>' + '에러 증상' + '</td>' + '<td><pre>' + data.result[i].obstaclePhenomenon + '</pre></td>' + '</tr>' +
+                            '<tr>' + '<td>' + '에러 조치' + '</td>' + '<td><pre>' + data.result[i].obstacleResult + '</pre></td>' + '</tr>' + "</table></div></li>"
                     }
                     $('#errorListArea').empty();
                     $('#errorListArea').append(tagList);

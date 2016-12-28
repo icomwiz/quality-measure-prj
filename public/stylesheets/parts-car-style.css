@@ -6,6 +6,7 @@ table {
     text-align: center;
 }
 
+
 thead {
     background-color: beige;
 }
@@ -33,6 +34,7 @@ a {
 
 .carName {
     background-color: cornsilk;
+    text-align: center;
 }
 
 .true-teamName {
