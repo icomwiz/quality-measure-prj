@@ -27,13 +27,14 @@
     <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
 </head>
 <body>
-    <div class="page-header">
-    <h1>차량 현황 <small>월별 현황</small></h1>
-</div>
+
     <ul class="nav nav-pills">
         <li role="presentation" class="active"><a href="#first">팀별 차량현황</a></li>
         <li role="presentation"><a href="#second">주행Km별 차량현황</a></li>
     </ul>
+    <div class="page-header">
+        <h1>차량 현황 <small>월별 현황</small></h1>
+    </div>
     <div class="tab-content" style="margin-top: 80px;">
         <div class="tab-pane fade active in" id="first">
             <% for(var i = 0; i < result.length; i++) { %>
