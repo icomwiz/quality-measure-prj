@@ -50,7 +50,7 @@
                     if(data.result === 2) { //측정자용
                         return location.replace('http://localhost:3000/reports?action=0');
                     } else if(data.result === 1) { //분석자용, 관리자용
-                        //오늘날짜계산함수
+                        //어제날짜계산함수
                         function getYesterday(){
                             var today = new Date();
                             var yesterday = new Date(today.valueOf() - (24*60*60*1000));
