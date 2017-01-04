@@ -279,10 +279,11 @@
             tmpSum2 += parseInt($('#measurePerson'+j).val()) || 0;
             tmpSum3 += parseInt($('#supportPerson'+j).val()) || 0;
         }
+
         $('#AssignedPerson_total').text(tmpSum1);
         $('#measurePerson_total').text(tmpSum2);
         $('#supportPerson_total').text(tmpSum3);
-        $('#total_Sum').text(tmpSum1+tmpSum2+tmpSum3);
+        $('#total_Sum').text(tmpSum2+tmpSum3);
 
         $('#SaveBtn').click(function() {
             return window.location.href = "http://localhost:3000/employees/admin?date="+query.date+"&action=0"
@@ -310,8 +311,6 @@
             }
             $(id2).text(tmpSum);
         }
-
-
 
         $('.excelDownBtn').click(function() {
             $('#BusinessStatus').excelexportjs({
@@ -351,7 +350,5 @@
         }
         return year + '-' +month+ '-' +day;
     }
-
-
 </script>
 </html>
