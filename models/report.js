@@ -1843,7 +1843,7 @@ function getErrorStatisticsPerMonth(callback) {
                 'SELECT DISTINCT YEAR(date) year, MONTH(date) month ' +
                 'FROM report ' +
                 'WHERE type = 1 ' +
-                'ORDER BY MONTH(date) DESC';
+                'ORDER BY date DESC';
 
             dbConn.query(sql_select_week, [], function(err, results) {
                 if (err) {
@@ -2009,7 +2009,7 @@ function getErrorStatisticsPerQuarter(callback) {
                 'SELECT DISTINCT YEAR(date) year, QUARTER(date) quarter ' +
                 'FROM report ' +
                 'WHERE type = 1 ' +
-                'ORDER BY QUARTER(date) DESC';
+                'ORDER BY date DESC';
 
             dbConn.query(sql_select_quarter, [], function(err, results) {
                 if (err) {
@@ -2373,7 +2373,8 @@ function getCarState(callback) {
                                         "CASE WHEN DAY(date) = 30 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day30, "+
                                         "CASE WHEN DAY(date) = 31 THEN CONCAT_WS(',', team_name, car_mileage_before, car_mileage_after) ELSE NULL END day31 "+
                                         "FROM report "+
-                                        "WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? ";
+                                        "WHERE type = 1 AND Year(date) = ? AND MONTH(date) = ? " +
+                                        "ORDER BY carNumber";
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
