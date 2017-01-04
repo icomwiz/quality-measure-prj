@@ -77,7 +77,7 @@ th, td {
   background-color: #DAEEF3;
 }
 
-.humanErrorDiv > tr > td {
+.humanErrorTd {
   background-color: #DAEEF3;
 }
 
@@ -95,4 +95,8 @@ th, td {
 
 .etcErrorTd {
   background-color: aliceblue;
+}
+
+.errorChkTh {
+  background-color: #f6f6f6;
 }

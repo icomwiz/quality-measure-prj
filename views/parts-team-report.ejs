@@ -161,48 +161,97 @@
             <!--</table>-->
             <table>
                 <thead>
-                    <tr>
-                        <th>에러 구분</th><th>에러 세부</th><th>에러 증상</th><th>에러 조치</th>
-                    </tr>
+                    <th class="errorChkTh" height="30" width="15%">에러 구분</th><th class="errorChkTh" width="15%">에러 세부</th><th class="errorChkTh">에러 증상</th><th class="errorChkTh">에러 조치</th>
                 </thead>
                 <tbody>
                     <div class="humanErrorDiv">
                         <tr>
-                            <th rowspan="4">Human<BR>(측정자 오류)</th>
-                            <td>
+                            <th class="humanErrorTd" rowspan="4">Human<BR>(측정자 오류)</th>
+                            <td class="humanErrorTd">
                                 <label>
                                     <input type="checkbox" id="uploadError">업로드 오류
                                 </label>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd"></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="humanErrorTd">
                                 <label>
                                     <input type="checkbox" id="compressionNameError">압축 파일명 오류
                                 </label>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd"></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="humanErrorTd">
                                 <label>
                                     <input type="checkbox" id="settingError">Setting오류
                                 </label>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd"></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="humanErrorTd">
                                 <label>
                                     <input type="checkbox" id="etcError">기타 오류
                                 </label>
                             </td>
-                            <td></td>
-                            <td></td>
+                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd"></td>
+                        </tr>
+                    </div>
+                    <div class="IQAErrorDiv">
+                        <tr>
+                            <th class="IQAErrorTd" rowspan="3">IQA<br>(기능 오류)</th>
+                            <td class="IQAErrorTd">
+                                <label>
+                                <input type="checkbox" id="serverError">Server오류
+                                </label>
+                            </td>
+                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd"></td>
+                        </tr>
+                        <tr>
+                            <td class="IQAErrorTd">
+                                <label>
+                                <input type="checkbox" id="segmentOmissionError">Segment누락
+                                </label>
+                            </td>
+                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd"></td>
+                        </tr>
+                        <tr>
+                            <td class="IQAErrorTd">
+                                <label>
+                                    <input type="checkbox" id="settingError">Setting오류
+                                </label>
+                            </td>
+                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd"></td>
+                        </tr>
+                    </div>
+                    <div class="etcErrorDiv">
+                        <tr>
+                            <th class="etcErrorTh" rowspan="2">기타</th>
+                            <td class="etcErrorTh">
+                                <label>
+                                    <input type="checkbox" id="compressionLiftError">압축해제에러
+                                </label>
+                            </td>
+                            <td class="etcErrorTh"></td>
+                            <td class="etcErrorTh"></td>
+                        </tr>
+                        <tr>
+                            <td class="etcErrorTh">
+                                <label>
+                                    <input type="checkbox" id="etc">기타
+                                </label>
+                            </td>
+                            <td class="etcErrorTh"></td>
+                            <td class="etcErrorTh"></td>
                         </tr>
                     </div>
                 </tbody>
