@@ -117,10 +117,10 @@
                                 </label>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="uploadErrorPhenomenon"></textarea>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="uploadErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -130,10 +130,10 @@
                                 </label>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="compressionNameErrorPhenomenon"></textarea>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="compressionNameErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -143,10 +143,10 @@
                                 </label>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="settingErrorPhenomenon"></textarea>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="settingErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -156,10 +156,10 @@
                                 </label>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="etcErrorPhenomenon"></textarea>
                             </td>
                             <td class="humanErrorTd">
-                                <textarea></textarea>
+                                <textarea id="etcErrorResult"></textarea>
                             </td>
                         </tr>
                     </div>
@@ -172,10 +172,10 @@
                                 </label>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="serverErrorPhenomenon"></textarea>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="serverErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -185,10 +185,10 @@
                                 </label>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="segmentOmissionErrorPhenomenon"></textarea>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="segmentOmissionErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -198,10 +198,10 @@
                                 </label>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="settingErrorPhenomenon"></textarea>
                             </td>
                             <td class="IQAErrorTd">
-                                <textarea></textarea>
+                                <textarea id="settingErrorResult"></textarea>
                             </td>
                         </tr>
                     </div>
@@ -214,10 +214,10 @@
                                 </label>
                             </td>
                             <td class="etcErrorTd">
-                                <textarea></textarea>
+                                <textarea id="compressionLiftErrorPhenomenon"></textarea>
                             </td>
                             <td class="etcErrorTd">
-                                <textarea></textarea>
+                                <textarea id="compressionLiftErrorResult"></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -227,10 +227,10 @@
                                 </label>
                             </td>
                             <td class="etcErrorTd">
-                                <textarea></textarea>
+                                <textarea id="etcPhenomenon"></textarea>
                             </td>
                             <td class="etcErrorTd">
-                                <textarea></textarea>
+                                <textarea id="etcResult"></textarea>
                             </td>
                         </tr>
                     </div>
@@ -425,38 +425,56 @@
                 var uploadError = {};
                 uploadError.name = 'uploadError';
                 uploadError.value = ($('#uploadError').is(":checked") === true) ? 1 : 0;
+                uploadError.phenomenon = $('#uploadErrorPhenomenon').val();
+                uploadError.result = $('#uploadErrorResult').val();
 
                 var compressionNameError = {};
                 compressionNameError.name = 'compressionNameError';
                 compressionNameError.value = ($('#compressionNameError').is(":checked") === true) ? 1 : 0;
+                compressionNameError.phenomenon = $('#compressionNameErrorPhenomenon').val();
+                compressionNameError.result = $('#compressionNameErrorResult').val();
 
                 var settingError = {};
                 settingError.name = 'settingError';
                 settingError.value = ($('#settingError').is(":checked") === true) ? 1 : 0;
+                settingError.phenomenon = $('#settingErrorPhenomenon').val();
+                settingError.result = $('#settingErrorResult').val();
 
                 var etcError = {};
                 etcError.name = 'etcError';
                 etcError.value = ($('#etcError').is(":checked") === true) ? 1 : 0;
+                etcError.phenomenon = $('#uploadErrorPhenomenon').val();
+                etcError.result = $('#uploadErrorResult').val();
 
                 var conversionError = {};
                 conversionError.name = 'conversionError';
                 conversionError.value = ($('#conversionError').is(":checked") === true) ? 1 : 0;
+                conversionError.phenomenon = $('#conversionErrorPhenomenon').val();
+                conversionError.result = $('#conversionErrorResult').val();
 
                 var serverError = {};
                 serverError.name = 'serverError';
                 serverError.value = ($('#serverError').is(":checked") === true) ? 1 : 0;
+                serverError.phenomenon = $('#serverErrorPhenomenon').val();
+                serverError.result = $('#serverErrorResult').val();
 
                 var segmentOmissionError = {};
                 segmentOmissionError.name = 'segmentOmissionError';
                 segmentOmissionError.value = ($('#segmentOmissionError').is(":checked") === true) ? 1 : 0;
+                segmentOmissionError.phenomenon = $('#segmentOmissionErrorPhenomenon').val();
+                segmentOmissionError.result = $('#segmentOmissionErrorResult').val();
 
                 var compressionLiftError = {};
                 compressionLiftError.name = 'compressionLiftError';
                 compressionLiftError.value = ($('#compressionLiftError').is(":checked") === true) ? 1 : 0;
+                compressionLiftError.phenomenon = $('#compressionLiftErrorPhenomenon').val();
+                compressionLiftError.result = $('#compressionLiftErrorResult').val();
 
                 var etc = {};
                 etc.name = 'etc';
                 etc.value = ($('#etc').is(":checked") === true) ? 1 : 0;
+                etc.phenomenon = $('#etcPhenomenon').text();
+                etc.result = $('#etcResult').text();
 
                 errors.push(uploadError, compressionNameError, settingError, etcError, conversionError, serverError, segmentOmissionError, compressionLiftError, etc);
 

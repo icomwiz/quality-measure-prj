@@ -51,44 +51,44 @@ function setAnalystEvaluationError(reqData, callback) {
         'SELECT * ' +
         'FROM team_analyst_error ' +
         'WHERE team_id = ? AND analyst_evaluation_error_id = (SELECT id ' +
-        'FROM analyst_evaluation_error ' +
-        'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
-        'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
-        'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
-        'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
-        'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
-        'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
-        'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
-        'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
-        'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
+                                                             'FROM analyst_evaluation_error ' +
+                                                             'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
+                                                                               'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
+                                                                               'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
+                                                                               'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
+                                                                               'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
+                                                                               'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
+                                                                               'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
+                                                                               'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
+                                                                               'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
 
     var sql_insert_team_analyst_error =
-        'INSERT INTO team_analyst_error(team_id, analyst_evaluation_error_id, date) ' +
+        'INSERT INTO team_analyst_error(team_id, analyst_evaluation_error_id, date, employee_id, obstacle_phenomenon, obstacle_result) ' +
         'VALUES(?, (SELECT id ' +
-        'FROM analyst_evaluation_error ' +
-        'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
-        'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
-        'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
-        'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
-        'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
-        'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
-        'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
-        'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
-        'WHEN ? = \'etc\' THEN \'기타\' END), STR_TO_DATE(?, \'%Y-%m-%d\'))';
+                   'FROM analyst_evaluation_error ' +
+                   'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
+                                     'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
+                                     'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
+                                     'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
+                                     'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
+                                     'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
+                                     'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
+                                     'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
+                                     'WHEN ? = \'etc\' THEN \'기타\' END), STR_TO_DATE(?, \'%Y-%m-%d\'), ?, ?, ?)';
 
     var sql_delete_team_analyst_error =
         'DELETE FROM team_analyst_error ' +
         'WHERE team_id = ? AND analyst_evaluation_error_id = (SELECT id ' +
-        'FROM analyst_evaluation_error ' +
-        'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
-        'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
-        'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
-        'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
-        'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
-        'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
-        'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
-        'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
-        'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
+                                                             'FROM analyst_evaluation_error ' +
+                                                             'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
+                                                                               'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
+                                                                               'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
+                                                                               'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
+                                                                               'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
+                                                                               'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
+                                                                               'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
+                                                                               'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
+                                                                               'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
@@ -103,9 +103,8 @@ function setAnalystEvaluationError(reqData, callback) {
                     callback(null);
                 });
             } else { //체크되어있다면
-                setErrorChk(item.name, function(err) {
+                setErrorChk(item.name, item.phenomenon, item.result, function(err) {
                     if (err) {
-                        console.log(2);
                         return callback(err);
                     }
                     callback(null);
@@ -121,20 +120,19 @@ function setAnalystEvaluationError(reqData, callback) {
         });
 
         //에러 저장하기
-        function setErrorChk(errType, callback) {
+        function setErrorChk(errType, phenomenon, result, callback) {
             dbConn.query(sql_select_team_analyst_error, [reqData.teamId, errType, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date], function(err, results) {
                 if (err) {
                     return callback(err);
                 }
                 if (results.length === 0) { //에러가 테이블에 저장되어 있는지 없는지 검사한 뒤 저장되어있지 않다면 insert하기
-                    dbConn.query(sql_insert_team_analyst_error, [reqData.teamId, errType, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date], function(err, results) {
+                    dbConn.query(sql_insert_team_analyst_error, [reqData.teamId, errType, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date, reqData.employeeId, phenomenon, result], function(err, results) {
                         if (err) {
-                            console.log(5);
                             return callback(err);
                         }
                         callback(null);
                     });
-                } else { //테이블에 이미 저장되어 있다면 그대로 두기
+                } else { //테이블에 이미 저장되어 있다면 업데이트 하기
                     callback(null);
                 }
             });

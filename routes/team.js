@@ -50,6 +50,7 @@ router.get('/analystEvaluationError', function(req, res, next) {
 
 router.post('/analystEvaluationError', function(req, res, next) {
     var reqData = {};
+    reqData.employeeId = req.user.id;
     reqData.teamId = req.body.teamId;
     reqData.date = req.body.date;
     reqData.errors = req.body.errors;
