@@ -2201,11 +2201,12 @@ function getDetailErrorStatePerWeek(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
         'FROM team t JOIN report r ON (t.id = r.team_id) ' +
-        'JOIN report_details rd ON (rd.report_id = r.id) ' +
-        'JOIN employee e ON (e.id = r.employee_id) ' +
-        'JOIN (SELECT e.name, t.id ' +
-        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
-        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+                    'JOIN report_details rd ON (rd.report_id = r.id) ' +
+                    'JOIN employee e ON (e.id = r.employee_id) ' +
+                    'JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                          'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                          'WHERE r.team_position = \'조장\' AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND type = 1 ' +
+                          'GROUP BY teamId) a ON (t.id = a.teamId) ' +
         'WHERE r.type = 1 AND t.id = ? AND r.date BETWEEN STR_TO_DATE(?, \'%Y-%m-%d\') AND STR_TO_DATE(?, \'%Y-%m-%d\') AND rd.type = 1 AND rd.obstacle_classification = ? ' +
         'ORDER BY date DESC';
 
@@ -2213,7 +2214,7 @@ function getDetailErrorStatePerWeek(reqData, callback) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.startDay, reqData.endDay, reqData.obstacleClassification], function(err, results) {
+        dbConn.query(sql_detail_error_state, [reqData.startDay, reqData.endDay, reqData.teamId, reqData.startDay, reqData.endDay, reqData.obstacleClassification], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -2244,11 +2245,12 @@ function getDetailErrorStatePerMonth(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
         'FROM team t JOIN report r ON (t.id = r.team_id) ' +
-        'JOIN report_details rd ON (rd.report_id = r.id) ' +
-        'JOIN employee e ON (e.id = r.employee_id) ' +
-        'JOIN (SELECT e.name, t.id ' +
-        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
-        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
+                    'JOIN report_details rd ON (rd.report_id = r.id) ' +
+                    'JOIN employee e ON (e.id = r.employee_id) ' +
+                    'JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                          'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                          'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND type = 1 ' +
+                          'GROUP BY teamId) a ON (t.id = a.teamId) ' +
         'WHERE r.type = 1 AND t.id = ? AND YEAR(r.date) = ? AND MONTH(r.date) = ? AND rd.type = 1 AND rd.obstacle_classification = ? ' +
         'ORDER BY date DESC';
 
@@ -2256,7 +2258,7 @@ function getDetailErrorStatePerMonth(reqData, callback) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.year, reqData.month, reqData.obstacleClassification], function(err, results) {
+        dbConn.query(sql_detail_error_state, [reqData.year, reqData.month, reqData.teamId, reqData.year, reqData.month, reqData.obstacleClassification], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);
@@ -2287,19 +2289,20 @@ function getDetailErrorStatePerQuarter(reqData, callback) {
     var sql_detail_error_state =
         'SELECT date_format(r.date, \'%Y-%m-%d\') date, t.name teamName, t.team_no teamNo, a.name teamLeader, e.name, e.team_position teamPosition, rd.work_details workDetails, rd.obstacle_classification obstacleClassification, rd.obstacle_details obstacleDetails, rd.obstacle_start_time obstacleStartTime, rd.obstacle_end_time obstacleEndTime, rd.obstacle_phenomenon obstaclePhenomenon, rd.obstacle_result obstacleResult ' +
         'FROM team t JOIN report r ON (t.id = r.team_id) ' +
-        'JOIN report_details rd ON (rd.report_id = r.id) ' +
-        'JOIN employee e ON (e.id = r.employee_id) ' +
-        'JOIN (SELECT e.name, t.id ' +
-        'FROM employee e JOIN team t ON(e.team_id = t.id) ' +
-        'WHERE t.id = ? AND e.team_position = 3) a ON (t.id = a.id) ' +
-        'WHERE r.type = 1 AND t.id = ? AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 AND rd.obstacle_classification = ? ' +
+                    'JOIN report_details rd ON (rd.report_id = r.id) ' +
+                    'JOIN employee e ON (e.id = r.employee_id) ' +
+                    'JOIN (SELECT r.team_id teamId, group_concat(e.name) name ' +
+                          'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+                          'WHERE r.team_position = \'조장\' AND YEAR(r.date) = ? AND quarter(r.date) = ? AND type = 1 ' +
+                          'GROUP BY teamId) a ON (t.id = a.teamId) ' +
+        'WHERE r.type = 1 AND t.id = ? AND YEAR(r.date) = ? AND quarter(r.date) = ? AND rd.type = 1 AND rd.obstacle_classification = ?' +
         'ORDER BY date DESC';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
         }
-        dbConn.query(sql_detail_error_state, [reqData.teamId, reqData.teamId, reqData.year, reqData.quarter, reqData.obstacleClassification], function(err, results) {
+        dbConn.query(sql_detail_error_state, [reqData.year, reqData.quarter, reqData.teamId, reqData.year, reqData.quarter, reqData.obstacleClassification], function(err, results) {
             dbConn.release();
             if (err) {
                 return callback(err);

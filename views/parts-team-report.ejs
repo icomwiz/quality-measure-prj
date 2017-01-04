@@ -103,60 +103,108 @@
             </table><br/>
             에러사항 체크하기:
             <a href="#" data-role="button" data-inline="true" style="float:right;" id="errorSave">저장</a>
+            <!--<table>-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th colspan="4" class="humanErrorTh">Human<br>(측정자 오류)</th><th colspan="3" class="IQAErrorTh">IQA<br>(기능 오류)</th><th colspan="2" class="etcErrorTh">기타<br>(원인불명)</th>-->
+                    <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--<tr>-->
+                        <!--<td class="humanErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="uploadError">업로드 오류-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="humanErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="compressionNameError">압축 파일명 오류-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="humanErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="settingError">Setting오류-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="humanErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="etcError">기타오류-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="IQAErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="conversionError">Conversion Error-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="IQAErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="serverError">Server오류-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="IQAErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="segmentOmissionError">Segment누락-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="etcErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="compressionLiftError">압축해제에러-->
+                            <!--</label>-->
+                        <!--</td>-->
+                        <!--<td class="etcErrorTd">-->
+                            <!--<label>-->
+                                <!--<input type="checkbox" id="etc">기타-->
+                            <!--</label>-->
+                        <!--</td>-->
+                    <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
             <table>
                 <thead>
                     <tr>
-                        <th colspan="4" class="humanErrorTh">Human<br>(측정자 오류)</th><th colspan="3" class="IQAErrorTh">IQA<br>(기능 오류)</th><th colspan="2" class="etcErrorTh">기타<br>(원인불명)</th>
+                        <th>에러 구분</th><th>에러 세부</th><th>에러 증상</th><th>에러 조치</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="humanErrorTd">
-                            <label>
-                                <input type="checkbox" id="uploadError">업로드 오류
-                            </label>
-                        </td>
-                        <td class="humanErrorTd">
-                            <label>
-                                <input type="checkbox" id="compressionNameError">압축 파일명 오류
-                            </label>
-                        </td>
-                        <td class="humanErrorTd">
-                            <label>
-                                <input type="checkbox" id="settingError">Setting오류
-                            </label>
-                        </td>
-                        <td class="humanErrorTd">
-                            <label>
-                                <input type="checkbox" id="etcError">기타오류
-                            </label>
-                        </td>
-                        <td class="IQAErrorTd">
-                            <label>
-                                <input type="checkbox" id="conversionError">Conversion Error
-                            </label>
-                        </td>
-                        <td class="IQAErrorTd">
-                            <label>
-                                <input type="checkbox" id="serverError">Server오류
-                            </label>
-                        </td>
-                        <td class="IQAErrorTd">
-                            <label>
-                                <input type="checkbox" id="segmentOmissionError">Segment누락
-                            </label>
-                        </td>
-                        <td class="etcErrorTd">
-                            <label>
-                                <input type="checkbox" id="compressionLiftError">압축해제에러
-                            </label>
-                        </td>
-                        <td class="etcErrorTd">
-                            <label>
-                                <input type="checkbox" id="etc">기타
-                            </label>
-                        </td>
-                    </tr>
+                    <div class="humanErrorDiv">
+                        <tr>
+                            <th rowspan="4">Human<BR>(측정자 오류)</th>
+                            <td>
+                                <label>
+                                    <input type="checkbox" id="uploadError">업로드 오류
+                                </label>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    <input type="checkbox" id="compressionNameError">압축 파일명 오류
+                                </label>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    <input type="checkbox" id="settingError">Setting오류
+                                </label>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    <input type="checkbox" id="etcError">기타 오류
+                                </label>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </div>
                 </tbody>
             </table>
         </div>
@@ -341,6 +389,7 @@
                     alert(data);
                 }
             });
+
             $('#errorSave').click(function() {
                 var errors = [];
 

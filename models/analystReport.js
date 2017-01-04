@@ -223,7 +223,7 @@ function deleteMyReport(reportId, callback) {
 //내 특정 리포트 가져오기
 function getParticularReport(reportId, callback) {
     var sql_select_report =
-        'SELECT DATE_FORMAT(date,\'%Y-%m-%d\') date, major_job majorJob, DATE_FORMAT(work_start_time, \'%H:%i\') workStartTime, DATE_FORMAT(work_end_time, \'%H:%i\') workEndTime, etc_time etcTime, over_time overTime, vacation ' +
+        'SELECT DATE_FORMAT(date,\'%Y-%m-%d\') date, major_job majorJob, DATE_FORMAT(work_start_time, \'%H:%i\') workStartTime, DATE_FORMAT(work_end_time, \'%H:%i\') workEndTime, DATE_FORMAT(etc_time, \'%H:%i\') etcTime, DATE_FORMAT(over_time, \'%H:%i\') overTime, vacation ' +
         'FROM analyst_report ' +
         'WHERE id = ?';
 

@@ -662,6 +662,7 @@
         //업무 상세내역을 올바르게 작성했는지 검사
         function analystReportDetailsChk(callback) {
             var workDetailsNum = $('#workDetailsTbl > tbody tr').length;
+            console.log(workDetailsNum);
             var strTrInput = '';
             var strTrTextarea = '';
             var arrInput = '';
@@ -671,7 +672,7 @@
                 strTrTextarea = '#workDetailsTbl > tbody tr:nth-child(1) textarea';
                 arrInput = $(strTrInput); // 배열의 0 : 업무 시작시간, 1 : 종료시간
                 arrTextarea = $(strTrTextarea); //배열의 0 : 업무내용, 1 : 비고
-                if (($(arrInput[0]).val() == '') && ($(arrInput[1]).val() == '') && ($(arrTextarea[0]).val() =='') && ($(arrTextarea[0]).val() =='')) { //아무것도 입력하지 않았을 경우
+                if (workDetailsNum === 0 ||(($(arrInput[0]).val() == '') && ($(arrInput[1]).val() == '') && ($(arrTextarea[0]).val() =='') && ($(arrTextarea[0]).val() ==''))) { //아무것도 입력하지 않았을 경우
                     return callback(1); //analystReport만 생성
                 } else {
                     if (!(timeRegExpCheck('업무 시작 시간', $(arrInput[0]).val()) && timeRegExpCheck('업무 종료 시간', $(arrInput[1]).val()))) { //시간을 잘못 입력했을 경우
@@ -1282,6 +1283,7 @@
                 $('#postReportDate').attr("readonly", false); //날짜를 입력할수 있도록
                 $('#workStartTime').val(''); //출근 시간을 공백으로
                 $('#workEndTime').val('');//퇴근 시간을 공백으로
+                $('#overTime').val('');//야근 시간을 공백으로
                 $('#etcTime').val(''); //기타 시간을 공백으로
                 $('#majorWork').val(''); //majorWork를 공백으로
                 $("#workDetailsTbl > tbody tr:not(:first)").remove();
