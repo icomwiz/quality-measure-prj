@@ -103,62 +103,6 @@
             </table><br/>
             에러사항 체크하기:
             <a href="#" data-role="button" data-inline="true" style="float:right;" id="errorSave">저장</a>
-            <!--<table>-->
-                <!--<thead>-->
-                    <!--<tr>-->
-                        <!--<th colspan="4" class="humanErrorTh">Human<br>(측정자 오류)</th><th colspan="3" class="IQAErrorTh">IQA<br>(기능 오류)</th><th colspan="2" class="etcErrorTh">기타<br>(원인불명)</th>-->
-                    <!--</tr>-->
-                <!--</thead>-->
-                <!--<tbody>-->
-                    <!--<tr>-->
-                        <!--<td class="humanErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="uploadError">업로드 오류-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="humanErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="compressionNameError">압축 파일명 오류-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="humanErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="settingError">Setting오류-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="humanErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="etcError">기타오류-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="IQAErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="conversionError">Conversion Error-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="IQAErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="serverError">Server오류-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="IQAErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="segmentOmissionError">Segment누락-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="etcErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="compressionLiftError">압축해제에러-->
-                            <!--</label>-->
-                        <!--</td>-->
-                        <!--<td class="etcErrorTd">-->
-                            <!--<label>-->
-                                <!--<input type="checkbox" id="etc">기타-->
-                            <!--</label>-->
-                        <!--</td>-->
-                    <!--</tr>-->
-                <!--</tbody>-->
-            <!--</table>-->
             <table>
                 <thead>
                     <th class="errorChkTh" height="30" width="15%">에러 구분</th><th class="errorChkTh" width="15%">에러 세부</th><th class="errorChkTh">에러 증상</th><th class="errorChkTh">에러 조치</th>
@@ -172,8 +116,12 @@
                                     <input type="checkbox" id="uploadError">업로드 오류
                                 </label>
                             </td>
-                            <td class="humanErrorTd"></td>
-                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="humanErrorTd">
@@ -181,8 +129,12 @@
                                     <input type="checkbox" id="compressionNameError">압축 파일명 오류
                                 </label>
                             </td>
-                            <td class="humanErrorTd"></td>
-                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="humanErrorTd">
@@ -190,8 +142,12 @@
                                     <input type="checkbox" id="settingError">Setting오류
                                 </label>
                             </td>
-                            <td class="humanErrorTd"></td>
-                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="humanErrorTd">
@@ -199,8 +155,12 @@
                                     <input type="checkbox" id="etcError">기타 오류
                                 </label>
                             </td>
-                            <td class="humanErrorTd"></td>
-                            <td class="humanErrorTd"></td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="humanErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                     </div>
                     <div class="IQAErrorDiv">
@@ -211,8 +171,12 @@
                                 <input type="checkbox" id="serverError">Server오류
                                 </label>
                             </td>
-                            <td class="IQAErrorTd"></td>
-                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="IQAErrorTd">
@@ -220,8 +184,12 @@
                                 <input type="checkbox" id="segmentOmissionError">Segment누락
                                 </label>
                             </td>
-                            <td class="IQAErrorTd"></td>
-                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="IQAErrorTd">
@@ -229,29 +197,41 @@
                                     <input type="checkbox" id="settingError">Setting오류
                                 </label>
                             </td>
-                            <td class="IQAErrorTd"></td>
-                            <td class="IQAErrorTd"></td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="IQAErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                     </div>
                     <div class="etcErrorDiv">
                         <tr>
                             <th class="etcErrorTh" rowspan="2">기타</th>
-                            <td class="etcErrorTh">
+                            <td class="etcErrorTd">
                                 <label>
                                     <input type="checkbox" id="compressionLiftError">압축해제에러
                                 </label>
                             </td>
-                            <td class="etcErrorTh"></td>
-                            <td class="etcErrorTh"></td>
+                            <td class="etcErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="etcErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                         <tr>
-                            <td class="etcErrorTh">
+                            <td class="etcErrorTd">
                                 <label>
                                     <input type="checkbox" id="etc">기타
                                 </label>
                             </td>
-                            <td class="etcErrorTh"></td>
-                            <td class="etcErrorTh"></td>
+                            <td class="etcErrorTd">
+                                <textarea></textarea>
+                            </td>
+                            <td class="etcErrorTd">
+                                <textarea></textarea>
+                            </td>
                         </tr>
                     </div>
                 </tbody>
@@ -416,6 +396,7 @@
         $(function() {
             var teamId = $('#teamId').val();
             var date = $('#date').val();
+
             $.ajax({
                 url: 'http://localhost:3000/teams/analystEvaluationError',
                 type: 'GET',
@@ -430,7 +411,6 @@
                             var errorName = data.result[i].errorName;
                             errorName = '#' + errorName;
                             $(errorName).prop("checked", true).checkboxradio("refresh");
-                            console.log($(errorName).is(":checked"));
                         }
                     }
                 },
