@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <!-- 부가적인 테마 -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- 사용자 스타일 시트 파일 선언 -->
+    <link rel='stylesheet' href='/stylesheets/managementJournal-style.css' />
 </head>
 
 <body style="padding: 2%;">
@@ -49,7 +52,7 @@
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+                <td rowspan='5' style="text-align: left"><pre><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -100,7 +103,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><pre><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
@@ -124,7 +127,7 @@
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+                <td rowspan='5' style="text-align: left"><pre><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -175,7 +178,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><pre><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
@@ -199,7 +202,7 @@
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+                <td rowspan='5' style="text-align: left"><pre><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -250,7 +253,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><pre><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
@@ -274,7 +277,7 @@
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+                <td rowspan='5' style="text-align: left"><pre><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -325,7 +328,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><pre><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
@@ -349,7 +352,7 @@
             <tr>
                 <td style="text-align: center; width:10%; ">출근</td>
                 <td style="text-align: center; width:10%; "><%= info[i].result[0].workStartTime%></td>
-                <td rowspan='5' style="text-align: left"><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[0].majorJob%></pre></td>
+                <td rowspan='5' style="text-align: left"><pre><%= info[i].result[0].majorJob%></pre></td>
             <tr>
                 <td style="text-align: center;">퇴근</td>
                 <td style="text-align: center;"><%= info[i].result[0].workEndTime%></td>
@@ -400,7 +403,7 @@
                     외근자care
                     <% } %>
                 </td>
-                <td><pre style="margin-bottom: 0px; background: white; border: 0px"><%= info[i].result[j].workDetails%></pre></td>
+                <td><pre><%= info[i].result[j].workDetails%></pre></td>
                 <td><%= info[i].result[j].note%></td>
             </tr>
             <% } %>
