@@ -443,8 +443,8 @@
                 var etcError = {};
                 etcError.name = 'etcError';
                 etcError.value = ($('#etcError').is(":checked") === true) ? 1 : 0;
-                etcError.phenomenon = $('#uploadErrorPhenomenon').val();
-                etcError.result = $('#uploadErrorResult').val();
+                etcError.phenomenon = $('#etcErrorPhenomenon').val();
+                etcError.result = $('#etcErrorResult').val();
 
                 var conversionError = {};
                 conversionError.name = 'conversionError';
@@ -473,8 +473,8 @@
                 var etc = {};
                 etc.name = 'etc';
                 etc.value = ($('#etc').is(":checked") === true) ? 1 : 0;
-                etc.phenomenon = $('#etcPhenomenon').text();
-                etc.result = $('#etcResult').text();
+                etc.phenomenon = $('#etcPhenomenon').val();
+                etc.result = $('#etcResult').val();
 
                 errors.push(uploadError, compressionNameError, settingError, etcError, conversionError, serverError, segmentOmissionError, compressionLiftError, etc);
 
