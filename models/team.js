@@ -90,6 +90,21 @@ function setAnalystEvaluationError(reqData, callback) {
                                                                                'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
                                                                                'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
 
+    var sql_update_team_analyst_error =
+        'UPDATE team_analyst_error ' +
+        'SET employee_id = ? AND obstacle_phenomenon = ? AND obstacle_result ' +
+        'WHERE analyst_evaluation_error_id = (SELECT id ' +
+                                             'FROM analyst_evaluation_error ' +
+                                             'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
+                                                               'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
+                                                               'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
+                                                               'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
+                                                               'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
+                                                               'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
+                                                               'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
+                                                               'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
+                                                               'WHEN ? = \'etc\' THEN \'기타\' END) AND date = str_to_date(?, \'%Y-%m-%d\')';
+
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -113,7 +128,6 @@ function setAnalystEvaluationError(reqData, callback) {
         }, function(err) {
             dbConn.release();
             if (err) {
-                console.log(3);
                 return callback(err);
             }
             callback(null);
@@ -136,6 +150,10 @@ function setAnalystEvaluationError(reqData, callback) {
                     callback(null);
                 }
             });
+        }
+
+        function setErrorUpdate(errType, phenomenon, result, callback) {
+
         }
 
         //에러 해제하기
