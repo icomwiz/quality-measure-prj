@@ -90,21 +90,6 @@ function setAnalystEvaluationError(reqData, callback) {
                                                                                'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
                                                                                'WHEN ? = \'etc\' THEN \'기타\' END) AND date = STR_TO_DATE(?, \'%Y-%m-%d\')';
 
-    var sql_update_team_analyst_error =
-        'UPDATE team_analyst_error ' +
-        'SET employee_id = ? AND obstacle_phenomenon = ? AND obstacle_result = ? ' +
-        'WHERE analyst_evaluation_error_id = (SELECT id ' +
-                                             'FROM analyst_evaluation_error ' +
-                                             'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
-                                                               'WHEN ? = \'compressionNameError\' THEN \'압축파일명오류\' ' +
-                                                               'WHEN ? = \'settingError\' THEN \'Setting오류\' ' +
-                                                               'WHEN ? = \'etcError\' THEN \'기타오류\' ' +
-                                                               'WHEN ? = \'conversionError\' THEN \'Conversion Error\' ' +
-                                                               'WHEN ? = \'serverError\' THEN \'Server오류\' ' +
-                                                               'WHEN ? = \'segmentOmissionError\' THEN \'Segment누락\' ' +
-                                                               'WHEN ? = \'compressionLiftError\' THEN \'압축해제에러\' ' +
-                                                               'WHEN ? = \'etc\' THEN \'기타\' END) AND date = str_to_date(?, \'%Y-%m-%d\')';
-
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
             return callback(err);
@@ -146,12 +131,17 @@ function setAnalystEvaluationError(reqData, callback) {
                         }
                         callback(null);
                     });
-                } else { //테이블에 이미 저장되어 있다면 업데이트 하기
-                    dbConn.query(sql_update_team_analyst_error, [reqData.employeeId, phenomenon, result, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date], function(err, result) {
+                } else { //테이블에 이미 저장되어 있다면 지웠다가 다시 저장하기
+                    dbConn.query(sql_delete_team_analyst_error, [reqData.teamId, errType, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date], function(err, results) {
                         if (err) {
                             return callback(err);
                         }
-                        callback(null);
+                        dbConn.query(sql_insert_team_analyst_error, [reqData.teamId, errType, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date, reqData.employeeId, phenomenon, result], function(err, results) {
+                            if (err) {
+                                return callback(err);
+                            }
+                            callback(null);
+                        });
                     });
                 }
             });
