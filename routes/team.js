@@ -28,6 +28,30 @@ router.get('/simple', function(req, res, next) {
     });
 });
 
+router.get('/:tid/analystEvaluationError/:ename', function(req, res, next) {
+    var action = parseInt(req.query.action);
+    var reqData = {};
+    reqData.teamId = req.params.tid;
+    reqData.errName = decodeURI(req.params.ename);
+    if (action === 0) { //일별 내근자 에러
+        reqData.date = req.query.date;
+            Team.getAnalystsDetailErrorStatePerDay(reqData, function(err, result) {
+                if (err) {
+                   return next(err);
+                }
+            res.send({
+                result: result
+            });
+        });
+    } else if (action === 2) { //주별 내근자 에러
+
+    } else if (action === 3) { //월별 내근자 에러
+
+    } else { //분기별 내근자 에러
+
+    }
+});
+
 router.get('/analystEvaluationError', function(req, res, next) {
     var reqData = {};
     reqData.teamId = req.query.teamId;
