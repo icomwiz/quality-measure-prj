@@ -92,7 +92,7 @@ function setAnalystEvaluationError(reqData, callback) {
 
     var sql_update_team_analyst_error =
         'UPDATE team_analyst_error ' +
-        'SET employee_id = ? AND obstacle_phenomenon = ? AND obstacle_result ' +
+        'SET employee_id = ? AND obstacle_phenomenon = ? AND obstacle_result = ? ' +
         'WHERE analyst_evaluation_error_id = (SELECT id ' +
                                              'FROM analyst_evaluation_error ' +
                                              'WHERE name = CASE WHEN ? = \'uploadError\' THEN \'업로드오류\' ' +
@@ -147,13 +147,14 @@ function setAnalystEvaluationError(reqData, callback) {
                         callback(null);
                     });
                 } else { //테이블에 이미 저장되어 있다면 업데이트 하기
-                    callback(null);
+                    dbConn.query(sql_update_team_analyst_error, [reqData.employeeId, phenomenon, result, errType, errType, errType, errType, errType, errType, errType, errType, reqData.date], function(err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+                        callback(null);
+                    });
                 }
             });
-        }
-
-        function setErrorUpdate(errType, phenomenon, result, callback) {
-
         }
 
         //에러 해제하기
