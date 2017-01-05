@@ -409,8 +409,12 @@
                     if (data.result !== 0) {
                         for (var i = 0; i < data.result.length; i++) {
                             var errorName = data.result[i].errorName;
+                            var obstaclePhenomenon = data.result[i].obstaclePhenomenon;
+                            var obstacleResult = data.result[i].obstacleResult;
                             errorName = '#' + errorName;
                             $(errorName).prop("checked", true).checkboxradio("refresh");
+                            $(errorName + 'Phenomenon').text(obstaclePhenomenon);
+                            $(errorName + 'Result').text(obstacleResult);
                         }
                     }
                 },

@@ -179,7 +179,7 @@ function getAnalystEvaluationError(reqData, callback) {
                     'WHEN aee.name = \'Server오류\' THEN \'serverError\' ' +
                     'WHEN aee.name = \'Segment누락\' THEN \'segmentOmissionError\' ' +
                     'WHEN aee.name = \'압축해제에러\' THEN \'compressionLiftError\' ' +
-                    'WHEN aee.name = \'기타\' THEN \'etc\' END errorName ' +
+                    'WHEN aee.name = \'기타\' THEN \'etc\' END errorName, tae.obstacle_phenomenon obstaclePhenomenon, tae.obstacle_result obstacleResult ' +
         'FROM team_analyst_error tae JOIN analyst_evaluation_error aee ON (tae.analyst_evaluation_error_id = aee.id) ' +
         'WHERE team_id = ? AND date = str_to_date(?, \'%Y-%m-%d\')';
 
@@ -198,7 +198,9 @@ function getAnalystEvaluationError(reqData, callback) {
                 var resData = [];
                 for (var i = 0; i <results.length; i++) {
                     resData.push({
-                        errorName: results[i].errorName
+                        errorName: results[i].errorName,
+                        obstaclePhenomenon: results[i].obstaclePhenomenon,
+                        obstacleResult: results[i].obstacleResult
                     });
                 }
                 callback(null, resData);
