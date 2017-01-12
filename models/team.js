@@ -258,7 +258,45 @@ function getAnalystsDetailErrorStatePerWeek(reqData, callback) {
 
 //월별 내근자에러 자세히 보기
 function getAnalystsDetailErrorStatePerMonth(reqData, callback) {
+    var sql_select_analysts_error_details =
+        'SELECT a.date, b.teamName, b.teamLeader, a.errFinder, a.errName, a.obstaclePhenomenon, a.obstacleResult ' +
+        'FROM(SELECT DISTINCT DATE_FORMAT(date, \'%Y-%m-%d\') date, t.id teamId, e.name errFinder, aee.name errName, tae.obstacle_phenomenon obstaclePhenomenon, tae.obstacle_result obstacleResult ' +
+        'FROM analyst_evaluation_error aee JOIN team_analyst_error tae ON (aee.id = tae.analyst_evaluation_error_id) ' +
+        'JOIN team t ON (tae.team_id = t.id) ' +
+        'JOIN employee e ON (tae.employee_id = e.id) ' +
+        'WHERE aee.name = ? AND t.id = ? AND year(date) = ? AND month(date) = ?) a JOIN (SELECT DISTINCT t.id teamId, a.name teamLeader, CONCAT(t.name, \'팀\', \' \', t.team_no, \'조\') teamName ' +
+        'FROM team t JOIN report r ON (t.id = r.team_id) ' +
+        'JOIN (SELECT DISTINCT r.team_id teamId, group_concat(DISTINCT e.name) name ' +
+        'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
+        'WHERE r.team_position = \'조장\' AND year(r.date) = ? AND month(r.date) = ? AND type = 1 ' +
+        'GROUP BY teamId) a ON (t.id = a.teamId) ' +
+        'WHERE year(r.date) = ? AND month(r.date) = ? AND r.team_id = ? AND r.type = 1) b ON (a.teamId = b.teamId) ' +
+        'ORDER BY date DESC';
 
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_select_analysts_error_details, [reqData.errName, reqData.teamId, reqData.year, reqData.month, reqData.year, reqData.month, reqData.year, reqData.month, reqData.teamId], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            var resData = [];
+            for (var i = 0; i < results.length; i++) {
+                resData.push({
+                    date: results[i].date || '',
+                    teamName: results[i].teamName || '',
+                    teamLeader: results[i].teamLeader || '',
+                    errFinder: results[i].errFinder || '',
+                    errName: results[i].errName || '',
+                    obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                    obstacleResult: results[i].obstacleResult || ''
+                });
+            }
+            callback(null, resData);
+        });
+    });
 }
 
 //분기별 내근자에러 자세히 보기

@@ -46,7 +46,16 @@ router.get('/:tid/analystEvaluationError/:ename', function(req, res, next) {
     } else if (action === 1) { //주별 내근자 에러
 
     } else if (action === 2) { //월별 내근자 에러
-
+        reqData.year = req.query.year;
+        reqData.month = req.query.month;
+        Team.getAnalystsDetailErrorStatePerMonth(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            });
+        });
     } else { //분기별 내근자 에러
 
     }

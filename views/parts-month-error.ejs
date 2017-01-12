@@ -130,40 +130,82 @@
                 <tr>
                     <td>압축파일명오류</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].compressionNameError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].compressionNameError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="압축파일명오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
                     <td><%=result[i].teams[k].compressionNameError%></td>
                     <%
                                 }
                             }
                         }
+                    }
                     %>
                 </tr>
                 <tr>
                     <td>Setting오류</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].settingError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].settingError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="Setting오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
                     <td><%=result[i].teams[k].settingError%></td>
                     <%
                                 }
                             }
                         }
+                    }
                     %>
                 </tr>
                 <tr>
                     <td>기타오류</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].etcError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].etcError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="기타오류"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
                     <td><%=result[i].teams[k].etcError%></td>
                     <%
                                 }
                             }
                         }
+                    }
                     %>
                 </tr>
                 <tr>
@@ -187,40 +229,82 @@
                     <td rowspan="3">IQA<BR>(기능오류)</td>
                     <td>Conversion Error</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                        for (var k = 0; k < result[i].teams.length; k ++) {
+                            if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                                if (result[i].teams[k].conversionError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].conversionError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="Conversion Error"/>
+                        </a>
+                    </td>
+                    <%
+                                } else {
+                    %>
                     <td><%=result[i].teams[k].conversionError%></td>
                     <%
                                 }
                             }
                         }
+                    }
                     %>
                 </tr>
                 <tr>
                     <td>Server오류</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k ++) {
+                    if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                    if (result[i].teams[k].serverError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].serverError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="Server오류"/>
+                        </a>
+                    </td>
+                    <%
+                    } else {
+                    %>
                     <td><%=result[i].teams[k].serverError%></td>
                     <%
-                                }
-                            }
-                        }
+                    }
+                    }
+                    }
+                    }
                     %>
                 </tr>
                 <tr>
                     <td>Segment누락</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k ++) {
+                    if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                    if (result[i].teams[k].segmentOmissionError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].segmentOmissionError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="Segment누락"/>
+                        </a>
+                    </td>
+                    <%
+                    } else {
+                    %>
                     <td><%=result[i].teams[k].segmentOmissionError%></td>
                     <%
-                                }
-                            }
-                        }
+                    }
+                    }
+                    }
+                    }
                     %>
                 </tr>
                 <tr>
@@ -397,27 +481,55 @@
                     <td rowspan="2">기타<BR>(원인불명)</td>
                     <td>압축해제에러</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k ++) {
+                    if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                    if (result[i].teams[k].compressionLiftError != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].compressionLiftError%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="압축해제에러"/>
+                        </a>
+                    </td>
+                    <%
+                    } else {
+                    %>
                     <td><%=result[i].teams[k].compressionLiftError%></td>
                     <%
-                                }
-                            }
-                        }
+                    }
+                    }
+                    }
+                    }
                     %>
                 </tr>
                 <tr>
                     <td>기타</td>
                     <%
-                        for (var j = 0; j < result[i].parts.length; j++) {
-                            for (var k = 0; k < result[i].teams.length; k ++) {
-                                if (result[i].parts[j].partId === result[i].teams[k].partId) { %>
+                    for (var j = 0; j < result[i].parts.length; j++) {
+                    for (var k = 0; k < result[i].teams.length; k ++) {
+                    if (result[i].parts[j].partId === result[i].teams[k].partId) {
+                    if (result[i].teams[k].etc != 0) {
+                    %>
+                    <td>
+                        <a class="analystError" data-toggle="modal" data-target="#myModal"><%=result[i].teams[k].etc%>
+                            <input type="hidden" name="teamId" value="<%=result[i].teams[k].teamId%>"/>
+                            <input type="hidden" name="year" value="<%=result[i].teams[k].year%>"/>
+                            <input type="hidden" name="month" value="<%=result[i].teams[k].month%>"/>
+                            <input type="hidden" name="errorType" value="기타"/>
+                        </a>
+                    </td>
+                    <%
+                    } else {
+                    %>
                     <td><%=result[i].teams[k].etc%></td>
                     <%
-                                }
-                            }
-                        }
+                    }
+                    }
+                    }
+                    }
                     %>
                 </tr>
                 <tr>
@@ -553,7 +665,8 @@
                 type: 'GET',
                 dataType: 'JSON',
                 data: {
-                    date: date,
+                    year: year,
+                    month: month,
                     action: 2
                 },
                 success: function(data) {
