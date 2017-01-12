@@ -35,10 +35,10 @@ router.get('/:tid/analystEvaluationError/:ename', function(req, res, next) {
     reqData.errName = decodeURI(req.params.ename);
     if (action === 0) { //일별 내근자 에러
         reqData.date = req.query.date;
-            Team.getAnalystsDetailErrorStatePerDay(reqData, function(err, result) {
-                if (err) {
-                   return next(err);
-                }
+        Team.getAnalystsDetailErrorStatePerDay(reqData, function(err, result) {
+            if (err) {
+               return next(err);
+            }
             res.send({
                 result: result
             });

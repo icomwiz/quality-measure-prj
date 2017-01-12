@@ -223,7 +223,7 @@ function getAnalystsDetailErrorStatePerDay(reqData, callback) {
                                                                                                                 'FROM report r JOIN employee e ON(r.employee_id = e.id) ' +
                                                                                                                 'WHERE r.team_position = \'조장\' AND r.date = str_to_date(?, \'%Y-%m-%d\') AND type = 1 ' +
                                                                                                                 'GROUP BY teamId) a ON (t.id = a.teamId) ' +
-                                                                                              'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_id = ?) b ON (a.teamId = b.teamId)';
+                                                                                              'WHERE r.date = str_to_date(?, \'%Y-%m-%d\') AND r.team_id = ? AND r.type = 1) b ON (a.teamId = b.teamId)';
 
     dbPool.getConnection(function(err, dbConn) {
         if (err) {
