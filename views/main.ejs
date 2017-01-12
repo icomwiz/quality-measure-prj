@@ -52,6 +52,8 @@
         </div>
         <div data-role="footer" data-position="fixed" style="text-align: center">
             <h1>
+                <a href="#errorStatePage" data-role="button" id="errorState">오류현황</a>
+                <a data-role="button" id="carState">차량현황</a>
                 <a href="#popupChange" data-rel="popup" data-position-to="window" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a" data-transition="pop">비밀번호변경</a>
                 <div data-role="popup" id="popupChange" data-theme="a" class="ui-corner-all">
                     <div style="padding:10px 20px;">
@@ -308,6 +310,20 @@
                 <a href="" data-role="button" id="updateBtn" data-icon="edit">저장</a>
                 <button data-icon="delete" class="Cencel" >취소</button>
             </h1>
+        </div>
+    </div>
+    <div data-role="page" id="errorStatePage">
+        <div data-role='header'>
+            <h1>오류 현황</h1>
+        </div>
+        <div data-role="content">
+            <button id="errorStateDay">일별 오류 현황</button>
+            <button id="errorStateWeek">주별 오류 현황</button>
+            <button id="errorStateMonth">월별 오류 현황</button>
+            <button id="errorStateQuarter">분기별 오류 현황</button>
+        </div>
+        <div data-role="footer" data-position="fixed" style="text-align: center;">
+            <h1>안녕하세요</h1>
         </div>
     </div>
 </body>
@@ -586,6 +602,27 @@
         $(".datailList").click(function() {
             var Reportid = $(this).val();
             return window.location.href = "http://localhost:3000/details?Report="+Reportid;
+        });
+
+
+        $("#errorStateDay").click(function() {
+            return window.location.href = "http://localhost:3000/reports/statistics?action=0";
+        });
+
+        $("#errorStateWeek").click(function() {
+            return window.location.href = "http://localhost:3000/reports/statistics?action=1";
+        });
+
+        $("#errorStateMonth").click(function() {
+            return window.location.href = "http://localhost:3000/reports/statistics?action=2";
+        });
+
+        $("#errorStateQuarter").click(function() {
+            return window.location.href = "http://localhost:3000/reports/statistics?action=3";
+        });
+
+        $("#carState").click(function() {
+            return window.location.href = "http://localhost:3000/reports/cars";
         });
     });
 
