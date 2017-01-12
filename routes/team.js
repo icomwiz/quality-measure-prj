@@ -43,9 +43,9 @@ router.get('/:tid/analystEvaluationError/:ename', function(req, res, next) {
                 result: result
             });
         });
-    } else if (action === 2) { //주별 내근자 에러
+    } else if (action === 1) { //주별 내근자 에러
 
-    } else if (action === 3) { //월별 내근자 에러
+    } else if (action === 2) { //월별 내근자 에러
 
     } else { //분기별 내근자 에러
 
