@@ -22,7 +22,6 @@ function getMyReportDetails(reqData, callback) {
 }
 
 function postMyReportDetails(reqData, callback) {
-    console.log(reqData);
     var sql_insert_my_report_details =
         'INSERT INTO analyst_report_details(analyst_report_id, start_time, end_time, work_details, note, type) ' +
         'VALUES(?, IF(? = \'\', NULL , ?), IF(? = \'\', NULL , ?), ?, ?, ?)';

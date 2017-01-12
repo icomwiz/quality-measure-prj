@@ -46,7 +46,7 @@ function postMyReport(reqData, callback) {
                 dbConn.release();
                 return callback(err);
             }
-            if (0 < results.length) { //이미 리포트가 있을 경우
+            if (0 != results.length) { //이미 리포트가 있을 경우
                 dbConn.release();
                 return callback(null, 0);
             } else { //리포트가 없을 경우
@@ -240,7 +240,6 @@ function getParticularReport(reportId, callback) {
         if (err) {
             return callback(err);
         }
-
         async.series([getReportInfo, getReportDetailsInfo], function(err, result) {
             if (err) {
                 dbConn.release();
@@ -287,9 +286,35 @@ function getParticularReport(reportId, callback) {
     });
 }
 
+//날짜를 통해 리포트가 있는지 없는지 검사
+function getExistingReport(reqData, callback) {
+    var sql_select_analystReport =
+        'SELECT * ' +
+        'FROM analyst_report ' +
+        'WHERE employee_id = ? AND date = str_to_date(?, \'%Y-%m-%d\')';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        dbConn.query(sql_select_analystReport, [reqData.employeeId, reqData.date], function(err, results) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            if (results.length === 0) { //존재하지 않으면
+                callback(null, 0);
+            } else {
+                callback(null, 1); //존재하면
+            }
+        });
+    });
+}
+
 
 module.exports.getMyReport = getMyReport;
 module.exports.postMyReport = postMyReport;
 module.exports.deleteMyReport = deleteMyReport;
 module.exports.getParticularReport = getParticularReport;
 module.exports.postVacation = postVacation;
+module.exports.getExistingReport = getExistingReport;

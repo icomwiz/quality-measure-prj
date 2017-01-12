@@ -5,8 +5,18 @@ var AnalystReportDetails = require('../models/analystReportDetails');
 var async = require('async');
 var isAuthenticated = require('./common').isAuthenticated;
 
-router.get('/', function(req, res, next) { //모든 내근자의 일일 업무 보고서 불러오기
-    
+router.get('/', function(req, res, next) { //날짜를 통해 리포트가 있는지 없는지 검사하기
+    var reqData = {};
+    reqData.date = req.query.date;
+    reqData.employeeId = req.user.id;
+    AnalystReport.getExistingReport(reqData, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: result //result값이 0이면 존재하지 않는것. 1이면 존재하는것.
+        });
+    });
 });
 
 router.get('/me', isAuthenticated, function(req, res, next) { //자신이 작성한 일일 업무 보고서 내역 모두 불러오기
