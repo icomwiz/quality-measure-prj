@@ -44,7 +44,16 @@ router.get('/:tid/analystEvaluationError/:ename', function(req, res, next) {
             });
         });
     } else if (action === 1) { //주별 내근자 에러
-
+        reqData.startDay = req.query.startDay;
+        reqData.endDay = req.query.endDay;
+        Team.getAnalystsDetailErrorStatePerWeek(reqData, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.send({
+                result: result
+            })
+        });
     } else if (action === 2) { //월별 내근자 에러
         reqData.year = req.query.year;
         reqData.month = req.query.month;
