@@ -79,7 +79,7 @@
             <% } else if(managementList[i].department_id == 1) { %>
             대표이사
             <% } else if(managementList[i].department_id == 2) { %>
-            사업총괄
+            임원
             <% } else if(managementList[i].department_id == 4) { %>
             품질측정팀
             <% } else if(managementList[i].department_id == 5) { %>
@@ -159,7 +159,7 @@
                 <td style="text-align: left; padding-bottom: 10px;">
                     <select id="department" style="width: 70%">
                         <option value="1">대표이사</option>
-                        <option value="2">사업총괄</option>
+                        <option value="2">임원</option>
                         <option value="3">품질분석팀</option>
                         <option value="4">품질측정팀</option>
                         <option value="5">CEM팀</option>
@@ -245,7 +245,7 @@
                 <td style="text-align: left; padding-bottom: 10px;">
                     <select id="updateDepartment" style="width: 70%">
                         <option value="1">대표이사</option>
-                        <option value="2">사업총괄</option>
+                        <option value="2">임원</option>
                         <option value="3">품질분석팀</option>
                         <option value="4">품질측정팀</option>
                         <option value="5">CEM팀</option>
@@ -275,7 +275,9 @@
                         <option value="차장">차장</option>
                         <option value="부장">부장</option>
                         <option value="이사">이사</option>
-                        <option value="상무">상무</option>
+                        <option value="싱무">상무</option>
+                        <option value="전무">전무</option>
+                        <option value="사장">사장</option>
                     </select>
                 </td>
             </tr>
@@ -392,7 +394,7 @@
 //            $("#updateDepartment").val($(EmployeeTeam).html());
             if (teamBlank === "대표이사") {    // 부서
                 $("#updateDepartment").val(1);
-            } else if (teamBlank === "사업총괄") {
+            } else if (teamBlank === "임원") {
                 $("#updateDepartment").val(2);
             } else if (teamBlank === "품질분석팀") {
                 $("#updateDepartment").val(3);
@@ -462,7 +464,7 @@
 //            $("#updateDepartment").val($(EmployeeTeam).html());
             if (teamBlank === "대표이사") {    // 부서
                 $("#updateDepartment").val(1);
-            } else if (teamBlank === "사업총괄") {
+            } else if (teamBlank === "임원") {
                 $("#updateDepartment").val(2);
             } else if (teamBlank === "품질분석팀") {
                 $("#updateDepartment").val(3);

@@ -114,7 +114,7 @@
                         <tr>
                             <td width="200">퇴근</td>
                             <td width="200">
-                                <input id="workEndTime" type="text" placeholder="18:00"/>
+                                <input id="workEndTime" type="text" placeholder="20:00"/>
                             </td>
                         </tr>
                             <td width="200">기타</td>
@@ -122,9 +122,9 @@
                                 <input id="etcTime" type="text" placeholder="15:00"/>
                             </td>
                         <tr>
-                            <td width="200">야근</td>
+                            <td width="200">야근시간</td>
                             <td width="200">
-                                <input id="overTime" type="text" placeholder="23:00"/>
+                                <input id="overTime" type="text" placeholder="02:00 (20:00 이후 지난 시간)"/>
                             </td>
                         </tr>
                         <tr id="vacationPeriod">
@@ -254,7 +254,7 @@
                                                         "</tr>" +
                                                             "<td>" + '기타' + "</td>" + "<td>" + (this.etcTime ||'') + "</td>" +
                                                         "<tr>" +
-                                                            "<td>" + '야근' + "</td>" + "<td>" + (this.overTime || '') + "</td>" +
+                                                            "<td>" + '야근시간' + "</td>" + "<td>" + (this.overTime || '') + "</td>" +
                                                         "</tr>" +
                                                             "<td>" + '휴가' + "</td>" + "<td>" + (this.vacation === 1 ? '휴가 중' : '') + "</td>" +
                                                         "<tr>" +
