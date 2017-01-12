@@ -237,13 +237,13 @@ function getAnalystsDetailErrorStatePerDay(reqData, callback) {
             var resData = [];
             for (var i = 0; i < results.length; i++) {
                 resData.push({
-                    date: results[i].date,
-                    teamName: results[i].teamName,
-                    teamLeader: results[i].teamLeader,
-                    errFinder: results[i].errFinder,
-                    errName: results[i].errName,
-                    obstaclePhenomenon: results[i].obstaclePhenomenon,
-                    obstacleResult: results[i].obstacleResult
+                    date: results[i].date || '',
+                    teamName: results[i].teamName || '',
+                    teamLeader: results[i].teamLeader || '',
+                    errFinder: results[i].errFinder || '',
+                    errName: results[i].errName || '',
+                    obstaclePhenomenon: results[i].obstaclePhenomenon || '',
+                    obstacleResult: results[i].obstacleResult || ''
                 });
             }
             callback(null, resData);
