@@ -20,6 +20,7 @@
         <h4><%= result.partName %></h4>
     </div>
     <div data-role="content">
+        <img style="width:50%; height:auto;" src="/img/logo.png">
         <p class="hello"><b><%= result.name %></b> <B><%= result.departmentPosition %></B>님 반갑습니다.</p>
         <fieldset class="parts-main-radio-btns" data-role="controlgroup" data-type="horizontal" data-mini="true">
             <% if (result.teamPosition !== 0) { %>
@@ -39,6 +40,8 @@
             <label class="partsmain-radio-labels" for="call-state">콜수 현황</label>
             <input type="radio" name="radio-choice-1" id="car-state" value="4"/>
             <label class="partsmain-radio-labels" for="car-state">차량 현황</label>
+            <input type="radio" name="radio-choice-1" id="analyst-commute-state" value="10"/>
+            <label class="partsmain-radio-labels" for="analyst-commute-state">내근자 출퇴현황</label>
             <% if (result.teamPosition === 0 || result.teamPosition === 5) { %>
             <input type="radio" name="radio-choice-1" id="admin-page" value="6"/>
             <label class="partsmain-radio-labels" for="admin-page">품질측정팀 일일업무보고</label>
@@ -795,6 +798,10 @@
                     $('#teamManagementDateDiv').hide();
                     //
                     break;
+                case '10':
+                    $('#planner').hide();
+                    $('#teamManagementDateDiv').hide();
+                    break;
             }
 
             $('#teamManagementDate').val()
@@ -835,6 +842,14 @@
                 $('#error-state-div').hide();
                 $('#teamManagementDateDiv').hide();
                 return window.location.href = "http://localhost:3000/reports/cars";
+            });
+
+            //내근자 출퇴근 현황 탭이 클릭 되었을 시
+            $("#analyst-commute-state").click(function() {
+                $('#calls-state-div').hide();
+                $('#error-state-div').hide();
+                $('#teamManagementDateDiv').hide();
+                return window.location.href = "http://localhost:3000/analystreports/commutestates";
             });
 
             //관리자 페이지 탭이 클릭 되었을 시

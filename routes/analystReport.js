@@ -31,6 +31,17 @@ router.get('/me', isAuthenticated, function(req, res, next) { //자신이 작성
     });
 });
 
+router.get('/commutestates', isAuthenticated, function(req, res, next) {
+    AnalystReport.getAnalystCommuteState(function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.render('parts-commute-state', {
+            result: result
+        });
+    });
+});
+
 router.get('/:rid', isAuthenticated, function(req, res, next) {
     var reportId = req.params.rid;
     AnalystReport.getParticularReport(reportId, function(err, result) {

@@ -45,7 +45,7 @@
                 <tr>
                     <td>차량</td>
                     <% for (var k = 1; k <= result[i].lastDay; k++) { %>
-                    <td><%=k%>일</td>
+                    <td class="theadDay"><%=k%>일</td>
                     <% } %>
                 </tr>
                 </thead>
@@ -53,7 +53,7 @@
                 <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
                 <tr>
                     <td class="carName">
-                        <%=result[i].dayDatas[j].carType%>
+                        <%=result[i].dayDatas[j].carType%><br>
                         <%=result[i].dayDatas[j].carNumber%>
                     </td>
                     <%
@@ -91,7 +91,7 @@
                 <tr>
                     <td>차량</td>
                     <% for (var k = 1; k <= result[i].lastDay; k++) { %>
-                    <td><%=k%>일</td>
+                    <td class="theadDay"><%=k%>일</td>
                     <% } %>
                 </tr>
                 </thead>
@@ -99,7 +99,7 @@
                 <% for (var j = 0; j < result[i].dayDatas.length; j++) { %>
                 <tr>
                     <td class="carName">
-                        <%=result[i].dayDatas[j].carType%>
+                        <%=result[i].dayDatas[j].carType%><br>
                         <%=result[i].dayDatas[j].carNumber%>
                     </td>
                     <%

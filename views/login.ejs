@@ -14,14 +14,17 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <title><%= title %></title>
 </head>
-<body>
+<body style="width:100%; text-align:center;">
     <div data-role='header'>
         <h1><%= title %></h1>
     </div>
     <div data-role="content">
-        <input type="text" name="email" id="email">
-        <input type="password" name="password" id="password">
-        <button type="button" id="btnLogin">로그인</button>
+        <img style="margin-left: auto; margin-right: auto; display: block; width: 300px; height: 439px;" src="/img/home.png" /><br>
+        <div style="display: inline-block;">
+            <input style="width: 300px;" type="text" name="email" id="email">
+            <input style="width: 300px;" type="password" name="password" id="password">
+            <button type="button" id="btnLogin">로그인</button>
+        </div>
     </div>
     <div data-role="footer" data-position="fixed">
         <h1><%= title %></h1>

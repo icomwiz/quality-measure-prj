@@ -6,10 +6,6 @@ table {
     text-align: left;
 }
 
-.table > tbody > tr > td {
-    vertical-align: middle !important;
-}
-
 thead {
     background-color: beige;
     text-align: center;
@@ -37,8 +33,10 @@ a {
 }
 
 .carName {
+    min-width: 120px;
     background-color: cornsilk;
     text-align: center;
+    vertical-align: middle !important;
 }
 
 .true-teamName {
@@ -86,3 +84,27 @@ pre {
     white-space: -o-pre-wrap;
     word-break: break-all;
 }
+
+.theadDay {
+    min-width: 50px;
+}
+
+.start {
+    color: blue;
+    font-size: 0.9em;
+}
+
+.end {
+    color: blue;
+    font-size: 0.9em;
+}
+
+.over {
+    color: red;
+    font-size: 0.9em;
+}
+
+/*.table > tbody > tr > td {*/
+    /*vertical-align: middle !important;*/
+/*}*/
+

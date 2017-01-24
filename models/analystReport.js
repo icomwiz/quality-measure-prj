@@ -311,6 +311,288 @@ function getExistingReport(reqData, callback) {
     });
 }
 
+//월별 출퇴근 상태
+function getAnalystCommuteState(callback) {
+    //내근자업무일지의 년과 월을 가지고옴.
+    var sql_select_analystreports_year_and_month =
+        'SELECT DISTINCT year(date) year, month(date) month ' +
+        'FROM analyst_report ' +
+        'ORDER BY date DESC';
+
+    //년과 월을 통해 마지막 날짜를 구함
+    var sql_select_last_day_of_month =
+        'SELECT DAYOFMONTH(LAST_DAY(STR_TO_DATE(?, \'%Y-%m\'))) lastDay';
+
+    //년과 월을 통해 파트들을 가져옴
+    var sql_select_parts =
+        'SELECT a.id partId, a.name partName, count(*) employeeCount ' +
+        'FROM (SELECT p.Id, p.name, count(e.id) ' +
+              'FROM analyst_report ar JOIN employee e ON (ar.employee_id = e.id) ' +
+                                     'JOIN team t ON (e.team_id = t.id) ' +
+                                     'JOIN teams_parts tp ON (t.id = tp.team_id) ' +
+                                     'JOIN part p ON (p.id = tp.part_id) ' +
+              'WHERE YEAR(ar.date) = 2017 AND MONTH(ar.date) = 1 ' +
+              'GROUP BY e.id) a ' +
+        'GROUP BY a.id';
+
+    //년과 월을 통해 출퇴근정보를 가져옴
+    var sql_select_commute_state =
+        'SELECT p.id partId, p.name partName, e.id employeeId, e.name employeeName, CASE WHEN DAY(date) = 1 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day1, ' +
+                                           'CASE WHEN DAY(date) = 2 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day2, ' +
+                                           'CASE WHEN DAY(date) = 3 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day3, ' +
+                                           'CASE WHEN DAY(date) = 4 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day4, ' +
+                                           'CASE WHEN DAY(date) = 5 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day5, ' +
+                                           'CASE WHEN DAY(date) = 6 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day6, ' +
+                                           'CASE WHEN DAY(date) = 7 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day7, ' +
+                                           'CASE WHEN DAY(date) = 8 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day8, ' +
+                                           'CASE WHEN DAY(date) = 9 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day9, ' +
+                                           'CASE WHEN DAY(date) = 10 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day10, ' +
+                                           'CASE WHEN DAY(date) = 11 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day11, ' +
+                                           'CASE WHEN DAY(date) = 12 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day12, ' +
+                                           'CASE WHEN DAY(date) = 13 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day13, ' +
+                                           'CASE WHEN DAY(date) = 14 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day14, ' +
+                                           'CASE WHEN DAY(date) = 15 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day15, ' +
+                                           'CASE WHEN DAY(date) = 16 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day16, ' +
+                                           'CASE WHEN DAY(date) = 17 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day17, ' +
+                                           'CASE WHEN DAY(date) = 18 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day18, ' +
+                                           'CASE WHEN DAY(date) = 19 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day19, ' +
+                                           'CASE WHEN DAY(date) = 20 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day20, ' +
+                                           'CASE WHEN DAY(date) = 21 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day21, ' +
+                                           'CASE WHEN DAY(date) = 22 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day22, ' +
+                                           'CASE WHEN DAY(date) = 23 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day23, ' +
+                                           'CASE WHEN DAY(date) = 24 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day24, ' +
+                                           'CASE WHEN DAY(date) = 25 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day25, ' +
+                                           'CASE WHEN DAY(date) = 26 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day26, ' +
+                                           'CASE WHEN DAY(date) = 27 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day27, ' +
+                                           'CASE WHEN DAY(date) = 28 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day28, ' +
+                                           'CASE WHEN DAY(date) = 29 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day29, ' +
+                                           'CASE WHEN DAY(date) = 30 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day30, ' +
+                                           'CASE WHEN DAY(date) = 31 THEN concat_ws(\',\', DATE_FORMAT(ar.work_start_time, \'%H:%i\'), DATE_FORMAT(ar.work_end_time, \'%H:%i\'), DATE_FORMAT(ar.over_time, \'%H:%i\')) END day31 ' +
+        'FROM analyst_report ar JOIN employee e ON (ar.employee_id = e.id) ' +
+        'JOIN team t ON (e.team_id = t.id) ' +
+        'JOIN teams_parts tp ON (t.id = tp.team_id) ' +
+        'JOIN part p ON (p.id = tp.part_id) ' +
+        'WHERE YEAR(ar.date) = ? AND MONTH(ar.date) = ? ' +
+        'ORDER BY partId';
+
+    dbPool.getConnection(function(err, dbConn) {
+        if (err) {
+            return callback(err);
+        }
+        async.waterfall([getYearAndMonth, getLastDay, getParts, getCommuteInfo], function(err, result) {
+            dbConn.release();
+            if (err) {
+                return callback(err);
+            }
+            callback(null, result);
+        });
+
+        function getYearAndMonth(callback) {
+            dbConn.query(sql_select_analystreports_year_and_month, [], function(err, results) {
+                if (err) {
+                    return callback(err);
+                }
+                var resDatas = [];
+                for (var i = 0; i < results.length; i++) {
+                    resDatas.push({
+                        year: results[i].year,
+                        month: results[i].month,
+                        lastDay: '',
+                        parts: [],
+                        dayDatas: []
+                    });
+                }
+                callback(null, resDatas);
+            });
+        }
+
+        function getLastDay(resDatas, callback) {
+            async.each(resDatas, function(data, callback) {
+                dbConn.query(sql_select_last_day_of_month, [data.year + '-' + data.month], function(err, results) {
+                    if (err) {
+                        callback(err);
+                    }
+                    data.lastDay = results[0].lastDay;
+                    callback();
+                });
+            }, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, resDatas);
+            });
+        }
+
+        function getParts(resDatas, callback) {
+            async.each(resDatas, function(data, callback) {
+                dbConn.query(sql_select_parts, [data.year, data.month], function(err, results) {
+                    if (err) {
+                        callback(err);
+                    }
+                    if (results.length != 0) {
+                        for (var i = 0; i < results.length; i ++) {
+                            data.parts.push({
+                                partId: results[0].partId,
+                                partName: results[0].partName,
+                                employeeCount: results[0].employeeCount
+                            });
+                        }
+                    }
+                    callback();
+                });
+            }, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, resDatas);
+            });
+        }
+
+        function getCommuteInfo(resDatas, callback) {
+            async.each(resDatas, function(data, callback) {
+                dbConn.query(sql_select_commute_state, [data.year, data.month], function(err, results) {
+                    if (err) {
+                        callback(err);
+                    }
+                    if (results.length != 0) {
+                        for (var i = 0; i < results.length; i++) {
+                            var index = findWithAttr(data.dayDatas, 'employeeId', results[i].employeeId);
+                            if (index === -1) {
+                                data.dayDatas.push({
+                                    partId: results[i].partId,
+                                    partName: results[i].partName,
+                                    employeeId: results[i].employeeId,
+                                    employeeName: results[i].employeeName,
+                                    day1Start: results[i].day1 === null ? '' : results[i].day1.split(',')[0] || '',
+                                    day1End: results[i].day1 === null ? '' : results[i].day1.split(',')[1] || '',
+                                    day1Over: results[i].day1 === null ? '' : results[i].day1.split(',')[2] || '',
+                                    day2Start: results[i].day2 === null ? '' : results[i].day2.split(',')[0] || '',
+                                    day2End: results[i].day2 === null ? '' : results[i].day2.split(',')[1] || '',
+                                    day2Over: results[i].day2 === null ? '' : results[i].day2.split(',')[2] || '',
+                                    day3Start: results[i].day3 === null ? '' : results[i].day3.split(',')[0] || '',
+                                    day3End: results[i].day3 === null ? '' : results[i].day3.split(',')[1] || '',
+                                    day3Over: results[i].day3 === null ? '' : results[i].day3.split(',')[2] || '',
+                                    day4Start: results[i].day4 === null ? '' : results[i].day4.split(',')[0] || '',
+                                    day4End: results[i].day4 === null ? '' : results[i].day4.split(',')[1] || '',
+                                    day4Over: results[i].day4 === null ? '' : results[i].day4.split(',')[2] || '',
+                                    day5Start: results[i].day5 === null ? '' : results[i].day5.split(',')[0] || '',
+                                    day5End: results[i].day5 === null ? '' : results[i].day5.split(',')[1] || '',
+                                    day5Over: results[i].day5 === null ? '' : results[i].day5.split(',')[2] || '',
+                                    day6Start: results[i].day6 === null ? '' : results[i].day6.split(',')[0] || '',
+                                    day6End: results[i].day6 === null ? '' : results[i].day6.split(',')[1] || '',
+                                    day6Over: results[i].day6 === null ? '' : results[i].day6.split(',')[2] || '',
+                                    day7Start: results[i].day7 === null ? '' : results[i].day7.split(',')[0] || '',
+                                    day7End: results[i].day7 === null ? '' : results[i].day7.split(',')[1] || '',
+                                    day7Over: results[i].day7 === null ? '' : results[i].day7.split(',')[2] || '',
+                                    day8Start: results[i].day8 === null ? '' : results[i].day8.split(',')[0] || '',
+                                    day8End: results[i].day8 === null ? '' : results[i].day8.split(',')[1] || '',
+                                    day8Over: results[i].day8 === null ? '' : results[i].day8.split(',')[2] || '',
+                                    day9Start: results[i].day9 === null ? '' : results[i].day9.split(',')[0] || '',
+                                    day9End: results[i].day9 === null ? '' : results[i].day9.split(',')[1] || '',
+                                    day9Over: results[i].day9 === null ? '' : results[i].day9.split(',')[2] || '',
+                                    day10Start: results[i].day10 === null ? '' : results[i].day10.split(',')[0] || '',
+                                    day10End: results[i].day10 === null ? '' : results[i].day10.split(',')[1] || '',
+                                    day10Over: results[i].day10 === null ? '' : results[i].day10.split(',')[2] || '',
+                                    day11Start: results[i].day11 === null ? '' : results[i].day11.split(',')[0] || '',
+                                    day11End: results[i].day11 === null ? '' : results[i].day11.split(',')[1] || '',
+                                    day11Over: results[i].day11 === null ? '' : results[i].day11.split(',')[2] || '',
+                                    day12Start: results[i].day12 === null ? '' : results[i].day12.split(',')[0] || '',
+                                    day12End: results[i].day12 === null ? '' : results[i].day12.split(',')[1] || '',
+                                    day12Over: results[i].day12 === null ? '' : results[i].day12.split(',')[2] || '',
+                                    day13Start: results[i].day13 === null ? '' : results[i].day13.split(',')[0] || '',
+                                    day13End: results[i].day13 === null ? '' : results[i].day13.split(',')[1] || '',
+                                    day13Over: results[i].day13 === null ? '' : results[i].day13.split(',')[2] || '',
+                                    day14Start: results[i].day14 === null ? '' : results[i].day14.split(',')[0] || '',
+                                    day14End: results[i].day14 === null ? '' : results[i].day14.split(',')[1] || '',
+                                    day14Over: results[i].day14 === null ? '' : results[i].day14.split(',')[2] || '',
+                                    day15Start: results[i].day15 === null ? '' : results[i].day15.split(',')[0] || '',
+                                    day15End: results[i].day15 === null ? '' : results[i].day15.split(',')[1] || '',
+                                    day15Over: results[i].day15 === null ? '' : results[i].day15.split(',')[2] || '',
+                                    day16Start: results[i].day16 === null ? '' : results[i].day16.split(',')[0] || '',
+                                    day16End: results[i].day16 === null ? '' : results[i].day16.split(',')[1] || '',
+                                    day16Over: results[i].day16 === null ? '' : results[i].day16.split(',')[2] || '',
+                                    day17Start: results[i].day17 === null ? '' : results[i].day17.split(',')[0] || '',
+                                    day17End: results[i].day17 === null ? '' : results[i].day17.split(',')[1] || '',
+                                    day17Over: results[i].day17 === null ? '' : results[i].day17.split(',')[2] || '',
+                                    day18Start: results[i].day18 === null ? '' : results[i].day18.split(',')[0] || '',
+                                    day18End: results[i].day18 === null ? '' : results[i].day18.split(',')[1] || '',
+                                    day18Over: results[i].day18 === null ? '' : results[i].day18.split(',')[2] || '',
+                                    day19Start: results[i].day19 === null ? '' : results[i].day19.split(',')[0] || '',
+                                    day19End: results[i].day19 === null ? '' : results[i].day19.split(',')[1] || '',
+                                    day19Over: results[i].day19 === null ? '' : results[i].day19.split(',')[2] || '',
+                                    day20Start: results[i].day20 === null ? '' : results[i].day20.split(',')[0] || '',
+                                    day20End: results[i].day20 === null ? '' : results[i].day20.split(',')[1] || '',
+                                    day20Over: results[i].day20 === null ? '' : results[i].day20.split(',')[2] || '',
+                                    day21Start: results[i].day21 === null ? '' : results[i].day21.split(',')[0] || '',
+                                    day21End: results[i].day21 === null ? '' : results[i].day21.split(',')[1] || '',
+                                    day21Over: results[i].day21 === null ? '' : results[i].day21.split(',')[2] || '',
+                                    day22Start: results[i].day22 === null ? '' : results[i].day22.split(',')[0] || '',
+                                    day22End: results[i].day22 === null ? '' : results[i].day22.split(',')[1] || '',
+                                    day22Over: results[i].day22 === null ? '' : results[i].day22.split(',')[2] || '',
+                                    day23Start: results[i].day23 === null ? '' : results[i].day23.split(',')[0] || '',
+                                    day23End: results[i].day23 === null ? '' : results[i].day23.split(',')[1] || '',
+                                    day23Over: results[i].day23 === null ? '' : results[i].day23.split(',')[2] || '',
+                                    day24Start: results[i].day24 === null ? '' : results[i].day24.split(',')[0] || '',
+                                    day24End: results[i].day24 === null ? '' : results[i].day24.split(',')[1] || '',
+                                    day24Over: results[i].day24 === null ? '' : results[i].day24.split(',')[2] || '',
+                                    day25Start: results[i].day25 === null ? '' : results[i].day25.split(',')[0] || '',
+                                    day25End: results[i].day25 === null ? '' : results[i].day25.split(',')[1] || '',
+                                    day25Over: results[i].day25 === null ? '' : results[i].day25.split(',')[2] || '',
+                                    day26Start: results[i].day26 === null ? '' : results[i].day26.split(',')[0] || '',
+                                    day26End: results[i].day26 === null ? '' : results[i].day26.split(',')[1] || '',
+                                    day26Over: results[i].day26 === null ? '' : results[i].day26.split(',')[2] || '',
+                                    day27Start: results[i].day27 === null ? '' : results[i].day27.split(',')[0] || '',
+                                    day27End: results[i].day27 === null ? '' : results[i].day27.split(',')[1] || '',
+                                    day27Over: results[i].day27 === null ? '' : results[i].day27.split(',')[2] || '',
+                                    day28Start: results[i].day28 === null ? '' : results[i].day28.split(',')[0] || '',
+                                    day28End: results[i].day28 === null ? '' : results[i].day28.split(',')[1] || '',
+                                    day28Over: results[i].day28 === null ? '' : results[i].day28.split(',')[2] || '',
+                                    day29Start: results[i].day29 === null ? '' : results[i].day29.split(',')[0] || '',
+                                    day29End: results[i].day29 === null ? '' : results[i].day29.split(',')[1] || '',
+                                    day29Over: results[i].day29 === null ? '' : results[i].day29.split(',')[2] || '',
+                                    day30Start: results[i].day30 === null ? '' : results[i].day30.split(',')[0] || '',
+                                    day30End: results[i].day30 === null ? '' : results[i].day30.split(',')[1] || '',
+                                    day30Over: results[i].day30 === null ? '' : results[i].day30.split(',')[2] || '',
+                                    day31Start: results[i].day31 === null ? '' : results[i].day31.split(',')[0] || '',
+                                    day31End: results[i].day31 === null ? '' : results[i].day31.split(',')[1] || '',
+                                    day31Over: results[i].day31 === null ? '' : results[i].day31.split(',')[2] || ''
+                                });
+                            } else {
+                                for (var j = 1; j <= 31; j++) {
+                                    var day = 'day' + j;
+                                    if (!data.dayDatas[index][day + 'Start']) {
+                                        data.dayDatas[index][day + 'Start'] = (results[i][day] === null ? '' : results[i][day].split(',')[0] || '');
+                                        data.dayDatas[index][day + 'End'] = (results[i][day] === null ? '' : results[i][day].split(',')[1] || '');
+                                        data.dayDatas[index][day + 'Over'] = (results[i][day] === null ? '' : results[i][day].split(',')[2] || '');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    callback();
+                });
+            }, function(err) {
+                if (err) {
+                    return callback(err);
+                }
+                callback(null, resDatas);
+            });
+        }
+    });
+}
+
+//객체가 가지고있는 프로퍼티의 값을 통해서 그 객체가 배열의 몇번째에 있는지 찾는 함수
+function findWithAttr(array, attr, value) {
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+
 
 module.exports.getMyReport = getMyReport;
 module.exports.postMyReport = postMyReport;
@@ -318,3 +600,4 @@ module.exports.deleteMyReport = deleteMyReport;
 module.exports.getParticularReport = getParticularReport;
 module.exports.postVacation = postVacation;
 module.exports.getExistingReport = getExistingReport;
+module.exports.getAnalystCommuteState = getAnalystCommuteState;
