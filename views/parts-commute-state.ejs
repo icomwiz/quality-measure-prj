@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 메타 정보 선언 -->
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
+
+    <!-- 사용자 스타일 시트 파일 선언 -->
+    <link rel='stylesheet' href='/stylesheets/parts-car-style.css' />
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- table을 excel로 export하기 위한 library 선언 -->
+    <script type="text/javascript" src="/scripts/jquery.techbytarun.excelexportjs.js"></script>
+</head>
+<body>
+    <div class="page-header">
+        <h1>출퇴근 현황 <small>월별 현황</small></h1>
+    </div>
+    <%
+    for (var i = 0; i < result.length; i++ ) {
+    %>
+    <table class="table table-bordered" id="errorTbl<%=i%>">
+        <thead>
+            <tr class="month">
+                <td colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
+            </tr>
+            <tr>
+                <td>이름</td>
+                <% for (var k = 1; k <= result[i].lastDay; k++) { %>
+                <td class="theadDay"><%=k%>일</td>
+                <% } %>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+            for (var j = 0; j < result[i].dayDatas.length; j++) {
+            %>
+            <tr>
+                <td class="carName">
+                    <%=result[i].dayDatas[j].employeeName%><br>
+                    (<%=result[i].dayDatas[j].partName%>)
+                </td>
+                <%
+                for (var k = 0; k < result[i].lastDay; k++) {
+                    var day = 'day' + (k + 1);
+                    if (result[i].dayDatas[j][day + 'Start'] !== '') {
+                %>
+                <td class="true-teamName">
+                    출근: <span class="start"><%=result[i].dayDatas[j][day + 'Start']%></span><br>
+                    퇴근: <span class="end"><%=result[i].dayDatas[j][day + 'End']%></span><br>
+                    <%
+                    if (result[i].dayDatas[j][day + 'Over'] !== '') {
+                    %>
+                    야근시간: <span class="over"><%=result[i].dayDatas[j][day + 'Over']%></span>
+                    <%
+                    }
+                    %>
+                </td>
+                <%
+                    } else {
+                %>
+                <td></td>
+                <%
+                    }
+                }
+                %>
+            </tr>
+            <%
+            }
+            %>
+        </tbody>
+    </table>
+    <%
+    }
+    %>
+<script>
+    $(function() {
+
+    });
+</script>
+</body>
+</html>
