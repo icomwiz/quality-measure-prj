@@ -119,7 +119,6 @@ function baseDetail(report_id, user_id, callback) {
                 } else {
                     baseInfo.time = null;
                 }
-                console.log(baseInfo.time);
                 callback(null, null);
             });
         }], function(err, results) {

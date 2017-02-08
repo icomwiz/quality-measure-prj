@@ -143,7 +143,6 @@ router.get('/confirm', isAuthenticatedForMeasurer, function(req, res, next) {
     info.user_id = user_id;
     info.date = date();
     info.report_id = req.query.report;
-    console.log(info.report_id);
 
 
     //수정

@@ -231,7 +231,6 @@ function daily_briefing(info, callback) {
                     if (err) {
                         return callback(err);
                     }
-                    //console.log(result.insertId);
                     daily_briefing_id = result.insertId;
                     callback(null);
                 });
@@ -353,7 +352,6 @@ function managementView(callback) {
     })
 }
 function managementInsert(info, callback) {
-    console.log(info);
     if(info.group == 1 && info.part == 22) {
         info.group = 5;
     } else if (info.group == 1 && info.part == 23) {

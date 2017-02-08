@@ -348,8 +348,6 @@ function newReport(info, callback) {
                 if (err) {
                     return callback(err);
                 }
-//                console.log(typeof(result[0].team_position));
-//                console.log(result[0].team_position);
                 if (result[0].team_position == 3 ) {
                     me.team_position = '조장';
                 } else if (result[0].team_position == 4) {
