@@ -33,7 +33,7 @@
     <%
     for (var i = 0; i < result.length; i++ ) {
     %>
-    <table class="table table-bordered" id="errorTbl<%=i%>">
+    <table class="table table-bordered" id="commuteTbl<%=i%>">
         <thead>
             <tr class="month">
                 <td colspan="<%=result[i].lastDay + 1%>"><%=result[i].year + '년 ' + result[i].month + '월'%></td>
@@ -57,18 +57,33 @@
                 <%
                 for (var k = 0; k < result[i].lastDay; k++) {
                     var day = 'day' + (k + 1);
-                    if (result[i].dayDatas[j][day + 'Start'] !== '') {
+                    if (result[i].dayDatas[j][day + 'Vacation'] === '0') {
                 %>
-                <td class="true-teamName">
+                <td data-toggle="modal" data-target="#myModal" class="true-teamName">
                     출근: <span class="start"><%=result[i].dayDatas[j][day + 'Start']%></span><br>
                     퇴근: <span class="end"><%=result[i].dayDatas[j][day + 'End']%></span><br>
+                    <input type="hidden" name="employeeName" value="<%=result[i].dayDatas[j]["employeeName"]%>">
+                    <input type="hidden" name="employeeId" value="<%=result[i].dayDatas[j]["employeeId"]%>">
+                    <input type="hidden" name="year" value="<%=result[i].year%>">
+                    <input type="hidden" name="month" value="<%=result[i].month%>">
+                    <input type="hidden" name="day" value="<%=k + 1%>">
                     <%
-                    if (result[i].dayDatas[j][day + 'Over'] !== '') {
+                        if (result[i].dayDatas[j][day + 'Over'] !== '') {
                     %>
                     야근시간: <span class="over"><%=result[i].dayDatas[j][day + 'Over']%></span>
                     <%
-                    }
+                        }
                     %>
+                </td>
+                <%
+                    } else if (result[i].dayDatas[j][day + 'Vacation'] === '1') {
+                %>
+                <td data-toggle="modal" data-target="#myModal" class="vacation">휴가
+                    <input type="hidden" name="employeeName" value="<%=result[i].dayDatas[j]["employeeName"]%>">
+                    <input type="hidden" name="employeeId" value="<%=result[i].dayDatas[j]["employeeId"]%>">
+                    <input type="hidden" name="year" value="<%=result[i].year%>">
+                    <input type="hidden" name="month" value="<%=result[i].month%>">
+                    <input type="hidden" name="day" value="<%=k + 1%>">
                 </td>
                 <%
                     } else {
@@ -84,12 +99,129 @@
             %>
         </tbody>
     </table>
+    <button class="excelDownBtn" id="<%=i%>">엑셀로 다운로드</button><br><br><br><br>
     <%
     }
     %>
+    <!--팝업-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">업무 일지</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered" id="modal-table">
+                        <thead>
+                            <tr>
+                                <td colspan="5" id="employeeName">이름</td>
+                            </tr>
+                        </thead>
+                        <tr class="modal-th">
+                            <td colspan="2" style="width: 30%;">근태 현황</td><td colspan="3">세부 사항</td>
+                        </tr>
+                        <tr>
+                            <td>출근</td><td id="workStartTime"></td><td colspan="3" rowspan="5"><pre id="majorJob"></pre></td>
+                        </tr>
+                        <tr>
+                            <td>퇴근</td><td id="workEndTime"></td>
+                        </tr>
+                        <tr>
+                            <td>기타</td><td id="etcTime"></td>
+                        </tr>
+                        <tr>
+                            <td>야근시간</td><td id="overTime"></td>
+                        </tr>
+                        <tr>
+                            <td>휴가</td><td id="vacation"></td>
+                        </tr>
+                        <tr>
+                            <td class="modal-th" colspan="5">업무 상세 내역</td>
+                        </tr>
+                        <tr>
+                            <td style="width: 15%;">업무 시작 시각</td><td style="width: 15%;">업무 종료 시각</td><td style="width: 12%;">업무 구분</td><td>업무 내용</td><td style="width: 10%;">비고</td>
+                        </tr>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <script>
-    $(function() {
+    function getDetailReportInfo(employeeName, employeeId, year, month, day) {
+        $.ajax({
+            url: 'http://localhost:3000/employees/' + employeeId + '/analystReports',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                year: year,
+                month: month,
+                day: day
+            },
+            success: function(data) {
+                $('#employeeName').text(employeeName + ' ' + data.result.date);
+                var majorJob = data.result.majorJob;
+                var workStartTime = data.result.workStartTime;
+                var workEndTime = data.result.workEndTime;
+                var etcTime = data.result.etcTime;
+                var overTime = data.result.overTime;
+                var vacation = data.result.vacation === 1 ? '휴가 중' : '';
 
+                $('#majorJob').text(majorJob);
+                $('#workStartTime').text(workStartTime);
+                $('#workEndTime').text(workEndTime);
+                $('#etcTime').text(etcTime);
+                $('#overTime').text(overTime);
+                $('#vacation').text(vacation);
+
+                $('#modal-table > tbody:last').empty();
+                $.each(data.result.details, function() {
+                    $('#modal-table > tbody:last').append('<tr>' +
+                                                            '<td>' + this.startTime + '</td>' +
+                                                            '<td>' + this.endTime + '</td>' +
+                                                            '<td>' + (this.type === 1 ? '주 업무' : (this.type === 2 ? 'SKT 매니저' : '외근자 care')) + '</td>' +
+                                                            '<td><pre>' + this.workDetails + '<pre></td>' +
+                                                            '<td>' + this.note + '</td>' +
+                                                          '</tr>');
+                });
+            },
+            error: function() {
+
+            }
+        });
+    }
+
+    $(function() {
+        $('.true-teamName').click(function() {
+            var employeeName = $(this).children("input[name='employeeName']").val();
+            var employeeId = $(this).children("input[name='employeeId']").val();
+            var year = $(this).children("input[name='year']").val();
+            var month = $(this).children("input[name='month']").val();
+            var day = $(this).children("input[name='day']").val();
+            getDetailReportInfo(employeeName, employeeId, year, month, day);
+        });
+
+        $('.vacation').click(function() {
+            var employeeName = $(this).children("input[name='employeeName']").val();
+            var employeeId = $(this).children("input[name='employeeId']").val();
+            var year = $(this).children("input[name='year']").val();
+            var month = $(this).children("input[name='month']").val();
+            var day = $(this).children("input[name='day']").val();
+            getDetailReportInfo(employeeName, employeeId, year, month, day);
+        });
+
+        $('.excelDownBtn').click(function() {
+            var tableId = 'commuteTbl' + $(this).attr('id');
+            $('#' + tableId).excelexportjs({
+                containerid: tableId,
+                datatype: 'table'
+            });
+        });
     });
 </script>
 </body>

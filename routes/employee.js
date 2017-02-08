@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var Team = require('../models/team');
 var Employee = require('../models/employee');
 var Admin = require('../models/admin');
+var AnalystReport = require('../models/analystReport');
 var isAuthenticated = require('./common').isAuthenticated;
 var isAuthenticatedAdmin = require('./common').isAuthenticatedAdmin;
 
@@ -157,6 +157,20 @@ router.put('/',isAuthenticated, function(req, res, next) {
         }
         res.send({
            result : 'ok'
+        });
+    });
+});
+
+router.get('/:eid/analystReports', isAuthenticated, function(req, res,next) {
+    var reqData = {};
+    reqData.employeeId = req.params.eid;
+    reqData.date = req.query.year + '-' + req.query.month + '-' + req.query.day;
+    AnalystReport.getReortByEmployeeId(reqData, function(err, result) {
+        if (err) {
+            return next(err);
+        }
+        res.send({
+            result: result
         });
     });
 });

@@ -39,6 +39,13 @@ a {
     vertical-align: middle !important;
 }
 
+.vacation {
+    color: dimgrey;
+    background-color: cornsilk;
+    text-align: center;
+    vertical-align: middle !important;
+}
+
 .true-teamName {
     background-color: cornsilk;
     text-align: center;
@@ -102,6 +109,11 @@ pre {
 .over {
     color: red;
     font-size: 0.9em;
+}
+
+.modal-th {
+    background-color: #bcbcbc;
+    text-align: center;
 }
 
 /*.table > tbody > tr > td {*/
