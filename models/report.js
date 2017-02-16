@@ -230,9 +230,9 @@ function updateReport(info, callback) {
 
         function baseUpdate(callback) {
             var base_update = "UPDATE report " +
-                    "SET team_member=?, equipment_name=?, location=? " +
+                    "SET date = str_to_date(?, \'%Y-%m-%d\'), team_member=?, equipment_name=?, location=? " +
                     "WHERE id = ?";
-            dbConn.query(base_update, [info.report.group_member, info.report.measure_machine, info.report.measure_place, info.report.report_id], function(err, result) {
+            dbConn.query(base_update, [info.report.date, info.report.group_member, info.report.measure_machine, info.report.measure_place, info.report.report_id], function(err, result) {
                 if (err) {
                     return callback(err);
                 }
