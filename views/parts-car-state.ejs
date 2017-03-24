@@ -113,12 +113,12 @@
                             <input type="hidden" name="month" value="<%=result[i].month%>">
                             <input type="hidden" name="day" value="<%=(k+1)%>">
                         </p>
-                        <p class="km-property">측정 전
-                            <small class="km-value">
-                                <%=result[i].dayDatas[j][day + 'Before'] + 'Km'%>
-                            </small>
-                        </p>
-                        <p class="km-property">측정 후
+                        <!--<p class="km-property">측정 전-->
+                            <!--<small class="km-value">-->
+                                <!--<%=result[i].dayDatas[j][day + 'Before'] + 'Km'%>-->
+                            <!--</small>-->
+                        <!--</p>-->
+                        <p class="km-property">측정 누적
                             <small class="km-value">
                                 <%
                                 if (result[i].dayDatas[j][day + 'After']) {
@@ -136,15 +136,36 @@
                         <p class="km-property">주행 거리<br>
                             <small class="km-value">
                                 <%
-                                    if (((result[i].dayDatas[j][day + 'After'] || 0) - (result[i].dayDatas[j][day + 'Before'])) < 0) {
+                                if (((result[i].dayDatas[j][day + 'After'] || 0) - (result[i].dayDatas[j][day + 'Before'])) < 0) {
                                 %>
                                 측정 중
                                 <%
-                                    } else {
+                                } else {
                                 %>
                                 <%=result[i].dayDatas[j][day + 'After'] - result[i].dayDatas[j][day + 'Before']%>Km
                                 <%
+                                }
+                                %>
+                            </small>
+                        </p>
+                        <p class="km-property">주유 금액<br>
+                            <small class="km-value">
+                                <%
+                                if (result[i].dayDatas[j][day + 'RefuelingPrice']) {
+                                    if (result[i].dayDatas[j][day + 'RefuelingPrice'] === '0') {
+                                %>
+                                    주유X
+                                <%
+                                    } else {
+                                %>
+                                    <%=result[i].dayDatas[j][day + 'RefuelingPrice']%>원
+                                <%
                                     }
+                                } else {
+                                %>
+                                    미입력
+                                <%
+                                }
                                 %>
                             </small>
                         </p>
