@@ -113,6 +113,26 @@
                             <input type="hidden" name="month" value="<%=result[i].month%>">
                             <input type="hidden" name="day" value="<%=(k+1)%>">
                         </p>
+                        <p class="km-property">측정 전
+                            <small class="km-value">
+                                <%=result[i].dayDatas[j][day + 'Before'] + 'Km'%>
+                            </small>
+                        </p>
+                        <p class="km-property">측정 후
+                            <small class="km-value">
+                                <%
+                                if (result[i].dayDatas[j][day + 'After']) {
+                                %>
+                                <%=result[i].dayDatas[j][day + 'Before'] + 'Km'%>
+                                <%
+                                } else {
+                                %>
+                                측정 중
+                                <%
+                                }
+                                %>
+                            </small>
+                        </p>
                         <p class="km-property">주행 거리<br>
                             <small class="km-value">
                                 <%
